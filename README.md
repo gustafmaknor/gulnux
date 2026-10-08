@@ -98,7 +98,7 @@ Repot behöver ligga på GitHub (eller en USB-sticka) för att kunna hämtas und
 5. **Installera Gulnux:**
    ```
    nix-shell -p git
-   git clone https://github.com/DITT-KONTO/gulnux /mnt/home/gul/gulnux
+   git clone https://github.com/gustafmaknor/gulnux /mnt/home/gul/gulnux
    cd /mnt/home/gul/gulnux
    nixos-generate-config --root /mnt --show-hardware-config > hosts/x1/hardware-configuration.nix
    git add hosts/x1/hardware-configuration.nix   # flakes ser bara filer som git känner till
