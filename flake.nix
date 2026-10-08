@@ -18,6 +18,14 @@
         ];
       };
 
+      # Portabel installation på USB-minne/extern SSD – startar på de flesta PC
+      usb = nixpkgs.lib.nixosSystem {
+        modules = [
+          ./modules/gulnux
+          ./hosts/usb
+        ];
+      };
+
       # Testmaskin i VirtualBox
       vm = nixpkgs.lib.nixosSystem {
         modules = [

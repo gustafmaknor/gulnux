@@ -32,6 +32,48 @@ agent/AGENTS.md           systemkontext som alla agenter får
 | `Super+Shift+q` | Stäng fönster |
 | `Super+Escape` | Lås skärmen |
 
+## Testa på USB utan att röra datorns disk
+
+Gulnux installeras på ett externt USB-minne eller en USB-SSD och startas därifrån.
+Datorns inbyggda disk och bootmeny lämnas orörda.
+
+Du behöver **två** USB-enheter:
+- **A**: NixOS minimal ISO (skrivs med Rufus), minst 2 GB
+- **B**: Gulnux-installationen, minst 32 GB. En USB-SSD blir mycket snabbare än ett vanligt minne.
+
+1. Sätt i A, starta från den (F12 på ThinkPad, Secure Boot avstängt) och anslut till nätverket
+   (se steg 3 under X1-installationen nedan).
+2. Sätt i B och leta upp den. **Den inbyggda disken heter `nvme0n1` – rör den inte.**
+   ```
+   lsblk -o NAME,SIZE,MODEL,TRAN
+   ```
+   B är den med `TRAN = usb` och rätt storlek, oftast `sdb`.
+3. Installera (byt `sdX` mot B:s namn):
+   ```
+   sudo -i
+   DISK=/dev/sdX
+   parted $DISK -- mklabel gpt
+   parted $DISK -- mkpart ESP fat32 1MB 1GB
+   parted $DISK -- set 1 esp on
+   parted $DISK -- mkpart root ext4 1GB 100%
+   mkfs.fat -F 32 -n GULBOOT ${DISK}1
+   mkfs.ext4 -L gulnux ${DISK}2
+   mount /dev/disk/by-label/gulnux /mnt
+   mount --mkdir -o umask=077 /dev/disk/by-label/GULBOOT /mnt/boot
+
+   nix-shell -p git
+   git clone https://github.com/gustafmaknor/gulnux /mnt/home/gul/gulnux
+   cd /mnt/home/gul/gulnux
+   nixos-generate-config --root /mnt --show-hardware-config > hosts/usb/hardware-configuration.nix
+   git add hosts/usb/hardware-configuration.nix
+   nixos-install --flake .#usb
+   ```
+4. Stäng av, ta ur A och starta från B via F12. Fortsätt med *Första inloggningen* nedan.
+
+Om datorn kör Windows med BitLocker kan avstängd Secure Boot göra att Windows ber om
+återställningsnyckeln nästa gång. Ha den till hands (account.microsoft.com/devices/recoverykey)
+eller slå på Secure Boot igen när du testat klart.
+
 ## Testa i VirtualBox (Windows)
 
 1. Installera VirtualBox 7 (`winget install Oracle.VirtualBox`).
