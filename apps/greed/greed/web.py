@@ -11,7 +11,7 @@ from . import core, fetch
 
 PORT = int(os.environ.get("GREED_PORT", "9303"))
 STATIC = Path(__file__).parent / "static"
-TYPES = {".html": "text/html", ".js": "text/javascript", ".css": "text/css"}
+TYPES = {".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml"}
 
 # Bara Gulnux eget Greed-tillägg (fast id via nyckeln i manifest.json) får skicka inlägg.
 # Sidan själv kräver X-Greed, som andra webbsidor inte kan skicka hit utan att bli stoppade.
@@ -69,7 +69,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         def route(path, db):
-            if path in ("/", "/app.js", "/style.css", "/start", "/start.js", "/start.css"):
+            if path in ("/", "/app.js", "/style.css", "/ikon.svg", "/start", "/start.js", "/start.css"):
                 name = {"/": "index.html", "/start": "start.html"}.get(path, path[1:])
                 return self._send(200, (STATIC / name).read_bytes(), TYPES[Path(name).suffix] + "; charset=utf-8")
             if path == "/api/start":
@@ -111,6 +111,12 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, core.update_source(body["id"], enabled=bool(body.get("enabled"))))
             if path == "/api/sources/remove":
                 return self._send(200, {"message": core.remove_source(body["id"])})
+            if path == "/api/profile":
+                if isinstance(body.get("text"), str) and body["text"].strip():
+                    core.save_profile(body["text"])
+                else:
+                    core.save_profile_lists(body["likes"], body["dislikes"])
+                return self._send(200, {**core.profile(), "path": str(core.PROFILE_FILE)})
             if path == "/api/refresh":
                 with lock:
                     return self._send(200, refresh(db, force=True))

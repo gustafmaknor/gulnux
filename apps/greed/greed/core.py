@@ -83,6 +83,17 @@ def save_profile(text):
     PROFILE_FILE.write_text(text, encoding="utf-8")
 
 
+def save_profile_lists(likes, dislikes):
+    """Skriv om profilens två listor och behåll det som står ovanför dem (rubrik och inledning)."""
+    def clean(items):
+        return [" ".join(str(i).split()) for i in items if str(i).strip()]
+    text = profile()["text"]
+    intro = re.split(r"(?m)^## ", text, maxsplit=1)[0].rstrip() or PROFILE_TEMPLATE.split("\n## ")[0].rstrip()
+    lines = lambda items: "\n".join(f"- {i}" for i in clean(items)) or "-"
+    save_profile(f"{intro}\n\n## Intressen\n\n{lines(likes)}\n\n## Inte intresserad av\n\n{lines(dislikes)}\n")
+    return profile()
+
+
 # ------------------------------------------------------------------ källorna
 
 def load_sources():

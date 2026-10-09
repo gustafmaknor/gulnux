@@ -150,13 +150,91 @@ async function loadSources() {
 
 // ------------------------------------------------------------------ intressen
 
-async function loadProfile() {
-  const p = await api("/api/profile");
-  $("#profil").replaceChildren(
+// Två listor som går att ändra direkt: skriv i en rad för att ändra, × för att ta bort, Enter i
+// den tomma raden för att lägga till. Allt sparas på en gång i memory/greed.md. "Redigera som text"
+// visar hela filen för den som vill skriva fritt.
+
+let profile = null;
+let rawMode = false;
+
+async function saveLists() {
+  try {
+    profile = await api("/api/profile", { likes: profile.likes, dislikes: profile.dislikes });
+    status("Sparat i memory/greed.md");
+  } catch (e) {
+    status(e.message, true);
+  }
+}
+
+function list(key, title, hint, placeholder) {
+  const items = profile[key];
+  const rows = items.map((text, i) => {
+    const input = el("input", { value: text, "aria-label": title });
+    const commit = () => {
+      const value = input.value.trim();
+      if (value === items[i]) return;
+      if (value) items[i] = value;
+      else items.splice(i, 1);
+      saveLists().then(renderProfile);
+    };
+    input.addEventListener("change", commit);
+    input.addEventListener("keydown", (e) => e.key === "Enter" && input.blur());
+    const remove = () => {
+      items.splice(i, 1);
+      saveLists().then(renderProfile);
+    };
+    return el("li", {}, input, el("button", { class: "remove", onclick: remove, "aria-label": `Ta bort ${text}`, title: "Ta bort" }, "×"));
+  });
+  const add = el("input", { class: "new", placeholder, "aria-label": `Lägg till under ${title}` });
+  add.addEventListener("keydown", async (e) => {
+    if (e.key !== "Enter" || !add.value.trim()) return;
+    items.push(add.value.trim());
+    await saveLists();
+    renderProfile();
+    document.querySelector(`#lista-${key} .new`)?.focus();
+  });
+  return el("section", { class: `interests ${key}`, id: `lista-${key}` },
+    el("h2", {}, title),
+    el("p", { class: "hint" }, hint),
+    el("ul", {}, rows, el("li", { class: "add-row" }, add)));
+}
+
+function renderProfile() {
+  const toggle = el("button", { class: "mode", onclick: () => { rawMode = !rawMode; renderProfile(); } },
+    rawMode ? "Visa som listor" : "Redigera som text");
+  const intro = el("div", { class: "profile-head" },
     el("p", { class: "hint" }, "Greed väljer efter de här intressena och efter dina Mer/Mindre. ",
-      "Ändra i ", el("code", {}, "memory/greed.md"), " i ditt personliga repo, eller be agenten: ",
-      el("em", {}, "\"lägg till fastighetsmarknaden i Stockholm i mina Greed-intressen\"")),
-    el("div", { class: "profile" }, p.text));
+      "Du kan också be agenten: ", el("em", {}, "\"lägg till fastighetsmarknaden i Stockholm i mina Greed-intressen\"")),
+    toggle);
+  if (rawMode) {
+    const area = el("textarea", { class: "raw", spellcheck: "false", "aria-label": "memory/greed.md" });
+    area.value = profile.text;
+    const save = async () => {
+      try {
+        profile = await api("/api/profile", { text: area.value });
+        status("Sparat i memory/greed.md");
+        rawMode = false;
+        renderProfile();
+      } catch (e) {
+        status(e.message, true);
+      }
+    };
+    $("#profil").replaceChildren(intro, area,
+      el("div", { class: "raw-actions" },
+        el("button", { class: "primary", onclick: save }, "Spara"),
+        el("button", { onclick: () => { rawMode = false; renderProfile(); } }, "Avbryt"),
+        el("span", { class: "hint" }, "Behåll rubrikerna ## Intressen och ## Inte intresserad av, en rad med - per sak.")));
+    area.focus();
+    return;
+  }
+  $("#profil").replaceChildren(intro,
+    list("likes", "Intressen", "Det här vill du se mer av.", "Lägg till ett intresse och tryck Enter"),
+    list("dislikes", "Inte intresserad av", "Det här sorteras bort.", "Lägg till något du vill slippa och tryck Enter"));
+}
+
+async function loadProfile() {
+  profile = await api("/api/profile");
+  renderProfile();
 }
 
 // ------------------------------------------------------------------ start

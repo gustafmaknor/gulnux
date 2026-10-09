@@ -281,6 +281,12 @@ assert any(s["state"] and s["state"]["last_error"] for s in sources)
 assert http("/api/sources", {"url": "https://example.com/feed.xml"})[0] == 200
 assert http("/api/sources/remove", {"id": "example.com"})[0] == 200
 assert "NixOS och Linux" in json.loads(http("/api/profile")[1])["text"]
+saved = json.loads(http("/api/profile", {"likes": ["NixOS och Linux", "  Segling \n i skärgården "], "dislikes": []})[1])
+assert saved["likes"] == ["NixOS och Linux", "Segling i skärgården"] and saved["dislikes"] == [], saved
+assert saved["text"].startswith("# Greed – mina intressen") and "## Inte intresserad av\n\n-\n" in saved["text"], saved["text"]
+saved = json.loads(http("/api/profile", {"text": saved["text"].replace("Segling", "Kajak")})[1])
+assert "Kajak i skärgården" in saved["likes"]
+assert http("/api/profile", {"likes": ["x"], "dislikes": []}, headers={})[0] == 403
 server.shutdown()
 ok("sidans server: flödet, öppna, återkoppling, tilläggets inlägg, källor och profil")
 

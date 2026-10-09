@@ -70,4 +70,34 @@ main { max-width: 760px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
 .add input:focus { outline: none; border-color: var(--accent); }
 .hint { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
 
-.profile { white-space: pre-wrap; background: var(--page); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; line-height: 1.6; }
+.profile-head { display: flex; align-items: flex-start; gap: 1rem; }
+.profile-head .hint { flex: 1; margin-top: 0; }
+.profile-head .mode { flex: none; }
+.interests { background: var(--page); border: 1px solid var(--line); border-radius: 14px; padding: 0.9rem 1.1rem 0.6rem; margin-bottom: 1rem; }
+.interests h2 { font-size: 1rem; margin: 0; }
+.interests .hint { margin: 0.1rem 0 0.5rem; }
+.interests.dislikes h2::before { content: "–  "; color: var(--muted); }
+.interests.likes h2::before { content: "+  "; color: var(--accent-text); }
+.interests ul { list-style: none; margin: 0; padding: 0; }
+.interests li { display: flex; align-items: center; gap: 0.4rem; border-top: 1px solid var(--line); }
+.interests li:first-child { border-top: none; }
+.interests input {
+  flex: 1; font: inherit; padding: 0.5rem 0.4rem; border: 1px solid transparent; border-radius: 8px;
+  background: transparent; color: var(--text);
+}
+.interests input:hover { background: var(--bg); }
+.interests input:focus { outline: none; border-color: var(--accent); background: var(--page); }
+.interests input.new::placeholder { color: var(--muted); }
+.interests .add-row input { padding-left: 1.6rem; background: no-repeat 0.4rem center / 0.8rem
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 1v8M1 5h8' stroke='%238A6100' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); }
+.interests .remove { border: none; background: transparent; color: var(--muted); font-size: 1.15rem; line-height: 1; padding: 0.3rem 0.5rem; opacity: 0; }
+.interests li:hover .remove, .interests .remove:focus { opacity: 1; }
+.interests .remove:hover { color: var(--error); }
+.raw {
+  width: 100%; min-height: 22rem; font: 0.9rem/1.6 "JetBrains Mono", monospace; padding: 1rem 1.1rem;
+  border: 1px solid var(--line); border-radius: 14px; background: var(--page); color: var(--text); resize: vertical;
+}
+.raw:focus { outline: none; border-color: var(--accent); }
+.raw-actions { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+.raw-actions .hint { margin: 0 0 0 0.5rem; }
+button.primary { background: var(--accent); border-color: var(--accent); font-weight: 600; }
