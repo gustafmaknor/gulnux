@@ -131,10 +131,5 @@ in
       emoji = [ "Noto Color Emoji" ];
     };
 
-    # Glome (Chromium) följer paletten: papperston i verktygsfältet
-    programs.chromium = {
-      enable = true;
-      extraOpts.BrowserThemeColor = "#F7F4EC";
-    };
   };
 }

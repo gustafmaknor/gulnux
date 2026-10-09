@@ -280,6 +280,15 @@ gäller från nästa gång Glome startar.
 
 ## Glome – webbläsaren
 
+![Glomes startsida: klocka, sökruta, genvägar till Greed, Gloffice och appar Good Times kan, och dagens val från Greed](docs/bilder/startsida.png)
+
+<sub>Riktig skärmdump av startsidan med påhittade exempelposter.</sub>
+
+Glome är Chromium i Gulnux färger: verktygsfält och flikar får en ljus gul ton, och
+startsidan och nya flikar visar klocka, sökning, genvägar (Greed, Gloffice och appar Good
+Times har lärt sig) och det som är **värt din tid idag** från Greed. Sök-, GT- och
+Greed-knapparna sitter fast i verktygsfältet.
+
 Glome är Chromium med egen profil (`~/.config/glome`) och fjärrstyrning på `127.0.0.1:9222`.
 Agenterna styr den via MCP-servern `glome` (Chrome DevTools MCP), som `gul` registrerar
 automatiskt hos Claude Code och Codex.

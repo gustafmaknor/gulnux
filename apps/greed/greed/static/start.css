@@ -1,0 +1,55 @@
+/* Glomes startsida – Gulnux palett: ljust papper med gul accent */
+:root {
+  --bg: #F7F4EC;
+  --page: #FFFFFF;
+  --surface: #EFEBE0;
+  --text: #1F1D18;
+  --muted: #6B6457;
+  --line: #E2DCCB;
+  --accent: #F5C518;
+  --accent-text: #8A6100;
+  font-family: "Lexend", system-ui, sans-serif;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+
+/* Samma sol och ring som på skrivbordets bakgrund */
+.sol { position: fixed; width: 760px; height: 760px; border-radius: 50%; background: var(--accent); opacity: 0.22; right: -220px; top: -300px; pointer-events: none; }
+.ring { position: fixed; width: 420px; height: 420px; border-radius: 50%; border: 2px solid var(--accent); opacity: 0.35; left: -120px; bottom: -180px; pointer-events: none; }
+
+main { position: relative; max-width: 720px; margin: 0 auto; padding: 12vh 1.25rem 3rem; display: flex; flex-direction: column; gap: 2rem; }
+
+.tid { text-align: center; }
+#klocka { font-size: 5rem; font-weight: 300; letter-spacing: -2px; line-height: 1; }
+#halsning { margin-top: 0.5rem; font-size: 1.1rem; color: var(--muted); }
+
+#sok { display: flex; align-items: center; gap: 0.75rem; padding: 0 1.1rem; height: 3.4rem; background: var(--page); border: 2px solid var(--line); border-radius: 18px; box-shadow: 0 10px 30px rgba(60, 48, 20, 0.08); }
+#sok:focus-within { border-color: var(--accent); }
+#sok svg { width: 1.2rem; height: 1.2rem; flex: none; fill: none; stroke: var(--accent-text); stroke-width: 2.4; stroke-linecap: round; }
+#fraga { flex: 1; min-width: 0; font: inherit; font-size: 1.1rem; border: 0; outline: none; background: transparent; color: var(--text); }
+.osynlig { position: absolute; left: -9999px; }
+
+#genvagar { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; }
+#genvagar a { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 1rem; background: rgba(255, 255, 255, 0.8); border: 1px solid var(--line); border-radius: 12px; font-size: 0.95rem; }
+#genvagar a:hover { border-color: var(--accent); }
+.ikon { width: 1.4rem; height: 1.4rem; border-radius: 50%; background: var(--accent); flex: none; position: relative; }
+.ikon.gloffice { border-radius: 6px; background: var(--surface); border: 2px solid var(--accent); }
+.ikon.app { background: var(--surface); }
+.ikon.app::after { content: attr(data-bokstav); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: var(--accent-text); }
+.ikon.greed::after { content: ""; position: absolute; left: 0.32rem; right: 0.32rem; top: 0.42rem; height: 0.12rem; background: var(--text); border-radius: 1px; box-shadow: 0 0.22rem 0 var(--text), 0 0.44rem 0 var(--text); }
+
+#vart { background: rgba(255, 255, 255, 0.86); border: 1px solid var(--line); border-radius: 18px; padding: 1.1rem 1.25rem; box-shadow: 0 10px 30px rgba(60, 48, 20, 0.06); }
+.rubrik { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+.rubrik h2 { margin: 0; font-size: 1rem; font-weight: 600; }
+.rubrik a { font-size: 0.85rem; color: var(--accent-text); }
+#val { list-style: none; margin: 0; padding: 0; }
+#val li { padding: 0.7rem 0; border-top: 1px solid var(--line); }
+#val li:first-child { border-top: 0; }
+#val .titel { font-weight: 500; line-height: 1.35; }
+#val .titel:hover { color: var(--accent-text); }
+#val .om { margin-top: 0.25rem; font-size: 0.85rem; color: var(--muted); }
+#val .om b { font-weight: 500; color: var(--accent-text); }

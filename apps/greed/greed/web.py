@@ -44,7 +44,7 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def _body(self):
-        return json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
+        return json.loads(self._raw or b"{}")
 
     def _allowed(self, path):
         if self.headers.get("Host") not in HOSTS:
@@ -69,9 +69,11 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         def route(path, db):
-            if path in ("/", "/app.js", "/style.css"):
-                name = "index.html" if path == "/" else path[1:]
+            if path in ("/", "/app.js", "/style.css", "/start", "/start.js", "/start.css"):
+                name = {"/": "index.html", "/start": "start.html"}.get(path, path[1:])
                 return self._send(200, (STATIC / name).read_bytes(), TYPES[Path(name).suffix] + "; charset=utf-8")
+            if path == "/api/start":
+                return self._send(200, start_data(db))
             if path == "/api/today":
                 return self._send(200, {"digests": db.digests(3)})
             if path == "/api/sources":
@@ -91,6 +93,9 @@ class Handler(BaseHTTPRequestHandler):
         self._handle(route)
 
     def do_POST(self):
+        # Läs alltid hela anropet först: att svara (t.ex. 403) med oläst innehåll kan bryta anslutningen
+        self._raw = self.rfile.read(int(self.headers.get("Content-Length") or 0))
+
         def route(path, db):
             body = self._body()
             if path == "/api/capture":
@@ -111,6 +116,26 @@ class Handler(BaseHTTPRequestHandler):
                     return self._send(200, refresh(db, force=True))
             self._send(404, {"error": "not found"})
         self._handle(route)
+
+
+def start_data(db):
+    """Det Glomes startsida visar: förnamn, dagens främsta val och appar Good Times kan."""
+    name = ""
+    try:
+        import pwd
+        name = pwd.getpwuid(os.getuid()).pw_gecos.split(",")[0].split(" ")[0]
+    except (ImportError, KeyError, AttributeError):
+        pass
+    digests = db.digests(1)
+    picks = [p for d in digests for p in d["picks"]][:5]
+    apps = []
+    for app_json in sorted((core.REPO / "gt").glob("*/app.json")):
+        try:
+            app = json.loads(app_json.read_text(encoding="utf-8"))
+            apps.append({"title": app["title"], "url": app["startUrl"]})
+        except (OSError, ValueError, KeyError):
+            continue
+    return {"name": name, "picks": picks, "apps": apps, "updated": digests[0]["created"] if digests else None}
 
 
 def save(db, item):

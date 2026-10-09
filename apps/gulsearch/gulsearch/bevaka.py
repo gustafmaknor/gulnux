@@ -36,6 +36,8 @@ class Hanterare(BaseHTTPRequestHandler):
 
     # Bara POST: Chromium skickar inte Origin på GET-anrop från tillägg
     def do_POST(self):
+        # Läs alltid hela anropet först: att svara (t.ex. 403) med oläst innehåll kan bryta anslutningen
+        raw = self.rfile.read(int(self.headers.get("Content-Length") or 0))
         if not self._tillaten():
             return self._svar(403, {"fel": "not allowed"})
         if self.path == "/api/glome":
@@ -43,7 +45,7 @@ class Hanterare(BaseHTTPRequestHandler):
         if self.path != "/api/glome/spara":
             return self._svar(404, {"fel": "not found"})
         try:
-            data = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))))
+            data = json.loads(raw)
             svar = core.Index().spara_sida(str(data.get("url", "")), str(data.get("titel", "")),
                                            str(data.get("text", "")), str(data.get("lage", "manual")),
                                            core.installningar())

@@ -122,6 +122,8 @@ class Handler(BaseHTTPRequestHandler):
         self._handle(route)
 
     def do_POST(self):
+        # Läs alltid hela anropet först: att svara (t.ex. 403) med oläst innehåll kan bryta anslutningen
+        raw = self.rfile.read(int(self.headers.get("Content-Length") or 0))
         url = urlparse(self.path)
         if not self._allowed(url.path):
             return
@@ -130,7 +132,7 @@ class Handler(BaseHTTPRequestHandler):
             action = ACTIONS.get(url.path)
             if action is None:
                 return self._send(404, {"error": "finns inte"})
-            body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
+            body = json.loads(raw or b"{}")
             with write_lock:
                 message = action(body)
             path = message if url.path == "/api/new" else body["path"]

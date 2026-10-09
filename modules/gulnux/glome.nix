@@ -2,6 +2,12 @@
 let
   cfg = config.gulnux;
 
+  # Glomes startsida och nya flikar: Greed serverar den med dagens val; utan Greed en lokal fil
+  startsida =
+    if cfg.greed.enable
+    then "http://127.0.0.1:9303/start"
+    else "file:///etc/gulnux/startsida/start.html";
+
   glome = pkgs.writeShellApplication {
     name = "glome";
     runtimeInputs = [ pkgs.chromium pkgs.jq ];
@@ -44,11 +50,27 @@ in
 
     environment.etc."gulnux/commands/glome.md".source = ../../agent/commands/glome.md;
 
-    # Gulnux knappar (sök, Good Times, Greed) alltid synliga i verktygsfältet, inte bakom pusselbiten
-    programs.chromium.extraOpts.ExtensionSettings = lib.genAttrs [
-      "okelhmbnolibhpnjedoejgidbpnnoolh" # Gulnux sök
-      "ggkddmolbkjjhlicmldkhpflblbleocb" # Good Times
-      "ccbiciocgndmnhmblociljbphlibegne" # Greed
-    ] (_: { toolbar_pin = "force_pinned"; });
+    # Startsidan: från Greed (med dagens val och GT-apparna), annars samma sida som lokal fil
+    environment.etc."gulnux/startsida".source = ../../apps/greed/greed/static;
+
+    programs.chromium = {
+      enable = true; # skriver bara policyerna i /etc/chromium; Glome är Chromium
+      extraOpts = {
+        # Chromium räknar fram en ljus, gultonad palett för flikar och verktygsfält ur färgen
+        BrowserThemeColor = "#F5C518";
+
+        NewTabPageLocation = startsida;
+        HomepageLocation = startsida;
+        HomepageIsNewTabPage = false;
+        ShowHomeButton = true;
+
+        # Gulnux knappar (sök, Good Times, Greed) alltid synliga i verktygsfältet, inte bakom pusselbiten
+        ExtensionSettings = lib.genAttrs [
+          "okelhmbnolibhpnjedoejgidbpnnoolh" # Gulnux sök
+          "ggkddmolbkjjhlicmldkhpflblbleocb" # Good Times
+          "ccbiciocgndmnhmblociljbphlibegne" # Greed
+        ] (_: { toolbar_pin = "force_pinned"; });
+      };
+    };
   };
 }

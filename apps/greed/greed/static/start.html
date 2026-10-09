@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ny flik</title>
+  <link rel="stylesheet" href="start.css">
+</head>
+<body>
+  <div class="sol" aria-hidden="true"></div>
+  <div class="ring" aria-hidden="true"></div>
+  <main>
+    <div class="tid">
+      <div id="klocka">--:--</div>
+      <div id="halsning"></div>
+    </div>
+
+    <form id="sok" role="search">
+      <label for="fraga" class="osynlig">Sök på webben eller skriv en adress</label>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"></circle><path d="M15 15l5 5"></path></svg>
+      <input id="fraga" name="q" type="search" placeholder="Sök på webben eller skriv en adress" autocomplete="off" autofocus>
+    </form>
+
+    <nav id="genvagar" aria-label="Genvägar">
+      <a href="http://127.0.0.1:9303/"><span class="ikon greed"></span>Greed</a>
+      <a href="http://127.0.0.1:9300/"><span class="ikon gloffice"></span>Gloffice</a>
+    </nav>
+
+    <section id="vart" hidden>
+      <div class="rubrik">
+        <h2>Värt din tid idag</h2>
+        <a href="http://127.0.0.1:9303/">Hela flödet →</a>
+      </div>
+      <ol id="val"></ol>
+    </section>
+  </main>
+  <script src="start.js"></script>
+</body>
+</html>
