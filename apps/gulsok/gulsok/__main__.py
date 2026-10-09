@@ -37,9 +37,9 @@ def print_status(s):
     if not s["vektorstod"]:
         print("Vector search: sqlite-vec is missing – full text only")
     else:
-        print(f"Vector search: model {s['modell']}, ollama {'running' if s['ollama'] else 'not responding'}")
+        print(f"Vector search: model {s['model']}, ollama {'running' if s['ollama'] else 'not responding'}")
     print(f"Glome pages: {s['glome']}")
-    print("Sources: " + ", ".join(f"{k} ({v})" for k, v in s["kallor"].items()))
+    print("Sources: " + ", ".join(f"{k} ({v})" for k, v in s["sources"].items()))
 
 
 def main():
@@ -57,7 +57,7 @@ def main():
         elif command == "save-page":
             page = json.load(sys.stdin)
             answer = core.Index().spara_sida(page["url"], page.get("titel", ""), page.get("text", ""),
-                                             "manuell", settings)
+                                             "manual", settings)
             print(f"Saved \"{answer['titel']}\" to the search index." if answer["sparad"]
                   else f"Not saved: {answer['orsak']}")
         elif command == "forget":
@@ -66,7 +66,7 @@ def main():
             print_status(core.Index().status(settings))
         elif command == "index":
             index = core.Index()
-            print(f"Updated {index.skanna(settings['kallor'])} documents.")
+            print(f"Updated {index.skanna(settings["sources"])} documents.")
             try:
                 print(f"Computed vectors for {index.vektorisera(settings)} text chunks.")
             except inbaddning.InbaddningFel as e:

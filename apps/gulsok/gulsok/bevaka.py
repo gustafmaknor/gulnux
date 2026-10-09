@@ -45,7 +45,7 @@ class Hanterare(BaseHTTPRequestHandler):
         try:
             data = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))))
             svar = core.Index().spara_sida(str(data.get("url", "")), str(data.get("titel", "")),
-                                           str(data.get("text", "")), str(data.get("lage", "manuell")),
+                                           str(data.get("text", "")), str(data.get("lage", "manual")),
                                            core.installningar())
             self._svar(200, svar)
         except (ValueError, TypeError, AttributeError) as e:
@@ -62,7 +62,7 @@ def kor():
     while True:
         installn = core.installningar()
         try:
-            andrade = index.skanna(installn["kallor"])
+            andrade = index.skanna(installn["sources"])
             if andrade:
                 print(f"Updated {andrade} documents", flush=True)
             gjort = index.vektorisera(installn)

@@ -1,6 +1,6 @@
 # gul update – fetch the latest version of the Gulnux base and rebuild
 
-repo="${GULNUX_PERSONLIG:-$HOME/gulnux-personlig}"
+repo="${GULNUX_PERSONAL:-$HOME/gulnux-personal}"
 cd "$repo" || exit 1
 
 git pull -q --rebase --autostash || echo "Could not fetch from GitHub – continuing with what is available locally."

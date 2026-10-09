@@ -1,13 +1,13 @@
 # gul reflect – Gulnux reviews how you have used the computer and proposes improvements.
 #
-# The agent works in its own git branch (forslag/<date>) in your personal repo and never
+# The agent works in its own git branch (proposals/<date>) in your personal repo and never
 # changes anything directly. Review the proposals with `gul proposals`. Runs every week.
 
-repo="${GULNUX_PERSONLIG:-$HOME/gulnux-personlig}"
+repo="${GULNUX_PERSONAL:-$HOME/gulnux-personal}"
 state="${XDG_STATE_HOME:-$HOME/.local/state}/gulnux"
 conf="${XDG_CONFIG_HOME:-$HOME/.config}/gulnux"
 
-if [ -e "$state/av" ] || [ -e "$conf/larande-av" ]; then
+if [ -e "$state/paused" ] || [ -e "$conf/learning-off" ]; then
   echo "Learning is turned off (gul learning) – no reflection."
   exit 0
 fi
@@ -24,19 +24,19 @@ fi
 
 mkdir -p "$state"
 gul-log prune
-gul-log 7 > "$state/sammanfattning.md"
+gul-log 7 > "$state/summary.md"
 
 date=$(date +%F)
 name="$date"
 n=2
-while git -C "$repo" rev-parse -q --verify "refs/heads/forslag/$name" >/dev/null; do
+while git -C "$repo" rev-parse -q --verify "refs/heads/proposals/$name" >/dev/null; do
   name="$date-$n"
   n=$((n + 1))
 done
-branch="forslag/$name"
+branch="proposals/$name"
 
 # The agent gets its own working copy of the repo so that whatever you have open is not affected
-work="$state/reflektion"
+work="$state/reflection"
 git -C "$repo" worktree remove --force "$work" 2>/dev/null || true
 rm -rf "$work"
 git -C "$repo" worktree prune
@@ -45,11 +45,11 @@ cleanup() { git -C "$repo" worktree remove --force "$work" 2>/dev/null || true; 
 trap cleanup EXIT
 
 prompt=$(sed \
-  -e "s|@SAMMANFATTNING@|$state/sammanfattning.md|g" \
-  -e "s|@LOGG@|$state/handelser.jsonl|g" \
+  -e "s|@SAMMANFATTNING@|$state/summary.md|g" \
+  -e "s|@LOGG@|$state/events.jsonl|g" \
   -e "s|@DATUM@|$date|g" \
-  -e "s|@FIL@|forslag/$name.md|g" \
-  "$GULNUX_PROMPTER/reflektera.md")
+  -e "s|@FIL@|proposals/$name.md|g" \
+  "$GULNUX_PROMPTER/reflect.md")
 
 echo "Gulnux is reflecting with $agent in the branch $branch …"
 case "$agent" in
@@ -81,14 +81,14 @@ fi
 # Check that the proposal builds before the user sees it (path: includes changes that
 # are not committed yet)
 check="Bygger utan fel."
-if ! nix build "path:$work#homeConfigurations.$USER.activationPackage" --no-link >"$state/bygglogg.txt" 2>&1; then
-  check="Hemkonfigurationen bygger INTE – se $state/bygglogg.txt."
+if ! nix build "path:$work#homeConfigurations.$USER.activationPackage" --no-link >"$state/build-log.txt" 2>&1; then
+  check="Hemkonfigurationen bygger INTE – se $state/build-log.txt."
 elif git -C "$work" diff --cached --name-only | grep -q '^hosts/' \
-  && ! nix build "path:$work#nixosConfigurations.$(hostname).config.system.build.toplevel" --no-link >>"$state/bygglogg.txt" 2>&1; then
-  check="Systemkonfigurationen bygger INTE – se $state/bygglogg.txt."
+  && ! nix build "path:$work#nixosConfigurations.$(hostname).config.system.build.toplevel" --no-link >>"$state/build-log.txt" 2>&1; then
+  check="Systemkonfigurationen bygger INTE – se $state/build-log.txt."
 fi
 
-description="$work/forslag/$name.md"
+description="$work/proposals/$name.md"
 mkdir -p "$(dirname "$description")"
 [ -f "$description" ] || printf '# Förslag %s\n\n(Agenten skrev ingen beskrivning – se ändringarna med gul proposals show.)\n' "$date" > "$description"
 printf '\n---\n\n**Kontroll:** %s\n' "$check" >> "$description"

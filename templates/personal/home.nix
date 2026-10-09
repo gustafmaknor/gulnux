@@ -4,7 +4,7 @@
 # Exempel:
 #   home.packages = [ pkgs.gimp ];
 #   home.shellAliases.gs = "git status";
-#   gulnux.larande.intervall = "daily";
+#   gulnux.learning.interval = "daily";
 { pkgs, ... }:
 {
 }

@@ -21,24 +21,24 @@
       nixosModules.default = ./modules/gulnux;
 
       # Maskinprofiler som en maskin i det personliga repot väljer bland
-      nixosModules.profiler = {
-        generisk = ./modules/profiler/generisk.nix;
-        thinkpad-x1-gen10 = ./modules/profiler/thinkpad-x1-gen10.nix;
-        virtualbox = ./modules/profiler/virtualbox.nix;
-        usb = ./modules/profiler/usb.nix;
+      nixosModules.profiles = {
+        generic = ./modules/profiles/generic.nix;
+        thinkpad-x1-gen10 = ./modules/profiles/thinkpad-x1-gen10.nix;
+        virtualbox = ./modules/profiles/virtualbox.nix;
+        usb = ./modules/profiles/usb.nix;
       };
 
       # Gulnux på användarnivå: git, minne, observation och reflektion
-      homeModules.default = ./modules/hem;
+      homeModules.default = ./modules/home;
 
-      # Bygger maskiner och hemkatalog ur ett personligt repo (se templates/personlig)
-      lib.personlig = import ./lib/personlig.nix { inherit self inputs; };
+      # Bygger maskiner och hemkatalog ur ett personligt repo (se templates/personal)
+      lib.personal = import ./lib/personal.nix { inherit self inputs; };
 
-      templates.personlig = {
-        path = ./templates/personlig;
+      templates.personal = {
+        path = ./templates/personal;
         description = "Personligt Gulnux-repo med inställningar, maskiner och minne";
       };
-      templates.default = self.templates.personlig;
+      templates.default = self.templates.personal;
 
       # Live-/installations-ISO med agenterna och installationsprogrammet
       nixosConfigurations.iso = nixpkgs.lib.nixosSystem {

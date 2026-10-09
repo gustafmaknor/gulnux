@@ -1,13 +1,13 @@
 # gul setup – connects Gulnux to your GitHub account and your personal repo
 #
-# If the repo <your-account>/gulnux-personlig already exists it is cloned, so that your
+# If the repo <your-account>/gulnux-personal already exists it is cloned, so that your
 # settings, your memory and your machines follow you to this computer. Otherwise it is
 # created (private).
 #
 #   gul setup
 #   gul setup --dir DIR --username NAME --install    (used by the installer)
 
-dir="${GULNUX_PERSONLIG:-$HOME/gulnux-personlig}"
+dir="${GULNUX_PERSONAL:-$HOME/gulnux-personal}"
 username="${USER:-}"
 installing=false
 fullname="" email="" agent=""
@@ -27,7 +27,7 @@ ask() {
   printf -v "$1" '%s' "${answer:-$3}"
 }
 
-# Values end up in installningar.nix and must not break the Nix syntax
+# Values end up in settings.nix and must not break the Nix syntax
 check() {
   case "$1" in
     *'"'* | *\\* | *'$'*) echo "The characters \" \\ and \$ can't be used: $1" >&2; return 1 ;;
@@ -46,11 +46,11 @@ else
   login=$(gh api user -q .login)
   echo "Logged in as $login."
 
-  if gh repo view "$login/gulnux-personlig" >/dev/null 2>&1; then
-    echo "Cloning your personal repo $login/gulnux-personlig…"
-    gh repo clone "$login/gulnux-personlig" "$dir" -- -q
+  if gh repo view "$login/gulnux-personal" >/dev/null 2>&1; then
+    echo "Cloning your personal repo $login/gulnux-personal…"
+    gh repo clone "$login/gulnux-personal" "$dir" -- -q
   else
-    echo "Creating your personal repo $login/gulnux-personlig (private)…"
+    echo "Creating your personal repo $login/gulnux-personal (private)…"
     while :; do
       ask username "Username on this computer (lowercase)" "$username"
       [[ "$username" =~ ^[a-z_][a-z0-9_-]*$ ]] && [ "$username" != root ] && break
@@ -69,16 +69,16 @@ else
     cp -r "$GULNUX_MALL"/. "$dir"/
     chmod -R u+w "$dir"
     sed -i \
-      -e "s|@ANVANDARNAMN@|$username|" \
-      -e "s|@NAMN@|$fullname|" \
-      -e "s|@EPOST@|$email|" \
+      -e "s|@USERNAME@|$username|" \
+      -e "s|@NAME@|$fullname|" \
+      -e "s|@EMAIL@|$email|" \
       -e "s|@GITHUB@|$login|" \
       -e "s|@AGENT@|$agent|" \
-      "$dir/installningar.nix"
+      "$dir/settings.nix"
     git -C "$dir" init -q -b main
     git -C "$dir" add -A
     git -C "$dir" -c user.name="$fullname" -c user.email="$email" commit -q -m "My personal Gulnux"
-    gh repo create gulnux-personlig --private --source "$dir" --push \
+    gh repo create gulnux-personal --private --source "$dir" --push \
       --description "My personal Gulnux settings"
   fi
 fi

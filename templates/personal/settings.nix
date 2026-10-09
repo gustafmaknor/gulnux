@@ -1,8 +1,8 @@
 # Dina grundinställningar. Gäller på alla datorer där du använder Gulnux.
 {
-  anvandarnamn = "@ANVANDARNAMN@";
-  namn = "@NAMN@";
-  epost = "@EPOST@";
+  username = "@USERNAME@";
+  name = "@NAME@";
+  email = "@EMAIL@";
   github = "@GITHUB@";
   agent = "@AGENT@"; # claude, codex eller vibe
 }

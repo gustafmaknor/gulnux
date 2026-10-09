@@ -9,7 +9,7 @@ in
 rec {
   gul = skript "gul" [ coreutils gnugrep jq ] "";
   gul-setup = skript "gul-setup" [ coreutils git gh gnused ] ''
-    export GULNUX_MALL=${../templates/personlig}
+    export GULNUX_MALL=${../templates/personal}
   '';
   gul-memory = skript "gul-memory" [ gnugrep ] "";
   gul-log = skript "gul-log" [ coreutils jq ] "";
@@ -32,7 +32,7 @@ rec {
   gulnux-rebuild = writeShellApplication {
     name = "gulnux-rebuild";
     text = ''
-      repo="''${GULNUX_PERSONLIG:-$HOME/gulnux-personlig}"
+      repo="''${GULNUX_PERSONAL:-$HOME/gulnux-personal}"
       exec sudo nixos-rebuild "''${1:-switch}" --flake "$repo#$(hostname)"
     '';
   };
@@ -40,7 +40,7 @@ rec {
   gulnux-home = writeShellApplication {
     name = "gulnux-home";
     text = ''
-      repo="''${GULNUX_PERSONLIG:-$HOME/gulnux-personlig}"
+      repo="''${GULNUX_PERSONAL:-$HOME/gulnux-personal}"
       exec home-manager "''${1:-switch}" -b before-gulnux --flake "$repo#$USER"
     '';
   };

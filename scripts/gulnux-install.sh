@@ -23,12 +23,12 @@ ask() {
 }
 
 echo "== 1/5 Your personal repo"
-temporary=/mnt/root/gulnux-personlig
+temporary=/mnt/root/gulnux-personal
 mkdir -p /mnt/root
 rm -rf "$temporary"
 gul-setup --dir "$temporary" --username "" --install
-username=$(nix --extra-experimental-features nix-command eval --raw --file "$temporary/installningar.nix" anvandarnamn)
-repo="/mnt/home/$username/gulnux-personlig"
+username=$(nix --extra-experimental-features nix-command eval --raw --file "$temporary/settings.nix" username)
+repo="/mnt/home/$username/gulnux-personal"
 if [ -e "$repo" ]; then
   echo "$repo already exists – move or remove it first." >&2
   exit 1
@@ -41,7 +41,7 @@ guess_profile() {
   case "$(systemd-detect-virt 2>/dev/null || true)" in
     oracle) echo virtualbox; return ;;
     none | "") ;;
-    *) echo generisk; return ;;
+    *) echo generic; return ;;
   esac
   if grep -qs "X1 Carbon Gen 10" /sys/class/dmi/id/product_version; then
     echo thinkpad-x1-gen10
@@ -53,14 +53,14 @@ guess_profile() {
     echo usb
     return
   fi
-  echo generisk
+  echo generic
 }
 profile=$(guess_profile)
 machine=""
-echo "Profiles: generisk (generic PC), thinkpad-x1-gen10, virtualbox, usb"
+echo "Profiles: generic (generic PC), thinkpad-x1-gen10, virtualbox, usb"
 while :; do
   ask profile "Profile" "$profile"
-  case "$profile" in generisk|thinkpad-x1-gen10|virtualbox|usb) break ;; esac
+  case "$profile" in generic|thinkpad-x1-gen10|virtualbox|usb) break ;; esac
   echo "Choose one of the profiles above."
 done
 case "$profile" in
@@ -86,11 +86,11 @@ else
 {
   imports = [
     ./hardware-configuration.nix
-    gulnux.nixosModules.profiler.$profile
+    gulnux.nixosModules.profiles.$profile
   ];
 
   # More users on this machine (each one runs 'gul setup' with their own repo):
-  # gulnux.users.anna = { namn = "Anna"; };
+  # gulnux.users.anna = { name = "Anna"; };
 
   # Set to the NixOS version that was first installed, and never changed afterwards
   system.stateVersion = "$version";

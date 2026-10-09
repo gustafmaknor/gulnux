@@ -5,7 +5,7 @@
 #   gul log delete         delete the whole log
 #   gul log path           print where the log is stored
 
-log="${XDG_STATE_HOME:-$HOME/.local/state}/gulnux/handelser.jsonl"
+log="${XDG_STATE_HOME:-$HOME/.local/state}/gulnux/events.jsonl"
 
 summarize() {
   local days="$1" since
@@ -16,13 +16,13 @@ summarize() {
   since=$(date -d "$days days ago" +%FT%T)
   # Read raw lines one by one so that a broken line doesn't stop the summary
   jq -Rrs --arg since "$since" --arg days "$days" '
-    split("\n") | map(fromjson? // empty | select(.tid >= $since)) as $e
-    | ($e | map(select(.typ == "program")) | group_by(.program)
+    split("\n") | map(fromjson? // empty | select(.time >= $since)) as $e
+    | ($e | map(select(.type == "program")) | group_by(.program)
           | map({name: .[0].program, n: length}) | sort_by(-.n)) as $programs
-    | ($e | map(select(.typ == "kommando")) | group_by(.kommando)
-          | map({name: .[0].kommando, n: length, failed: (map(select(.status != 0)) | length)})
+    | ($e | map(select(.type == "command")) | group_by(.command)
+          | map({name: .[0].command, n: length, failed: (map(select(.status != 0)) | length)})
           | sort_by(-.n)) as $commands
-    | ($e | map(.tid[11:13]) | group_by(.) | map({h: .[0], n: length})) as $hours
+    | ($e | map(.time[11:13]) | group_by(.) | map({h: .[0], n: length})) as $hours
     | "# Gulnux observations, last \($days) days (\($e | length) events)",
       "",
       "## Programs opened",
@@ -40,7 +40,7 @@ case "${1:-7}" in
   prune)
     [ -f "$log" ] || exit 0
     since=$(date -d '30 days ago' +%FT%T)
-    jq -Rc --arg since "$since" 'fromjson? // empty | select(.tid >= $since)' "$log" > "$log.tmp"
+    jq -Rc --arg since "$since" 'fromjson? // empty | select(.time >= $since)' "$log" > "$log.tmp"
     mv "$log.tmp" "$log"
     ;;
   delete)

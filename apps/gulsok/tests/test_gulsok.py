@@ -24,7 +24,7 @@ from pathlib import Path
 ROT = Path(os.environ.get("T") or tempfile.mkdtemp(dir=Path.home()))
 os.environ["XDG_DATA_HOME"] = str(ROT / "data")
 os.environ["XDG_CONFIG_HOME"] = str(ROT / "config")
-DOK, MINNE = ROT / "Document", ROT / "minne"
+DOK, MINNE = ROT / "Document", ROT / "memory"
 DOK.mkdir(parents=True, exist_ok=True)
 MINNE.mkdir(parents=True, exist_ok=True)
 
@@ -32,7 +32,7 @@ MINNE.mkdir(parents=True, exist_ok=True)
 def skriv_config(**extra):
     fil = ROT / "config" / "gulsok" / "config.json"
     fil.parent.mkdir(parents=True, exist_ok=True)
-    fil.write_text(json.dumps({"kallor": {"documents": str(DOK), "memory": str(MINNE)}, **extra}), encoding="utf-8")
+    fil.write_text(json.dumps({"sources": {"documents": str(DOK), "memory": str(MINNE)}, **extra}), encoding="utf-8")
 
 
 # ---------- låtsas-ollama: deterministiska vektorer från orden (fungerar som en enkel ordpåse)
@@ -100,7 +100,7 @@ gloffice.slide_add(str(deck), "Kickoff Gulnux", ["Tidsplan för hösten", "Ansva
 (DOK / "sida.html").write_text("<html><script>var hemlig=1</script><body><p>Guide till Sway-fönsterhanteraren</p></body></html>", encoding="utf-8")
 (DOK / ".dold.md").write_text("ska inte indexeras", encoding="utf-8")
 (DOK / "bild.png").write_bytes(b"\x89PNG")
-(MINNE / "MINNE.md").write_text("- [Föredrar mörkt tema](tema.md) — användaren vill ha mörka färger", encoding="utf-8")
+(MINNE / "MEMORY.md").write_text("- [Föredrar mörkt tema](tema.md) — användaren vill ha mörka färger", encoding="utf-8")
 
 # Minimal PDF med en textrad
 pdf_text = "Hyresavtal for lagenheten pa Sodermalm"
@@ -121,8 +121,8 @@ pdf += b"trailer\n<< /Size %d /Root 1 0 R >>\nstartxref\n%d\n%%%%EOF\n" % (len(o
 # ---------- indexering och fulltext
 index = core.Index()
 installn = core.installningar()
-assert index.skanna(installn["kallor"]) == 7, index.db.execute("select sokvag from dokument").fetchall()
-assert index.skanna(installn["kallor"]) == 0, "oförändrade filer ska inte indexeras om"
+assert index.skanna(installn["sources"]) == 7, index.db.execute("select sokvag from dokument").fetchall()
+assert index.skanna(installn["sources"]) == 0, "oförändrade filer ska inte indexeras om"
 assert index.vec is not None, "sqlite-vec ska gå att ladda"
 fragor = {
     "takbyte sommarstugan": "offert-tak.docx",
@@ -131,7 +131,7 @@ fragor = {
     "kardemummabullar": "anteckning.md",
     "Sway": "sida.html",
     "hyresavtal Södermalm": "avtal.pdf",
-    "mörkt tema": "MINNE.md",
+    "mörkt tema": "MEMORY.md",
     "sommarstuga": "offert-tak.docx",       # grundform hittar böjd form ("sommarstugan") via prefix
 }
 for fraga, vantat in fragor.items():
@@ -157,7 +157,7 @@ time.sleep(0.05)
 gloffice.docx_replace_paragraph(str(offert), 1, "Byte av plåttak, nytt pris 98 000 kr.")
 os.utime(offert, None)
 (DOK / "anteckning.md").unlink()
-assert index.skanna(installn["kallor"]) == 2
+assert index.skanna(installn["sources"]) == 2
 assert index.sok("plåttak", installn=None)["traffar"][0]["titel"] == "offert-tak.docx"
 assert not index.sok("tegeltak", installn=None)["traffar"]
 assert not index.sok("kardemummabullar", installn=None)["traffar"]
@@ -166,19 +166,19 @@ ok("ändrade och borttagna filer")
 
 # ---------- Glome-lägen
 sida = ("https://example.com/artikel#del2", "NixOS flakes förklarat", "En lång artikel om hur NixOS flakes låser beroenden. " * 5)
-skriv_config(glome="av")
-assert not index.spara_sida(*sida, "manuell", core.installningar())["sparad"]
-skriv_config(glome="manuell")
+skriv_config(glome="off")
+assert not index.spara_sida(*sida, "manual", core.installningar())["sparad"]
+skriv_config(glome="manual")
 assert not index.spara_sida(*sida, "auto", core.installningar())["sparad"]
-svar = index.spara_sida(*sida, "manuell", core.installningar())
+svar = index.spara_sida(*sida, "manual", core.installningar())
 assert svar["sparad"], svar
-skriv_config(glome="auto", undantag=["bank"])
+skriv_config(glome="auto", exclude=["bank"])
 installn = core.installningar()
 assert not index.spara_sida("https://minbank.se/konto", "Konto", "x" * 100, "auto", installn)["sparad"]
-assert index.spara_sida("https://minbank.se/konto", "Konto", "Saldo och transaktioner " * 5, "manuell", installn)["sparad"], \
+assert index.spara_sida("https://minbank.se/konto", "Konto", "Saldo och transaktioner " * 5, "manual", installn)["sparad"], \
     "knappen ska fungera även på undantagna sidor"
 assert not index.spara_sida("https://example.com/tom", "Tom", "kort", "auto", installn)["sparad"]
-assert not index.spara_sida("file:///etc/passwd", "x", "y" * 100, "manuell", installn)["sparad"]
+assert not index.spara_sida("file:///etc/passwd", "x", "y" * 100, "manual", installn)["sparad"]
 assert index.spara_sida(*sida, "auto", installn)["id"] == svar["id"], "samma sida igen ska inte dubbleras"
 t = index.sok("flakes låser beroenden", installn=installn)["traffar"][0]
 assert t["kalla"] == "glome" and t["sokvag"] == "https://example.com/artikel", t
@@ -220,7 +220,7 @@ try:
     assert http("/api/glome", {}, host="evil.example:9391")[0] == 403, "DNS-rebinding ska nekas"
     status, svar = http("/api/glome/spara", {"url": "https://wiki.example/sway", "titel": "Sway-tips",
                                              "text": "Tips om tangentbordsgenvägar i Sway och tiling. " * 4,
-                                             "lage": "manuell"})
+                                             "lage": "manual"})
     assert status == 200 and svar["sparad"], svar
     assert core.Index().sok("tangentbordsgenvägar", installn=None)["traffar"][0]["titel"] == "Sway-tips"
     ok("tjänstens HTTP-gränssnitt för Glome-tillägget")

@@ -36,7 +36,7 @@ function markera(tabId, text, farg, titel) {
 
 chrome.action.onClicked.addListener(async (tab) => {
   try {
-    const resultat = await spara(tab.id, "manuell");
+    const resultat = await spara(tab.id, "manual");
     if (resultat.sparad) markera(tab.id, "✓", "#98971a", "Saved to Gulnux search");
     else markera(tab.id, "–", "#a89984", `Not saved: ${resultat.orsak}`);
   } catch (e) {

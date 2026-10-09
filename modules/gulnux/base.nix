@@ -4,11 +4,11 @@ let
 in
 {
   # Användarna kommer från de personliga repona: maskinens ägare läggs till automatiskt
-  # (se lib/personlig.nix), och fler kan läggas till i maskinens hosts/<maskin>/default.nix.
+  # (se lib/personal.nix), och fler kan läggas till i maskinens hosts/<maskin>/default.nix.
   options.gulnux.users = lib.mkOption {
     type = lib.types.attrsOf (lib.types.submodule {
       options = {
-        namn = lib.mkOption {
+        name = lib.mkOption {
           type = lib.types.str;
           default = "";
           description = "Fullständigt namn.";
@@ -40,10 +40,10 @@ in
     i18n.defaultLocale = "sv_SE.UTF-8";
     console.keyMap = "sv-latin1";
 
-    # Lösenord sätts vid installationen (eller med `sudo passwd <namn>`), aldrig i repot
+    # Lösenord sätts vid installationen (eller med `sudo passwd <användare>`), aldrig i repot
     users.users = lib.mapAttrs (_: u: {
       isNormalUser = true;
-      description = u.namn;
+      description = u.name;
       extraGroups = [ "networkmanager" "video" "audio" ] ++ lib.optional u.admin "wheel";
     }) cfg.users;
 

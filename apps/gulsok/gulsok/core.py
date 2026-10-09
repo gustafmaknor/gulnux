@@ -18,13 +18,13 @@ from . import extrahera, inbaddning
 HOME = Path.home()
 DATA_DIR = Path(os.environ.get("XDG_DATA_HOME", HOME / ".local" / "share")) / "gulsok"
 CONFIG_FIL = Path(os.environ.get("XDG_CONFIG_HOME", HOME / ".config")) / "gulsok" / "config.json"
-SYSTEM_FIL = Path("/etc/gulnux/sok.json")
+SYSTEM_FIL = Path("/etc/gulnux/search.json")
 
 STANDARD = {
-    "kallor": {"documents": "~/Document", "memory": "~/gulnux-personlig/minne"},
-    "glome": "manuell",  # av, manuell eller auto
-    "undantag": [],
-    "modell": "bge-m3",
+    "sources": {"documents": "~/Document", "memory": "~/gulnux-personal/memory"},
+    "glome": "manual",  # off, manual eller auto
+    "exclude": [],
+    "model": "bge-m3",
     "ollama": "http://127.0.0.1:11434",
 }
 
@@ -47,7 +47,7 @@ class SokFel(Exception):
 
 
 def installningar():
-    """Systemets inställningar (/etc/gulnux/sok.json) med användarens ovanpå."""
+    """Systemets inställningar (/etc/gulnux/search.json) med användarens ovanpå."""
     varden = dict(STANDARD)
     for fil in (SYSTEM_FIL, CONFIG_FIL):
         try:
@@ -241,10 +241,10 @@ class Index:
         """Räkna fram vektorer för bitar som saknar dem. Returnerar antalet."""
         if not self.vec:
             return 0
-        if self._har_vektortabell() and self._meta("modell") != installn["modell"]:
+        if self._har_vektortabell() and self._meta("modell") != installn["model"]:
             with self.db:
-                self._aterstall_vektorer(self._meta("dim"), installn["modell"])
-        klient = inbaddning.Klient(installn["ollama"], installn["modell"])
+                self._aterstall_vektorer(self._meta("dim"), installn["model"])
+        klient = inbaddning.Klient(installn["ollama"], installn["model"])
         gjort = 0
         while max_bitar is None or gjort < max_bitar:
             rader = self.db.execute("SELECT id, text FROM bitar WHERE vektor = 0 LIMIT 16").fetchall()
@@ -253,7 +253,7 @@ class Index:
             vektorer = klient.vektorer([r["text"] for r in rader])
             with self.db:
                 if not self._har_vektortabell() or self._meta("dim") != str(len(vektorer[0])):
-                    self._aterstall_vektorer(len(vektorer[0]), installn["modell"])
+                    self._aterstall_vektorer(len(vektorer[0]), installn["model"])
                 for rad, vektor in zip(rader, vektorer):
                     self.db.execute("DELETE FROM bitar_vec WHERE rowid = ?", (rad["id"],))
                     self.db.execute("INSERT INTO bitar_vec (rowid, embedding) VALUES (?, ?)",
@@ -265,16 +265,16 @@ class Index:
     # ------------------------------------------------------------ Glome
 
     def spara_sida(self, url, titel, text, lage, installn):
-        """Spara en webbsida från Glome. lage är "manuell" (knappen/kommandot) eller "auto"."""
+        """Spara en webbsida från Glome. lage är "manual" (knappen/kommandot) eller "auto"."""
         installning = installn["glome"]
-        if installning == "av":
+        if installning == "off":
             return {"sparad": False, "orsak": "indexing of Glome pages is turned off"}
         if lage == "auto" and installning != "auto":
             return {"sparad": False, "orsak": "automatic indexing is not turned on"}
         if not url.startswith(("http://", "https://")):
             return {"sparad": False, "orsak": "only web pages can be saved"}
         vard = (urlparse(url).hostname or "").lower()
-        if lage == "auto" and any(u.lower() in vard for u in installn["undantag"]):
+        if lage == "auto" and any(u.lower() in vard for u in installn["exclude"]):
             return {"sparad": False, "orsak": f"{vard} is excluded"}
         if len(text.strip()) < 50:
             return {"sparad": False, "orsak": "the page has too little text"}
@@ -301,7 +301,7 @@ class Index:
         lage = "fulltext"
         if installn and self.vec and self._har_vektortabell():
             try:
-                vektor = inbaddning.Klient(installn["ollama"], installn["modell"]).vektorer([fraga])[0]
+                vektor = inbaddning.Klient(installn["ollama"], installn["model"]).vektorer([fraga])[0]
                 rader = self.db.execute(
                     "SELECT rowid FROM bitar_vec WHERE embedding MATCH ? AND k = 50 ORDER BY distance",
                     (self.vec.serialize_float32(vektor),)).fetchall()
@@ -362,9 +362,9 @@ class Index:
             "bitar": bitar[0],
             "med_vektor": bitar[1],
             "vektorstod": bool(self.vec),
-            "ollama": inbaddning.Klient(installn["ollama"], installn["modell"]).tillganglig(),
-            "modell": installn["modell"],
+            "ollama": inbaddning.Klient(installn["ollama"], installn["model"]).tillganglig(),
+            "model": installn["model"],
             "glome": installn["glome"],
-            "kallor": installn["kallor"],
+            "sources": installn["sources"],
             "index": str(self.sokvag),
         }

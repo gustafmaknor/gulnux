@@ -18,13 +18,13 @@ EOF
 
 conf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/gulnux"
 state="${XDG_STATE_HOME:-$HOME/.local/state}/gulnux"
-repo="${GULNUX_PERSONLIG:-$HOME/gulnux-personlig}"
+repo="${GULNUX_PERSONAL:-$HOME/gulnux-personal}"
 
 case "${1:-}" in
   use)
     mkdir -p "$conf_dir"
     echo "${2:?specify claude, codex or vibe}" > "$conf_dir/agent"
-    echo "Default agent: $2 (set agent in installningar.nix to make it apply on all your computers)"
+    echo "Default agent: $2 (set agent in settings.nix to make it apply on all your computers)"
     exit 0
     ;;
   setup|search|memory|proposals|reflect|log|learning|update)
@@ -69,9 +69,9 @@ mkdir -p "$state"
 context="$state/AGENTS.md"
 {
   cat /etc/gulnux/AGENTS.md
-  if [ -f "$repo/minne/MINNE.md" ]; then
-    printf "\n---\n\n# Användarens minne\n\nFrån \`%s\`. Läs de enskilda minnesfilerna när de är relevanta.\n\n" "$repo/minne"
-    cat "$repo/minne/MINNE.md"
+  if [ -f "$repo/memory/MEMORY.md" ]; then
+    printf "\n---\n\n# Användarens minne\n\nFrån \`%s\`. Läs de enskilda minnesfilerna när de är relevanta.\n\n" "$repo/memory"
+    cat "$repo/memory/MEMORY.md"
   fi
 } > "$context"
 

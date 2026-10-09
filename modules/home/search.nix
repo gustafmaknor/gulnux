@@ -1,28 +1,28 @@
 # Gulnux sök på användarnivå: vad som indexeras och bakgrundstjänsten som håller indexet aktuellt.
 { config, lib, ... }:
 let
-  cfg = config.gulnux.sok;
+  cfg = config.gulnux.search;
 in
 {
-  options.gulnux.sok = {
+  options.gulnux.search = {
     enable = lib.mkEnableOption "Gulnux sök för den här användaren" // { default = true; };
-    kallor = lib.mkOption {
+    sources = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
       default = {
         documents = "~/Document";
-        memory = "~/gulnux-personlig/minne";
+        memory = "~/gulnux-personal/memory";
       };
       description = "Kataloger som indexeras, som namn = sökväg. Namnet syns i träffarna.";
     };
     glome = lib.mkOption {
-      type = lib.types.enum [ "av" "manuell" "auto" ];
-      default = "manuell";
+      type = lib.types.enum [ "off" "manual" "auto" ];
+      default = "manual";
       description = ''
-        Webbsidor i Glome: "av" (aldrig), "manuell" (bara när du trycker på knappen eller kör
-        gul search save) eller "auto" (varje sida du öppnar, utom undantagen).
+        Webbsidor i Glome: "off" (aldrig), "manual" (bara när du trycker på knappen eller kör
+        gul search save) eller "auto" (varje sida du öppnar, utom undantagen i exclude).
       '';
     };
-    undantag = lib.mkOption {
+    exclude = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [
         "bank"
@@ -43,7 +43,7 @@ in
 
   config = lib.mkIf cfg.enable {
     xdg.configFile."gulsok/config.json".text = builtins.toJSON {
-      inherit (cfg) kallor glome undantag;
+      inherit (cfg) sources glome exclude;
     };
 
     systemd.user.services.gulsok = {

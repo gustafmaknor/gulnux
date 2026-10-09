@@ -5,9 +5,9 @@
   inputs.gulnux.url = "github:gustafmaknor/gulnux";
 
   outputs = { gulnux, ... }:
-    gulnux.lib.personlig {
-      installningar = import ./installningar.nix;
-      hem = ./home.nix;
-      maskiner = ./hosts;
+    gulnux.lib.personal {
+      settings = import ./settings.nix;
+      home = ./home.nix;
+      hosts = ./hosts;
     };
 }

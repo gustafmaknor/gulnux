@@ -18,7 +18,7 @@ Codex eller Mistral Vibe), och agenten sköter datorn åt dig.
 | Repo | Innehåll | Synlighet |
 |---|---|---|
 | **Gulnux-grunden** (det här repot) | Själva distributionen. Inget personligt. | Publikt |
-| **Ditt personliga repo** (`<ditt-konto>/gulnux-personlig`) | Dina inställningar, dina datorer, ditt minne och godkända förslag | Privat |
+| **Ditt personliga repo** (`<ditt-konto>/gulnux-personal`) | Dina inställningar, dina datorer, ditt minne och godkända förslag | Privat |
 
 Ditt personliga repo hämtar grunden som ett beroende med låst version (`gul update`
 hämtar senaste). Installationen kräver ett GitHub-konto och skapar repot åt dig. Finns det
@@ -33,14 +33,14 @@ Maskinens ägare lägger till fler användare i sin maskinkonfiguration, och de 
 
 | Del | Vad det gör | Kommando |
 |---|---|---|
-| **Minne** | Agenterna sparar det de lär sig om dig som korta filer i `minne/` i ditt repo. Alla agenter delar samma minne. | `gul memory` |
+| **Minne** | Agenterna sparar det de lär sig om dig som korta filer i `memory/` i ditt repo. Alla agenter delar samma minne. | `gul memory` |
 | **Observation** | Loggar lokalt vilka program du öppnar och vilka kommandon du kör (bara namnet och om det lyckades, aldrig argument). Sparas i 30 dagar och lämnar aldrig datorn. | `gul log` |
 | **Reflektion** | En gång i veckan går en agent igenom loggen, ditt minne och vad du bett agenterna om, och föreslår högst tre förbättringar i en git-gren. Inget ändras utan att du godkänner det. | `gul proposals` |
 
 - Godkänn med `gul proposals accept`, avböj med `gul proposals reject <namn> "varför"`. Avböjda
   förslag sparas i minnet så att de inte föreslås igen.
 - Pausa allt med `gul learning off`. Stäng av permanent i `home.nix`:
-  `gulnux.larande.observera = false;` och/eller `gulnux.larande.reflektera = false;`
+  `gulnux.learning.observe = false;` och/eller `gulnux.learning.reflect = false;`
 - Reflektionen använder din agent och dess konto, så den kostar som en vanlig agentsession.
 
 ## Installation
@@ -88,7 +88,7 @@ datorns inbyggda disk, ett USB-minne eller en virtuell maskin.
    ```
    Installationsprogrammet loggar in på GitHub (du får en kod att skriva in på
    github.com/login/device, gärna från mobilen), skapar eller hämtar ditt personliga repo,
-   föreslår en maskinprofil (ThinkPad X1 Gen 10, VirtualBox, USB eller generisk), installerar
+   föreslår en maskinprofil (ThinkPad X1 Gen 10, VirtualBox, USB eller generic), installerar
    och frågar efter ditt lösenord.
 7. **Starta om**, ta ur USB-stickan och logga in. Agenten startar på arbetsyta 1.
 
@@ -142,19 +142,19 @@ som hittar på betydelse. Allt stannar på datorn.
 
 **Webbsidor från Glome** har tre lägen, som du ställer in i `home.nix`:
 
-| `gulnux.sok.glome` | Vad som sparas |
+| `gulnux.search.glome` | Vad som sparas |
 |---|---|
-| `"av"` | Inga webbsidor |
-| `"manuell"` (standard) | Bara när du trycker på sökknappen (förstoringsglaset) i Glome eller kör `gul search save` |
+| `"off"` | Inga webbsidor |
+| `"manual"` (standard) | Bara när du trycker på sökknappen (förstoringsglaset) i Glome eller kör `gul search save` |
 | `"auto"` | Varje sida du öppnar, utom undantagna (bank, e-post, vården, myndigheter …). Knappen fungerar även på undantagna sidor. |
 
 ```nix
-gulnux.sok.glome = "auto";
-gulnux.sok.undantag = [ "bank" "mail." "intranat.foretaget.se" ];
-gulnux.sok.kallor.projekt = "~/Projekt";
+gulnux.search.glome = "auto";
+gulnux.search.exclude = [ "bank" "mail." "intranat.foretaget.se" ];
+gulnux.search.sources.projekt = "~/Projekt";
 ```
 
-Ta bort en sida ur indexet med `gul search forget <id>`. Byte mellan `av` och de andra lägena
+Ta bort en sida ur indexet med `gul search forget <id>`. Byte mellan `off` och de andra lägena
 gäller från nästa gång Glome startar.
 
 ## Glome – webbläsaren
@@ -207,16 +207,16 @@ förenklas när du ändrar dess text.
 ## Struktur
 
 ```
-flake.nix                    moduler, profiler, lib.personlig, mall, ISO och install
-lib/personlig.nix            bygger maskiner och hemkatalog ur ett personligt repo
+flake.nix                    moduler, profiler, lib.personal, mall, ISO och install
+lib/personal.nix             bygger maskiner och hemkatalog ur ett personligt repo
 modules/gulnux/              systemnivå: bas, skrivbord, agenter, Glome, Gloffice, sök
-modules/hem/                 användarnivå: git, observation, reflektion, sök
-modules/profiler/            maskinprofiler: generisk, thinkpad-x1-gen10, virtualbox, usb
-templates/personlig/         mallen för det personliga repot
+modules/home/                användarnivå: git, observation, reflektion, sök
+modules/profiles/            maskinprofiler: generic, thinkpad-x1-gen10, virtualbox, usb
+templates/personal/          mallen för det personliga repot
 pkgs/gul.nix                 gul-kommandona
 scripts/                     gul, gul-*, gulnux-install, glome, vbox-create
 agent/AGENTS.md              kontexten som alla agenter får
-agent/prompts/reflektera.md  instruktionen till veckoreflektionen
+agent/prompts/reflect.md     instruktionen till veckoreflektionen
 apps/gloffice/               kontorssviten
 apps/gulsok/                 sökningen (index, bakgrundstjänst, MCP)
 apps/glome-tillagg/          sökknappen och auto-läget i Glome

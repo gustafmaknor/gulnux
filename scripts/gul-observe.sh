@@ -6,12 +6,12 @@ mkdir -p "$state"
 
 swaymsg -t subscribe -m '["window"]' \
   | jq --unbuffered -c 'select(.change == "new") | {
-      tid: (now | strflocaltime("%Y-%m-%dT%H:%M:%S")),
-      typ: "program",
+      time: (now | strflocaltime("%Y-%m-%dT%H:%M:%S")),
+      type: "program",
       program: (.container.app_id // .container.window_properties.class // "unknown")
     }' \
   | while read -r line; do
-      if [ ! -e "$state/av" ] && [ ! -e "$conf/larande-av" ]; then
-        printf '%s\n' "$line" >> "$state/handelser.jsonl"
+      if [ ! -e "$state/paused" ] && [ ! -e "$conf/learning-off" ]; then
+        printf '%s\n' "$line" >> "$state/events.jsonl"
       fi
     done

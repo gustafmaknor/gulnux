@@ -33,13 +33,13 @@ def _save_glome_page():
                                          check=True, timeout=30).stdout)
     except (OSError, subprocess.SubprocessError, ValueError) as e:
         raise core.SokFel(f"Could not read the page in Glome: {e}") from None
-    return core.Index().spara_sida(sida["url"], sida["titel"], sida["text"], "manuell", core.installningar())
+    return core.Index().spara_sida(sida["url"], sida["titel"], sida["text"], "manual", core.installningar())
 
 
 def _reindex():
     installn = core.installningar()
     index = core.Index()
-    andrade = index.skanna(installn["kallor"])
+    andrade = index.skanna(installn["sources"])
     return f"Updated {andrade} documents. Vectors are computed in the background."
 
 

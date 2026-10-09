@@ -2,7 +2,7 @@
 { inputs, ... }:
 {
   imports = [
-    ./generisk.nix
+    ./generic.nix
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x1-10th-gen
   ];
 

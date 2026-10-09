@@ -11,9 +11,9 @@ eller avböjer dem.
 - Rå händelselogg, en JSON-rad per händelse: @LOGG@
 - Vad användaren har bett agenterna om: sessionerna i ~/.claude/projects/ och
   ~/.codex/sessions/. Läs de senaste dagarnas.
-- Minnet: minne/, börja med minne/MINNE.md. Läs minne/avbojda-forslag.md om den finns och
+- Minnet: memory/, börja med memory/MEMORY.md. Läs memory/rejected-proposals.md om den finns och
   föreslå aldrig något som redan har avböjts.
-- Nuvarande inställningar: installningar.nix, home.nix och hosts/.
+- Nuvarande inställningar: settings.nix, home.nix och hosts/.
 
 ## Uppgift
 
@@ -27,7 +27,7 @@ eller avböjer dem.
    - Användarnivå i home.nix (paket, alias, skript, inställningar). Det föredras eftersom
      det inte kräver sudo.
    - Systemnivå i hosts/<maskin>/default.nix bara när det verkligen behövs.
-   - Nya fakta om användaren som minnesfiler i minne/, med en rad i minne/MINNE.md
+   - Nya fakta om användaren som minnesfiler i memory/, med en rad i memory/MEMORY.md
      (`- [Titel](fil.md) — kort beskrivning`).
 4. Beskriv förslagen i @FIL@:
 

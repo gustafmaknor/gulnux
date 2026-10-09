@@ -2,7 +2,7 @@
 # Vad som indexeras (källor, Glome-läge, undantag) ställer varje användare in i home.nix.
 { config, lib, pkgs, ... }:
 let
-  cfg = config.gulnux.sok;
+  cfg = config.gulnux.search;
 
   python = pkgs.python3.withPackages (ps: [
     ps.python-docx
@@ -21,10 +21,10 @@ let
   };
 in
 {
-  options.gulnux.sok = {
+  options.gulnux.search = {
     enable = lib.mkEnableOption "Gulnux sök" // { default = config.gulnux.desktop.enable; };
-    vektorer = lib.mkEnableOption "vektorsökning med en lokal modell via ollama (ca 1 GB)" // { default = true; };
-    modell = lib.mkOption {
+    vectors = lib.mkEnableOption "vektorsökning med en lokal modell via ollama (ca 1 GB)" // { default = true; };
+    model = lib.mkOption {
       type = lib.types.str;
       default = "bge-m3";
       description = "Embedding-modell i ollama. Bör vara flerspråkig så att svenska fungerar.";
@@ -34,13 +34,13 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [ gulsok ];
 
-    services.ollama = lib.mkIf cfg.vektorer {
+    services.ollama = lib.mkIf cfg.vectors {
       enable = true;
-      loadModels = [ cfg.modell ];
+      loadModels = [ cfg.model ];
     };
 
-    environment.etc."gulnux/sok.json".text = builtins.toJSON {
-      inherit (cfg) modell;
+    environment.etc."gulnux/search.json".text = builtins.toJSON {
+      inherit (cfg) model;
       ollama = "http://127.0.0.1:11434";
     };
     environment.etc."gulnux/glome-tillagg".source = ../../apps/glome-tillagg;
