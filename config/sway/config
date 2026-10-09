@@ -36,6 +36,7 @@ bindsym $mod+Shift+a exec $term --app-id gul-agent gul-session
 ### Grundläggande
 bindsym $mod+Return exec $term
 bindsym $mod+g exec glome
+bindsym $mod+o exec gloffice
 bindsym $mod+d exec $menu
 bindsym $mod+Shift+q kill
 floating_modifier $mod normal

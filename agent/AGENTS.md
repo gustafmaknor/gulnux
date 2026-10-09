@@ -31,6 +31,20 @@ skärmdumpar, köra JavaScript, nätverk, konsol, prestanda, Lighthouse och till
 - Användaren är inloggad på sina egna konton i Glome. Fråga alltid innan du skickar
   formulär, köper, publicerar, skickar meddelanden eller ändrar något i användarens konton.
 
+## Kontorssviten Gloffice
+
+Gloffice öppnar och ändrar Word- (.docx), Excel- (.xlsx) och PowerPoint-filer (.pptx).
+Använd MCP-servern `gloffice` för att arbeta i sådana filer, inte egna skript.
+
+- Användarens dokument ligger i `~/Dokument`.
+- Läs filen med `read_document` först, så att du får rätt index på stycken, blad och bilder.
+- Öppna filen med `open_in_gloffice` när användaren ska se den. Fönstret uppdateras
+  automatiskt medan du ändrar, så användaren kan följa arbetet.
+- Varje ändring kan ångras med `undo`. Efter att du skrivit formler: kör `recalculate`
+  innan du läser tillbaka beräknade värden.
+- Äldre format (.doc, .xls, .ppt, .odt …) konverteras först med `convert`.
+- I terminalen: `gloffice <fil>` öppnar en fil.
+
 ## Regler för systemändringar
 
 1. Ändra aldrig filer i `/etc` direkt och installera aldrig paket med `nix-env`

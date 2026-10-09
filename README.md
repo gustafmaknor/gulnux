@@ -21,6 +21,24 @@ automatiskt hos Claude Code och Codex.
 Fjärrstyrningsporten är bara öppen lokalt, men alla program som körs som din användare kan
 styra Glome, inklusive dina inloggade konton.
 
+## Gloffice – kontorssviten
+
+En enkel lokal kontorssvit för `.docx`, `.xlsx` och `.pptx`. Den är webbaserad och öppnas som
+ett eget fönster i Glome (`gloffice` eller `Super+o`). Agenterna arbetar i filerna via
+MCP-servern `gloffice`, och fönstret uppdateras automatiskt medan de gör det.
+
+- Be agenten: *"skapa en budget för hösten i budget.xlsx och öppna den"*
+- Textdokument: skriv direkt i stycken, Enter ger nytt stycke
+- Kalkylark: klicka i en cell och skriv i formelfältet, `=SUM(A1:A5)` fungerar
+- Presentationer: redigera text på bilderna, lägg till bilder
+- Allt sparas direkt i originalfilen. Före varje ändring sparas en kopia i
+  `~/.local/share/gloffice/backups`, så **Ångra** fungerar även på det agenten gjort.
+- PDF-export, äldre format och omräkning av formler görs med LibreOffice.
+
+Begränsningar: bilder och diagram i kalkylark kan försvinna när Gloffice sparar (det beror på
+openpyxl). Textdokument redigeras stycke för stycke, och formatering inom ett stycke
+förenklas när du ändrar dess text.
+
 ## Struktur
 
 ```
@@ -41,6 +59,7 @@ agent/AGENTS.md           systemkontext som alla agenter får
 | `Super+Shift+a` | Öppna agentsessionen igen |
 | `Super+Enter` | Terminal |
 | `Super+g` | Glome |
+| `Super+o` | Gloffice |
 | `Super+d` | Programstartare |
 | `Super+h/j/k/l` | Flytta fokus |
 | `Super+1..9` | Byt arbetsyta |

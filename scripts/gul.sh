@@ -35,18 +35,31 @@ link_file() {
 link_file /etc/gulnux/AGENTS.md "$HOME/.claude/CLAUDE.md"
 link_file /etc/gulnux/AGENTS.md "$HOME/.codex/AGENTS.md"
 
-# Webbläsaren Glome: registrera MCP-servern och /glome-kommandot hos agenterna
-if command -v glome-mcp >/dev/null; then
-  if command -v claude >/dev/null && ! claude mcp get glome >/dev/null 2>&1; then
-    claude mcp add --scope user glome -- glome-mcp >/dev/null 2>&1 || true
+# Registrera en MCP-server hos Claude Code och Codex om den inte redan finns
+#   register_mcp <namn> <kommando> [argument...]
+register_mcp() {
+  local name="$1"
+  shift
+  if command -v claude >/dev/null && ! jq -e --arg n "$name" '.mcpServers[$n]' "$HOME/.claude.json" >/dev/null 2>&1; then
+    claude mcp add --scope user "$name" -- "$@" >/dev/null 2>&1 || true
   fi
-  codex_conf="$HOME/.codex/config.toml"
-  if ! grep -qs '^\[mcp_servers\.glome\]' "$codex_conf"; then
-    printf '\n[mcp_servers.glome]\ncommand = "glome-mcp"\n' >> "$codex_conf"
+  local codex_conf="$HOME/.codex/config.toml" args=""
+  if ! grep -qs "^\[mcp_servers\.$name\]" "$codex_conf"; then
+    for a in "${@:2}"; do args+="\"$a\", "; done
+    printf '\n[mcp_servers.%s]\ncommand = "%s"\nargs = [%s]\n' "$name" "$1" "${args%, }" >> "$codex_conf"
   fi
+}
 
+# Webbläsaren Glome
+if command -v glome-mcp >/dev/null; then
+  register_mcp glome glome-mcp
   link_file /etc/gulnux/commands/glome.md "$HOME/.claude/commands/glome.md"
   link_file /etc/gulnux/commands/glome.md "$HOME/.codex/prompts/glome.md"
+fi
+
+# Kontorssviten Gloffice
+if command -v gloffice >/dev/null; then
+  register_mcp gloffice gloffice mcp
 fi
 
 case "$agent" in

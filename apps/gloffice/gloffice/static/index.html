@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gloffice</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <aside id="sidebar">
+    <h1>Gloffice</h1>
+    <div class="new">
+      <button data-new="docx">+ Dokument</button>
+      <button data-new="xlsx">+ Kalkyl</button>
+      <button data-new="pptx">+ Presentation</button>
+    </div>
+    <div id="dir"></div>
+    <ul id="files"></ul>
+  </aside>
+  <main>
+    <header id="toolbar" hidden>
+      <span id="title"></span>
+      <span id="status"></span>
+      <button id="undo" title="Ångra senaste ändringen">Ångra</button>
+      <button id="pdf" title="Visa som PDF (LibreOffice)">PDF</button>
+      <button id="download">Ladda ner</button>
+    </header>
+    <div id="formula" hidden>
+      <span id="cellref"></span>
+      <input id="cellinput" placeholder="Värde eller =formel" autocomplete="off">
+    </div>
+    <div id="view">
+      <p class="empty">Välj en fil till vänster, eller be agenten i gul att skapa en.</p>
+    </div>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
