@@ -11,7 +11,7 @@ in
   };
 
   config = {
-    environment.systemPackages = gul.alla ++ [
+    environment.systemPackages = gul.all ++ [
       pkgs.claude-code
       pkgs.codex
       # Mistral Vibe startas via uv av `gul` tills den finns i nixpkgs

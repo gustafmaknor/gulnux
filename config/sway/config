@@ -113,7 +113,7 @@ bindsym Print exec grim -g "$(slurp)" - | wl-copy
 
 ### Bakgrundstjänster
 exec mako
-exec gul-observera
+exec gul-observe
 exec swayidle -w \
     timeout 300 'swaylock -f -c 1d2021' \
     timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \

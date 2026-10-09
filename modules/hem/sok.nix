@@ -9,8 +9,8 @@ in
     kallor = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
       default = {
-        dokument = "~/Dokument";
-        minne = "~/gulnux-personlig/minne";
+        documents = "~/Document";
+        memory = "~/gulnux-personlig/minne";
       };
       description = "Kataloger som indexeras, som namn = sökväg. Namnet syns i träffarna.";
     };
@@ -19,7 +19,7 @@ in
       default = "manuell";
       description = ''
         Webbsidor i Glome: "av" (aldrig), "manuell" (bara när du trycker på knappen eller kör
-        gul sok spara) eller "auto" (varje sida du öppnar, utom undantagen).
+        gul search save) eller "auto" (varje sida du öppnar, utom undantagen).
       '';
     };
     undantag = lib.mkOption {
@@ -48,11 +48,11 @@ in
 
     systemd.user.services.gulsok = {
       Unit = {
-        Description = "Gulnux sök håller sökindexet uppdaterat";
+        Description = "Gulnux search keeps the search index up to date";
         ConditionPathExists = "/run/current-system/sw/bin/gulsok";
       };
       Service = {
-        ExecStart = "/run/current-system/sw/bin/gulsok bevaka";
+        ExecStart = "/run/current-system/sw/bin/gulsok watch";
         Restart = "on-failure";
         RestartSec = 30;
         Environment = [ "PATH=/run/current-system/sw/bin" ];

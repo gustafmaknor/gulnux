@@ -24,7 +24,7 @@ async function spara(tabId, lage) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ...sida, lage }),
   });
-  if (!svar.ok) throw new Error(`Gulnux sök svarade ${svar.status}`);
+  if (!svar.ok) throw new Error(`Gulnux search answered ${svar.status}`);
   return svar.json();
 }
 
@@ -37,10 +37,10 @@ function markera(tabId, text, farg, titel) {
 chrome.action.onClicked.addListener(async (tab) => {
   try {
     const resultat = await spara(tab.id, "manuell");
-    if (resultat.sparad) markera(tab.id, "✓", "#98971a", "Sparad i Gulnux sök");
-    else markera(tab.id, "–", "#a89984", `Inte sparad: ${resultat.orsak}`);
+    if (resultat.sparad) markera(tab.id, "✓", "#98971a", "Saved to Gulnux search");
+    else markera(tab.id, "–", "#a89984", `Not saved: ${resultat.orsak}`);
   } catch (e) {
-    markera(tab.id, "!", "#cc241d", `Kunde inte spara: ${e.message}`);
+    markera(tab.id, "!", "#cc241d", `Could not save: ${e.message}`);
   }
 });
 
@@ -50,7 +50,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
     const { lage } = await (await fetch(`${TJANST}/api/glome`, { method: "POST" })).json();
     if (lage !== "auto") return;
     const resultat = await spara(tabId, "auto");
-    if (resultat.sparad) markera(tabId, "✓", "#98971a", "Sparad automatiskt i Gulnux sök");
+    if (resultat.sparad) markera(tabId, "✓", "#98971a", "Saved automatically to Gulnux search");
   } catch {
     // tjänsten är inte igång eller sidan gick inte att läsa – försök inte igen
   }

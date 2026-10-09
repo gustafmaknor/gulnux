@@ -24,7 +24,7 @@ from pathlib import Path
 ROT = Path(os.environ.get("T") or tempfile.mkdtemp(dir=Path.home()))
 os.environ["XDG_DATA_HOME"] = str(ROT / "data")
 os.environ["XDG_CONFIG_HOME"] = str(ROT / "config")
-DOK, MINNE = ROT / "Dokument", ROT / "minne"
+DOK, MINNE = ROT / "Document", ROT / "minne"
 DOK.mkdir(parents=True, exist_ok=True)
 MINNE.mkdir(parents=True, exist_ok=True)
 
@@ -32,7 +32,7 @@ MINNE.mkdir(parents=True, exist_ok=True)
 def skriv_config(**extra):
     fil = ROT / "config" / "gulsok" / "config.json"
     fil.parent.mkdir(parents=True, exist_ok=True)
-    fil.write_text(json.dumps({"kallor": {"dokument": str(DOK), "minne": str(MINNE)}, **extra}), encoding="utf-8")
+    fil.write_text(json.dumps({"kallor": {"documents": str(DOK), "memory": str(MINNE)}, **extra}), encoding="utf-8")
 
 
 # ---------- låtsas-ollama: deterministiska vektorer från orden (fungerar som en enkel ordpåse)
@@ -140,7 +140,7 @@ for fraga, vantat in fragor.items():
 assert not index.sok("hemlig", installn=None)["traffar"], "script-innehåll ska inte indexeras"
 assert not index.sok("indexeras", installn=None)["traffar"], "dolda filer ska hoppas över"
 assert index.sok("och i att", installn=None)["traffar"] == [], "bara stoppord ska inte ge brus"
-assert index.sok("tema", kalla="dokument", installn=None)["traffar"] == []
+assert index.sok("tema", kalla="documents", installn=None)["traffar"] == []
 ok("indexering och fulltext (" + ", ".join(fragor.values()) + ")")
 
 # ---------- vektorer och hybrid
@@ -189,7 +189,7 @@ ok("Glome: av, manuell, auto, undantag och glöm")
 
 # ---------- bakgrundstjänstens HTTP-gränssnitt
 env = {**os.environ, "GULSOK_PORT": "9391", "GULSOK_INTERVALL": "3600", "PYTHONIOENCODING": "utf-8"}
-tjanst = subprocess.Popen([sys.executable, "-m", "gulsok", "bevaka"], env=env, stdout=subprocess.PIPE, text=True)
+tjanst = subprocess.Popen([sys.executable, "-m", "gulsok", "watch"], env=env, stdout=subprocess.PIPE, text=True)
 from gulsok import bevaka  # noqa: E402
 URSPRUNG = f"chrome-extension://{bevaka.TILLAGG_ID}"
 

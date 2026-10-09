@@ -37,11 +37,11 @@ class Hanterare(BaseHTTPRequestHandler):
     # Bara POST: Chromium skickar inte Origin på GET-anrop från tillägg
     def do_POST(self):
         if not self._tillaten():
-            return self._svar(403, {"fel": "inte tillåtet"})
+            return self._svar(403, {"fel": "not allowed"})
         if self.path == "/api/glome":
             return self._svar(200, {"lage": core.installningar()["glome"]})
         if self.path != "/api/glome/spara":
-            return self._svar(404, {"fel": "finns inte"})
+            return self._svar(404, {"fel": "not found"})
         try:
             data = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))))
             svar = core.Index().spara_sida(str(data.get("url", "")), str(data.get("titel", "")),
@@ -55,7 +55,7 @@ class Hanterare(BaseHTTPRequestHandler):
 def kor():
     server = ThreadingHTTPServer(("127.0.0.1", PORT), Hanterare)
     threading.Thread(target=server.serve_forever, daemon=True).start()
-    print(f"Gulnux sök bevakar källorna och tar emot sidor från Glome på 127.0.0.1:{PORT}", flush=True)
+    print(f"Gulnux search is watching the sources and accepting pages from Glome on 127.0.0.1:{PORT}", flush=True)
 
     index = core.Index()
     senaste_fel = None
@@ -64,16 +64,16 @@ def kor():
         try:
             andrade = index.skanna(installn["kallor"])
             if andrade:
-                print(f"Uppdaterade {andrade} dokument", flush=True)
+                print(f"Updated {andrade} documents", flush=True)
             gjort = index.vektorisera(installn)
             if gjort:
-                print(f"Räknade fram vektorer för {gjort} textbitar", flush=True)
+                print(f"Computed vectors for {gjort} text chunks", flush=True)
             senaste_fel = None
         except inbaddning.InbaddningFel as e:
             # Fulltextsökningen fungerar ändå; vektorerna tas igen när ollama är igång
             if str(e) != senaste_fel:
-                print(f"Vektorer väntar: {e}", flush=True)
+                print(f"Vectors are waiting: {e}", flush=True)
                 senaste_fel = str(e)
         except Exception as e:
-            print(f"Fel: {type(e).__name__}: {e}", flush=True)
+            print(f"Error: {type(e).__name__}: {e}", flush=True)
         time.sleep(INTERVALL)

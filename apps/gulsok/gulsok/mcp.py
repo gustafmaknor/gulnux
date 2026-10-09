@@ -7,10 +7,10 @@ import sys
 
 from . import __version__, core
 
-INSTRUCTIONS = """Sök i användarens egna dokument (~/Dokument: Word, Excel, PowerPoint, PDF, text),
-Gulnux minne och webbsidor som sparats från Glome. Sökningen förstår både exakta ord och
-betydelse, så fråga gärna med en hel mening. Läs hela dokumentet med read. Office-filer
-öppnas med gloffice, webbsidor med glome."""
+INSTRUCTIONS = """Search the user's own documents (~/Document: Word, Excel, PowerPoint, PDF, text),
+the Gulnux memory and web pages saved from Glome. The search understands both exact words and
+meaning, so feel free to query with a whole sentence. Read a whole document with read. Open
+Office files with gloffice and web pages with glome."""
 
 TOOLS = {}
 
@@ -32,7 +32,7 @@ def _save_glome_page():
         sida = json.loads(subprocess.run(["glome-read", "--json"], capture_output=True, text=True,
                                          check=True, timeout=30).stdout)
     except (OSError, subprocess.SubprocessError, ValueError) as e:
-        raise core.SokFel(f"Kunde inte läsa sidan i Glome: {e}") from None
+        raise core.SokFel(f"Could not read the page in Glome: {e}") from None
     return core.Index().spara_sida(sida["url"], sida["titel"], sida["text"], "manuell", core.installningar())
 
 
@@ -40,23 +40,23 @@ def _reindex():
     installn = core.installningar()
     index = core.Index()
     andrade = index.skanna(installn["kallor"])
-    return f"Uppdaterade {andrade} dokument. Vektorer räknas fram i bakgrunden."
+    return f"Updated {andrade} documents. Vectors are computed in the background."
 
 
-ID = {"type": ["integer", "string"], "description": "Dokumentets id från search, eller sökväg/adress"}
-tool("search", "Sök i användarens dokument, minne och sparade webbsidor. Ger de bästa träffarna med utdrag.",
+ID = {"type": ["integer", "string"], "description": "The document id from search, or a path/URL"}
+tool("search", "Search the user's documents, memory and saved web pages. Returns the best hits with excerpts.",
      _search, required=("query",),
-     query={"type": "string", "description": "Vad du letar efter, gärna som en mening"},
-     limit={"type": "integer", "description": "Max antal träffar (standard 10)"},
-     source={"type": "string", "description": "Bara en källa: dokument, minne, glome eller annan källa från status"})
-tool("read", "Läs hela texten i ett dokument från sökindexet.",
+     query={"type": "string", "description": "What you are looking for, preferably as a sentence"},
+     limit={"type": "integer", "description": "Max number of hits (default 10)"},
+     source={"type": "string", "description": "Only one source: documents, memory, glome or another source from status"})
+tool("read", "Read the full text of a document from the search index.",
      lambda id: core.Index().las(id), required=("id",), id=ID)
-tool("save_glome_page", "Spara sidan som användaren har framme i Glome i sökindexet.", _save_glome_page)
-tool("forget", "Ta bort ett dokument eller en sparad webbsida ur sökindexet (filen påverkas inte).",
+tool("save_glome_page", "Save the page the user has open in Glome to the search index.", _save_glome_page)
+tool("forget", "Remove a document or saved web page from the search index (the file is not touched).",
      lambda id: core.Index().glom(id), required=("id",), id=ID)
-tool("status", "Visa vad som är indexerat och om vektorsökningen är igång.",
+tool("status", "Show what is indexed and whether vector search is running.",
      lambda: core.Index().status(core.installningar()))
-tool("reindex", "Leta efter nya och ändrade filer nu i stället för att vänta på bakgrundstjänsten.", _reindex)
+tool("reindex", "Look for new and changed files now instead of waiting for the background service.", _reindex)
 
 
 def handle(msg):
@@ -76,15 +76,15 @@ def handle(msg):
     if method == "tools/call":
         name = params.get("name")
         if name not in TOOLS:
-            return {"error": {"code": -32602, "message": f"Okänt verktyg: {name}"}}
+            return {"error": {"code": -32602, "message": f"Unknown tool: {name}"}}
         try:
             out = TOOLS[name][0](**(params.get("arguments") or {}))
             text = out if isinstance(out, str) else json.dumps(out, ensure_ascii=False, indent=1)
             return {"result": {"content": [{"type": "text", "text": text}]}}
         except Exception as e:
-            return {"result": {"content": [{"type": "text", "text": f"Fel: {e}"}], "isError": True}}
+            return {"result": {"content": [{"type": "text", "text": f"Error: {e}"}], "isError": True}}
     if "id" in msg:
-        return {"error": {"code": -32601, "message": f"Okänd metod: {method}"}}
+        return {"error": {"code": -32601, "message": f"Unknown method: {method}"}}
     return None
 
 

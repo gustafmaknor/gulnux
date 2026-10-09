@@ -21,7 +21,7 @@ CONFIG_FIL = Path(os.environ.get("XDG_CONFIG_HOME", HOME / ".config")) / "gulsok
 SYSTEM_FIL = Path("/etc/gulnux/sok.json")
 
 STANDARD = {
-    "kallor": {"dokument": "~/Dokument", "minne": "~/gulnux-personlig/minne"},
+    "kallor": {"documents": "~/Document", "memory": "~/gulnux-personlig/minne"},
     "glome": "manuell",  # av, manuell eller auto
     "undantag": [],
     "modell": "bge-m3",
@@ -225,7 +225,7 @@ class Index:
                 try:
                     text = extrahera.text(fil)
                 except Exception as e:  # trasig fil: indexera namnet så att den inte provas varje varv
-                    print(f"Kunde inte läsa {fil}: {e}", flush=True)
+                    print(f"Could not read {fil}: {e}", flush=True)
                     text = ""
                 self.lagg_till(kalla, sokvag, fil.name, text, andrad)
                 andrade += 1
@@ -268,16 +268,16 @@ class Index:
         """Spara en webbsida från Glome. lage är "manuell" (knappen/kommandot) eller "auto"."""
         installning = installn["glome"]
         if installning == "av":
-            return {"sparad": False, "orsak": "indexering av Glome-sidor är avstängd"}
+            return {"sparad": False, "orsak": "indexing of Glome pages is turned off"}
         if lage == "auto" and installning != "auto":
-            return {"sparad": False, "orsak": "automatisk indexering är inte påslagen"}
+            return {"sparad": False, "orsak": "automatic indexing is not turned on"}
         if not url.startswith(("http://", "https://")):
-            return {"sparad": False, "orsak": "bara webbsidor kan sparas"}
+            return {"sparad": False, "orsak": "only web pages can be saved"}
         vard = (urlparse(url).hostname or "").lower()
         if lage == "auto" and any(u.lower() in vard for u in installn["undantag"]):
-            return {"sparad": False, "orsak": f"{vard} är undantagen"}
+            return {"sparad": False, "orsak": f"{vard} is excluded"}
         if len(text.strip()) < 50:
-            return {"sparad": False, "orsak": "sidan har för lite text"}
+            return {"sparad": False, "orsak": "the page has too little text"}
         url = url.split("#")[0]
         dokument = self.lagg_till("glome", url, titel or url, text, time.time())
         return {"sparad": True, "id": dokument, "titel": titel or url}
@@ -346,13 +346,13 @@ class Index:
             "SELECT id, kalla, sokvag, titel, text, andrad FROM dokument WHERE id = ? OR sokvag = ?",
             (int(nyckel) if str(nyckel).isdigit() else -1, str(nyckel))).fetchone()
         if not rad:
-            raise SokFel(f"Hittade inget dokument {nyckel} i indexet")
+            raise SokFel(f"Found no document {nyckel} in the index")
         return dict(rad)
 
     def glom(self, nyckel):
         dokument = self.las(nyckel)
         self.ta_bort(dokument["id"])
-        return f"Tog bort \"{dokument['titel']}\" ur sökindexet"
+        return f"Removed \"{dokument['titel']}\" from the search index"
 
     def status(self, installn):
         kallor = {r[0]: r[1] for r in self.db.execute("SELECT kalla, count(*) FROM dokument GROUP BY kalla")}

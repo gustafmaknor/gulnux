@@ -21,10 +21,10 @@ class Klient:
             with urllib.request.urlopen(request, timeout=600) as response:
                 svar = json.load(response)
         except (OSError, ValueError) as e:
-            raise InbaddningFel(f"ollama svarar inte på {self.url} ({e})") from None
+            raise InbaddningFel(f"ollama is not responding at {self.url} ({e})") from None
         vektorer = svar.get("embeddings")
         if not vektorer or len(vektorer) != len(texter):
-            raise InbaddningFel(f"ollama gav inga vektorer – är modellen {self.modell} hämtad?")
+            raise InbaddningFel(f"ollama returned no vectors – has the model {self.modell} been pulled?")
         return vektorer
 
     def tillganglig(self):

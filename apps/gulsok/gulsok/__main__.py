@@ -1,13 +1,13 @@
-"""gulsok – Gulnux sök
+"""gulsok – Gulnux search
 
-  gulsok sok <fråga>       sök i dokument, minne och sparade webbsidor
-  gulsok las <id>          visa hela texten för en träff
-  gulsok spara-sida        spara en webbsida (JSON med url, titel och text på stdin)
-  gulsok glom <id>         ta bort ett dokument ur indexet
-  gulsok status            vad som är indexerat
-  gulsok indexera          uppdatera indexet nu, i förgrunden
-  gulsok bevaka            bakgrundstjänsten (startas av systemd)
-  gulsok mcp               MCP-servern för agenterna
+  gulsok search <query>    search documents, memory and saved web pages
+  gulsok read <id>         show the full text of a hit
+  gulsok save-page         save a web page (JSON with url, titel and text on stdin)
+  gulsok forget <id>       remove a document from the index
+  gulsok status            what is indexed
+  gulsok index             update the index now, in the foreground
+  gulsok watch             the background service (started by systemd)
+  gulsok mcp               the MCP server for the agents
 """
 
 import json
@@ -16,64 +16,65 @@ import sys
 from . import core, inbaddning
 
 
-def skriv_traffar(resultat):
-    traffar = resultat["traffar"]
-    if not traffar:
-        print("Inga träffar.")
+def print_hits(result):
+    hits = result["traffar"]
+    if not hits:
+        print("No hits.")
         return
-    for nr, t in enumerate(traffar, start=1):
-        print(f"{nr}. {t['titel']}  [{t['kalla']}, {t['andrad']}, id {t['id']}]")
-        print(f"   {t['sokvag']}")
-        print(f"   {t['utdrag']}\n")
-    if resultat["lage"] == "fulltext":
-        print("(Bara fulltextsökning – vektorsökningen är inte igång än, se 'gul sok status'.)")
+    for nr, hit in enumerate(hits, start=1):
+        print(f"{nr}. {hit['titel']}  [{hit['kalla']}, {hit['andrad']}, id {hit['id']}]")
+        print(f"   {hit['sokvag']}")
+        print(f"   {hit['utdrag']}\n")
+    if result["lage"] == "fulltext":
+        print("(Full-text search only – vector search is not running yet, see 'gul search status'.)")
 
 
-def skriv_status(s):
+def print_status(s):
     print(f"Index: {s['index']}")
-    for kalla, antal in sorted(s["dokument"].items()):
-        print(f"  {kalla}: {antal} dokument")
-    print(f"Textbitar: {s['bitar']}, varav {s['med_vektor']} med vektor")
+    for source, count in sorted(s["dokument"].items()):
+        print(f"  {source}: {count} documents")
+    print(f"Text chunks: {s['bitar']}, of which {s['med_vektor']} have a vector")
     if not s["vektorstod"]:
-        print("Vektorsökning: saknar sqlite-vec – bara fulltext")
+        print("Vector search: sqlite-vec is missing – full text only")
     else:
-        print(f"Vektorsökning: modell {s['modell']}, ollama {'igång' if s['ollama'] else 'svarar inte'}")
-    print(f"Glome-sidor: {s['glome']}")
-    print("Källor: " + ", ".join(f"{k} ({v})" for k, v in s["kallor"].items()))
+        print(f"Vector search: model {s['modell']}, ollama {'running' if s['ollama'] else 'not responding'}")
+    print(f"Glome pages: {s['glome']}")
+    print("Sources: " + ", ".join(f"{k} ({v})" for k, v in s["kallor"].items()))
 
 
 def main():
     args = sys.argv[1:]
-    kommando = args[0] if args else "--help"
-    installn = core.installningar()
+    command = args[0] if args else "--help"
+    settings = core.installningar()
     try:
-        if kommando == "sok":
+        if command == "search":
             if len(args) < 2:
-                sys.exit("Vad vill du söka efter?")
-            skriv_traffar(core.Index().sok(" ".join(args[1:]), installn=installn))
-        elif kommando == "las":
+                sys.exit("What do you want to search for?")
+            print_hits(core.Index().sok(" ".join(args[1:]), installn=settings))
+        elif command == "read":
             d = core.Index().las(args[1])
             print(f"# {d['titel']}\n{d['sokvag']}\n\n{d['text']}")
-        elif kommando == "spara-sida":
-            sida = json.load(sys.stdin)
-            svar = core.Index().spara_sida(sida["url"], sida.get("titel", ""), sida.get("text", ""),
-                                           "manuell", installn)
-            print(f"Sparade \"{svar['titel']}\" i sökindexet." if svar["sparad"] else f"Inte sparad: {svar['orsak']}")
-        elif kommando == "glom":
+        elif command == "save-page":
+            page = json.load(sys.stdin)
+            answer = core.Index().spara_sida(page["url"], page.get("titel", ""), page.get("text", ""),
+                                             "manuell", settings)
+            print(f"Saved \"{answer['titel']}\" to the search index." if answer["sparad"]
+                  else f"Not saved: {answer['orsak']}")
+        elif command == "forget":
             print(core.Index().glom(args[1]))
-        elif kommando == "status":
-            skriv_status(core.Index().status(installn))
-        elif kommando == "indexera":
+        elif command == "status":
+            print_status(core.Index().status(settings))
+        elif command == "index":
             index = core.Index()
-            print(f"Uppdaterade {index.skanna(installn['kallor'])} dokument.")
+            print(f"Updated {index.skanna(settings['kallor'])} documents.")
             try:
-                print(f"Räknade fram vektorer för {index.vektorisera(installn)} textbitar.")
+                print(f"Computed vectors for {index.vektorisera(settings)} text chunks.")
             except inbaddning.InbaddningFel as e:
-                print(f"Vektorerna får vänta: {e}")
-        elif kommando == "bevaka":
+                print(f"The vectors will have to wait: {e}")
+        elif command == "watch":
             from . import bevaka
             bevaka.kor()
-        elif kommando == "mcp":
+        elif command == "mcp":
             from . import mcp
             mcp.main()
         else:
@@ -81,7 +82,7 @@ def main():
     except core.SokFel as e:
         sys.exit(f"gulsok: {e}")
     except (IndexError, KeyError, ValueError) as e:
-        sys.exit(f"gulsok: fel argument ({e})")
+        sys.exit(f"gulsok: bad arguments ({e})")
 
 
 if __name__ == "__main__":

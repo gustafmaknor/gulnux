@@ -1,91 +1,92 @@
-# gul setup – kopplar Gulnux till ditt GitHub-konto och ditt personliga repo
+# gul setup – connects Gulnux to your GitHub account and your personal repo
 #
-# Finns repot <ditt-konto>/gulnux-personlig redan hämtas det, så att dina inställningar,
-# ditt minne och dina maskiner följer med till den här datorn. Annars skapas det (privat).
+# If the repo <your-account>/gulnux-personlig already exists it is cloned, so that your
+# settings, your memory and your machines follow you to this computer. Otherwise it is
+# created (private).
 #
 #   gul setup
-#   gul setup --katalog DIR --anvandarnamn NAMN    (används av installationsprogrammet)
+#   gul setup --dir DIR --username NAME --install    (used by the installer)
 
-katalog="${GULNUX_PERSONLIG:-$HOME/gulnux-personlig}"
-anvandarnamn="${USER:-}"
-installation=false
-namn="" epost="" agent=""
+dir="${GULNUX_PERSONLIG:-$HOME/gulnux-personlig}"
+username="${USER:-}"
+installing=false
+fullname="" email="" agent=""
 while [ $# -gt 0 ]; do
   case "$1" in
-    --katalog) katalog="$2"; shift 2 ;;
-    --anvandarnamn) anvandarnamn="$2"; shift 2 ;;
-    --installation) installation=true; shift ;;
-    *) echo "gul setup: okänt argument '$1'" >&2; exit 1 ;;
+    --dir) dir="$2"; shift 2 ;;
+    --username) username="$2"; shift 2 ;;
+    --install) installing=true; shift ;;
+    *) echo "gul setup: unknown argument '$1'" >&2; exit 1 ;;
   esac
 done
 
-# fraga <variabel> <fråga> <förslag>
-fraga() {
-  local svar
-  read -r -p "$2${3:+ [$3]}: " svar
-  printf -v "$1" '%s' "${svar:-$3}"
+# ask <variable> <question> <suggestion>
+ask() {
+  local answer
+  read -r -p "$2${3:+ [$3]}: " answer
+  printf -v "$1" '%s' "${answer:-$3}"
 }
 
-# Värden hamnar i installningar.nix och får inte bryta Nix-syntaxen
-kontrollera() {
+# Values end up in installningar.nix and must not break the Nix syntax
+check() {
   case "$1" in
-    *'"'* | *\\* | *'$'*) echo "Tecknen \" \\ och \$ kan inte användas: $1" >&2; return 1 ;;
+    *'"'* | *\\* | *'$'*) echo "The characters \" \\ and \$ can't be used: $1" >&2; return 1 ;;
   esac
 }
 
-if [ -d "$katalog/.git" ]; then
-  echo "Ditt personliga repo finns redan i $katalog."
+if [ -d "$dir/.git" ]; then
+  echo "Your personal repo already exists in $dir."
 else
   echo "== GitHub"
   if ! gh auth status >/dev/null 2>&1; then
-    echo "Logga in på GitHub. Du får en kod att skriva in på github.com/login/device"
-    echo "(det går bra att göra det på mobilen)."
+    echo "Log in to GitHub. You'll get a code to enter at github.com/login/device"
+    echo "(you can do that on your phone)."
     gh auth login --hostname github.com --git-protocol https --web
   fi
   login=$(gh api user -q .login)
-  echo "Inloggad som $login."
+  echo "Logged in as $login."
 
   if gh repo view "$login/gulnux-personlig" >/dev/null 2>&1; then
-    echo "Hämtar ditt personliga repo $login/gulnux-personlig…"
-    gh repo clone "$login/gulnux-personlig" "$katalog" -- -q
+    echo "Cloning your personal repo $login/gulnux-personlig…"
+    gh repo clone "$login/gulnux-personlig" "$dir" -- -q
   else
-    echo "Skapar ditt personliga repo $login/gulnux-personlig (privat)…"
+    echo "Creating your personal repo $login/gulnux-personlig (private)…"
     while :; do
-      fraga anvandarnamn "Användarnamn på datorn (små bokstäver)" "$anvandarnamn"
-      [[ "$anvandarnamn" =~ ^[a-z_][a-z0-9_-]*$ ]] && [ "$anvandarnamn" != root ] && break
-      echo "Använd små bokstäver, siffror, - och _."
+      ask username "Username on this computer (lowercase)" "$username"
+      [[ "$username" =~ ^[a-z_][a-z0-9_-]*$ ]] && [ "$username" != root ] && break
+      echo "Use lowercase letters, digits, - and _."
     done
-    namn_forslag=$(gh api user -q '.name // empty')
-    while :; do fraga namn "Ditt namn" "$namn_forslag"; kontrollera "$namn" && break; done
-    epost_forslag=$(gh api user -q '.email // empty')
-    while :; do fraga epost "E-post för git" "${epost_forslag:-$login@users.noreply.github.com}"; kontrollera "$epost" && break; done
+    suggested_name=$(gh api user -q '.name // empty')
+    while :; do ask fullname "Your name" "$suggested_name"; check "$fullname" && break; done
+    suggested_email=$(gh api user -q '.email // empty')
+    while :; do ask email "Email for git" "${suggested_email:-$login@users.noreply.github.com}"; check "$email" && break; done
     while :; do
-      fraga agent "Kodagent (claude, codex eller vibe)" "claude"
+      ask agent "Coding agent (claude, codex or vibe)" "claude"
       case "$agent" in claude|codex|vibe) break ;; esac
     done
 
-    mkdir -p "$katalog"
-    cp -r "$GULNUX_MALL"/. "$katalog"/
-    chmod -R u+w "$katalog"
+    mkdir -p "$dir"
+    cp -r "$GULNUX_MALL"/. "$dir"/
+    chmod -R u+w "$dir"
     sed -i \
-      -e "s|@ANVANDARNAMN@|$anvandarnamn|" \
-      -e "s|@NAMN@|$namn|" \
-      -e "s|@EPOST@|$epost|" \
+      -e "s|@ANVANDARNAMN@|$username|" \
+      -e "s|@NAMN@|$fullname|" \
+      -e "s|@EPOST@|$email|" \
       -e "s|@GITHUB@|$login|" \
       -e "s|@AGENT@|$agent|" \
-      "$katalog/installningar.nix"
-    git -C "$katalog" init -q -b main
-    git -C "$katalog" add -A
-    git -C "$katalog" -c user.name="$namn" -c user.email="$epost" commit -q -m "Mitt personliga Gulnux"
-    gh repo create gulnux-personlig --private --source "$katalog" --push \
-      --description "Mina personliga Gulnux-inställningar"
+      "$dir/installningar.nix"
+    git -C "$dir" init -q -b main
+    git -C "$dir" add -A
+    git -C "$dir" -c user.name="$fullname" -c user.email="$email" commit -q -m "My personal Gulnux"
+    gh repo create gulnux-personlig --private --source "$dir" --push \
+      --description "My personal Gulnux settings"
   fi
 fi
 
-git -C "$katalog" config credential.https://github.com.helper '!gh auth git-credential'
+git -C "$dir" config credential.https://github.com.helper '!gh auth git-credential'
 
-if ! $installation; then
-  echo "== Aktiverar dina inställningar"
+if ! $installing; then
+  echo "== Activating your settings"
   gulnux-home
-  echo "Klart! Starta din agent med: gul"
+  echo "Done! Start your agent with: gul"
 fi

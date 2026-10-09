@@ -20,7 +20,7 @@ Codex eller Mistral Vibe), och agenten sköter datorn åt dig.
 | **Gulnux-grunden** (det här repot) | Själva distributionen. Inget personligt. | Publikt |
 | **Ditt personliga repo** (`<ditt-konto>/gulnux-personlig`) | Dina inställningar, dina datorer, ditt minne och godkända förslag | Privat |
 
-Ditt personliga repo hämtar grunden som ett beroende med låst version (`gul uppdatera`
+Ditt personliga repo hämtar grunden som ett beroende med låst version (`gul update`
 hämtar senaste). Installationen kräver ett GitHub-konto och skapar repot åt dig. Finns det
 redan, till exempel från en tidigare dator, hämtas det, så att hela din Gulnux följer med.
 
@@ -33,13 +33,13 @@ Maskinens ägare lägger till fler användare i sin maskinkonfiguration, och de 
 
 | Del | Vad det gör | Kommando |
 |---|---|---|
-| **Minne** | Agenterna sparar det de lär sig om dig som korta filer i `minne/` i ditt repo. Alla agenter delar samma minne. | `gul minne` |
-| **Observation** | Loggar lokalt vilka program du öppnar och vilka kommandon du kör (bara namnet och om det lyckades, aldrig argument). Sparas i 30 dagar och lämnar aldrig datorn. | `gul logg` |
-| **Reflektion** | En gång i veckan går en agent igenom loggen, ditt minne och vad du bett agenterna om, och föreslår högst tre förbättringar i en git-gren. Inget ändras utan att du godkänner det. | `gul forslag` |
+| **Minne** | Agenterna sparar det de lär sig om dig som korta filer i `minne/` i ditt repo. Alla agenter delar samma minne. | `gul memory` |
+| **Observation** | Loggar lokalt vilka program du öppnar och vilka kommandon du kör (bara namnet och om det lyckades, aldrig argument). Sparas i 30 dagar och lämnar aldrig datorn. | `gul log` |
+| **Reflektion** | En gång i veckan går en agent igenom loggen, ditt minne och vad du bett agenterna om, och föreslår högst tre förbättringar i en git-gren. Inget ändras utan att du godkänner det. | `gul proposals` |
 
-- Godkänn med `gul forslag godkann`, avböj med `gul forslag avboj <namn> "varför"`. Avböjda
+- Godkänn med `gul proposals accept`, avböj med `gul proposals reject <namn> "varför"`. Avböjda
   förslag sparas i minnet så att de inte föreslås igen.
-- Pausa allt med `gul larande av`. Stäng av permanent i `home.nix`:
+- Pausa allt med `gul learning off`. Stäng av permanent i `home.nix`:
   `gulnux.larande.observera = false;` och/eller `gulnux.larande.reflektera = false;`
 - Reflektionen använder din agent och dess konto, så den kostar som en vanlig agentsession.
 
@@ -84,7 +84,7 @@ datorns inbyggda disk, ett USB-minne eller en virtuell maskin.
    ```
 6. **Installera Gulnux:**
    ```
-   nix --extra-experimental-features 'nix-command flakes' run github:gustafmaknor/gulnux#installera
+   nix --extra-experimental-features 'nix-command flakes' run github:gustafmaknor/gulnux#install
    ```
    Installationsprogrammet loggar in på GitHub (du får en kod att skriva in på
    github.com/login/device, gärna från mobilen), skapar eller hämtar ditt personliga repo,
@@ -112,29 +112,31 @@ Skriptet laddar ner NixOS-ISO:n och skapar och startar VM:en. Följ sedan stegen
 ## Vardag
 
 ```
-gul                     starta din agent
-gul codex               starta en viss agent
-gul sok <fråga>         sök i dokument, minne och sparade sidor
-gul sok spara           spara sidan du har framme i Glome
-gul minne               vad Gulnux minns om dig
-gul forslag             Gulnux förslag på förbättringar
-gul logg                vad Gulnux har observerat
-gul larande av          pausa lärandet
-gul uppdatera           hämta senaste Gulnux-grunden
-gulnux-home             aktivera ändringar i home.nix (användarnivå)
-gulnux-rebuild          aktivera ändringar i hosts/ (systemnivå, sudo)
+gul                         starta din agent
+gul codex                   starta en viss agent
+gul search <fråga>          sök i dokument, minne och sparade sidor
+gul search save             spara sidan du har framme i Glome
+gul memory                  vad Gulnux minns om dig
+gul proposals               Gulnux förslag på förbättringar
+gul proposals accept|reject godkänn eller avböj ett förslag
+gul log                     vad Gulnux har observerat
+gul learning off|on         pausa eller slå på lärandet
+gul update                  hämta senaste Gulnux-grunden
+gul help                    alla kommandon
+gulnux-home                 aktivera ändringar i home.nix (användarnivå)
+gulnux-rebuild              aktivera ändringar i hosts/ (systemnivå, sudo)
 sudo nixos-rebuild switch --rollback   ångra senaste systemändringen
 ```
 
 ## Sökning
 
-Gulnux sök hittar saker i dina dokument (`~/Dokument`: Word, Excel, PowerPoint, PDF, text),
+Gulnux sök hittar saker i dina dokument (`~/Document`: Word, Excel, PowerPoint, PDF, text),
 ditt minne och webbsidor du sparat från Glome. Den kombinerar fulltext, som hittar namn,
 nummer och exakta ord, med vektorer från en lokal flerspråkig modell (bge-m3 via ollama),
 som hittar på betydelse. Allt stannar på datorn.
 
 - Be agenten: *"hitta offerten om takbyte från i våras"*
-- `gul sok <fråga>` i terminalen, `gul sok status` för att se vad som är indexerat
+- `gul search <fråga>` i terminalen, `gul search status` för att se vad som är indexerat
 - Indexet hålls uppdaterat i bakgrunden (`systemctl --user status gulsok`). Fulltexten
   fungerar direkt, och vektorerna räknas fram i takt med att modellen hinner.
 
@@ -143,7 +145,7 @@ som hittar på betydelse. Allt stannar på datorn.
 | `gulnux.sok.glome` | Vad som sparas |
 |---|---|
 | `"av"` | Inga webbsidor |
-| `"manuell"` (standard) | Bara när du trycker på sökknappen (förstoringsglaset) i Glome eller kör `gul sok spara` |
+| `"manuell"` (standard) | Bara när du trycker på sökknappen (förstoringsglaset) i Glome eller kör `gul search save` |
 | `"auto"` | Varje sida du öppnar, utom undantagna (bank, e-post, vården, myndigheter …). Knappen fungerar även på undantagna sidor. |
 
 ```nix
@@ -152,7 +154,7 @@ gulnux.sok.undantag = [ "bank" "mail." "intranat.foretaget.se" ];
 gulnux.sok.kallor.projekt = "~/Projekt";
 ```
 
-Ta bort en sida ur indexet med `gul sok glom <id>`. Byte mellan `av` och de andra lägena
+Ta bort en sida ur indexet med `gul search forget <id>`. Byte mellan `av` och de andra lägena
 gäller från nästa gång Glome startar.
 
 ## Glome – webbläsaren
@@ -205,14 +207,14 @@ förenklas när du ändrar dess text.
 ## Struktur
 
 ```
-flake.nix                    moduler, profiler, lib.personlig, mall, ISO och installera
+flake.nix                    moduler, profiler, lib.personlig, mall, ISO och install
 lib/personlig.nix            bygger maskiner och hemkatalog ur ett personligt repo
 modules/gulnux/              systemnivå: bas, skrivbord, agenter, Glome, Gloffice, sök
 modules/hem/                 användarnivå: git, observation, reflektion, sök
 modules/profiler/            maskinprofiler: generisk, thinkpad-x1-gen10, virtualbox, usb
 templates/personlig/         mallen för det personliga repot
 pkgs/gul.nix                 gul-kommandona
-scripts/                     gul, gul-*, gulnux-installera, glome, vbox-create
+scripts/                     gul, gul-*, gulnux-install, glome, vbox-create
 agent/AGENTS.md              kontexten som alla agenter får
 agent/prompts/reflektera.md  instruktionen till veckoreflektionen
 apps/gloffice/               kontorssviten
@@ -225,4 +227,4 @@ hosts/iso/                   installations-ISO
 ## Bygga egen ISO
 
 Kräver Linux med Nix: `nix build .#iso`. ISO:n startar i en terminal med agenterna och
-`gulnux-installera` förinstallerade.
+`gulnux-install` förinstallerade.

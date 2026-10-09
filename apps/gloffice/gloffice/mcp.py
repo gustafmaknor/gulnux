@@ -6,11 +6,11 @@ import sys
 from . import __version__, core, launcher
 
 INSTRUCTIONS = """Gloffice läser och ändrar Word- (.docx), Excel- (.xlsx) och PowerPoint-filer (.pptx).
-Relativa sökvägar utgår från ~/Dokument. Läs alltid filen med read_document först för att få
+Relativa sökvägar utgår från ~/Document. Läs alltid filen med read_document först för att få
 rätt index på stycken, blad och bilder. Öppna filen med open_in_gloffice när användaren ska se
 den – gränssnittet uppdateras automatiskt när du ändrar filen. Varje ändring kan ångras med undo."""
 
-PATH = {"type": "string", "description": "Sökväg till filen. Relativa sökvägar utgår från ~/Dokument."}
+PATH = {"type": "string", "description": "Sökväg till filen. Relativa sökvägar utgår från ~/Document."}
 TOOLS = {}
 
 
@@ -22,9 +22,9 @@ def tool(name, description, handler, /, required=("path",), **props):
     })
 
 
-tool("list_documents", "Lista Office-filer i ~/Dokument eller en annan katalog.",
+tool("list_documents", "Lista Office-filer i ~/Document eller en annan katalog.",
      lambda directory=None: core.list_documents(directory), required=(),
-     directory={"type": "string", "description": "Katalog att lista (standard ~/Dokument)"})
+     directory={"type": "string", "description": "Katalog att lista (standard ~/Document)"})
 tool("read_document", "Läs en fil som text med index för stycken, tabeller, blad, bilder och former.",
      core.summary, path=PATH)
 tool("create_document", "Skapa en ny tom fil. Typen styrs av filändelsen: .docx, .xlsx eller .pptx.",

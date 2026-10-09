@@ -1,5 +1,5 @@
 # Gulnux observation: loggar kommandots namn och slutstatus lokalt, aldrig argument.
-# Pausas med `gul larande av`, stängs av med gulnux.larande.observera = false i home.nix.
+# Pausas med `gul learning off`, stängs av med gulnux.larande.observera = false i home.nix.
 __gulnux_logg="${XDG_STATE_HOME:-$HOME/.local/state}/gulnux"
 __gulnux_senaste=$(HISTTIMEFORMAT='' history 1 | awk '{print $1}')
 

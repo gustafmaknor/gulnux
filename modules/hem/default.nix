@@ -43,21 +43,21 @@ in
       enable = true;
       initExtra = lib.mkIf cfg.observera (builtins.readFile ./observera.bash);
     };
-    # Programfönster observeras av gul-observera (startas av Sway), som läser den här flaggan
+    # Programfönster observeras av gul-observe (startas av Sway), som läser den här flaggan
     xdg.configFile."gulnux/larande-av" = lib.mkIf (!cfg.observera) {
       text = "Observation är avstängd i home.nix (gulnux.larande.observera)\n";
     };
 
     systemd.user.services.gulnux-reflektera = lib.mkIf cfg.reflektera {
-      Unit.Description = "Gulnux reflekterar och föreslår förbättringar";
+      Unit.Description = "Gulnux reflects and proposes improvements";
       Service = {
         Type = "oneshot";
-        ExecStart = "/run/current-system/sw/bin/gul reflektera";
+        ExecStart = "/run/current-system/sw/bin/gul reflect";
         Environment = [ "PATH=/run/current-system/sw/bin:${config.home.profileDirectory}/bin" ];
       };
     };
     systemd.user.timers.gulnux-reflektera = lib.mkIf cfg.reflektera {
-      Unit.Description = "Kör Gulnux reflektion regelbundet";
+      Unit.Description = "Run Gulnux reflection regularly";
       Timer = {
         OnCalendar = cfg.intervall;
         Persistent = true;

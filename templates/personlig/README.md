@@ -10,7 +10,7 @@ Repot är privat och följer med till varje dator där jag använder Gulnux.
 | `hosts/<maskin>/` | Mina datorer (systemnivå) | `gulnux-rebuild` |
 | `minne/` | Det Gulnux har lärt sig om mig | – |
 | `forslag/` | Förslag från Gulnux som jag har godkänt | – |
-| `flake.lock` | Vilken version av Gulnux-grunden jag kör | `gul uppdatera` |
+| `flake.lock` | Vilken version av Gulnux-grunden jag kör | `gul update` |
 
 Gulnux föreslår förbättringar i grenar som heter `forslag/<datum>`. Granska dem med
-`gul forslag`.
+`gul proposals`.

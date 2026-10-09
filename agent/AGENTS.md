@@ -20,7 +20,7 @@ Gulnux består av två git-repon:
   - `minne/` – det Gulnux har lärt sig om användaren (se nedan)
   - `forslag/` – godkända förslag från Gulnux reflektion
 - **Gulnux-grunden** (github.com/gustafmaknor/gulnux) – själva distributionen, gemensam
-  för alla. Den ändras inte härifrån utan hämtas med `gul uppdatera`. Behövs en ändring i
+  för alla. Den ändras inte härifrån utan hämtas med `gul update`. Behövs en ändring i
   grunden: föreslå det för användaren som en ändring eller ett issue i grund-repot.
 
 Flera personer kan använda samma dator, var och en med sitt eget personliga repo.
@@ -51,7 +51,7 @@ skärmdumpar, köra JavaScript, nätverk, konsol, prestanda, Lighthouse och till
 Gloffice öppnar och ändrar Word- (.docx), Excel- (.xlsx) och PowerPoint-filer (.pptx).
 Använd MCP-servern `gloffice` för att arbeta i sådana filer, inte egna skript.
 
-- Användarens dokument ligger i `~/Dokument`.
+- Användarens dokument ligger i `~/Document`.
 - Läs filen med `read_document` först, så att du får rätt index på stycken, blad och bilder.
 - Öppna filen med `open_in_gloffice` när användaren ska se den. Fönstret uppdateras
   automatiskt medan du ändrar, så användaren kan följa arbetet.
@@ -62,7 +62,7 @@ Använd MCP-servern `gloffice` för att arbeta i sådana filer, inte egna skript
 
 ## Sökning
 
-MCP-servern `gulsok` söker i användarens dokument (`~/Dokument`: Word, Excel, PowerPoint,
+MCP-servern `gulsok` söker i användarens dokument (`~/Document`: Word, Excel, PowerPoint,
 PDF, text), Gulnux minne och webbsidor som sparats från Glome. Den kombinerar exakta ord
 med betydelse, så sök gärna med en hel mening.
 
@@ -70,7 +70,7 @@ med betydelse, så sök gärna med en hel mening.
   flakes"): sök med `search` innan du letar på annat sätt.
 - Läs hela träffen med `read`. Öppna Office-filer med `open_in_gloffice` och webbsidor i Glome.
 - "Spara sidan" betyder `save_glome_page`. Användaren kan också trycka på sökknappen i Glome
-  eller köra `gul sok spara`.
+  eller köra `gul search save`.
 - Inställningar (källor, Glome-läge av/manuell/auto, undantag) finns under `gulnux.sok` i
   `home.nix`.
 
@@ -91,12 +91,12 @@ Indexet `minne/MINNE.md` finns längst ner i den här kontexten.
 ## Lärande
 
 Gulnux observerar lokalt vilka program och terminalkommandon användaren använder
-(`gul logg`, aldrig argument eller innehåll) och reflekterar varje vecka. Reflektionen
-föreslår förbättringar i grenar `forslag/<datum>` som användaren granskar med `gul forslag`.
+(`gul log`, aldrig argument eller innehåll) och reflekterar varje vecka. Reflektionen
+föreslår förbättringar i grenar `forslag/<datum>` som användaren granskar med `gul proposals`.
 
 - Föreslå aldrig något som står i `minne/avbojda-forslag.md`.
 - Loggen lämnar aldrig datorn. Skicka den inte någonstans och lägg den inte i repot.
-- Användaren kan pausa allt med `gul larande av`.
+- Användaren kan pausa allt med `gul learning off`.
 
 ## Regler för systemändringar
 

@@ -52,13 +52,13 @@
 
       packages.${system} = {
         iso = self.nixosConfigurations.iso.config.system.build.isoImage;
-        installera = (pkgs.callPackage ./pkgs/gul.nix { }).installera;
+        install = (pkgs.callPackage ./pkgs/gul.nix { }).install;
       };
 
-      # Från en vanlig NixOS-ISO:  nix run github:gustafmaknor/gulnux#installera
-      apps.${system}.installera = {
+      # Från en vanlig NixOS-ISO:  nix run github:gustafmaknor/gulnux#install
+      apps.${system}.install = {
         type = "app";
-        program = "${self.packages.${system}.installera}/bin/gulnux-installera";
+        program = "${self.packages.${system}.install}/bin/gulnux-install";
       };
     };
 }

@@ -4,7 +4,7 @@
 //   glome-read 2          text från flik nummer 2 (se --list)
 //   glome-read --html     rå HTML i stället för text
 //   glome-read --list     lista öppna flikar
-//   glome-read --json     url, titel och sidans huvudtext som JSON (används av gul sok spara)
+//   glome-read --json     url, titel och sidans huvudtext som JSON (används av gul search save)
 //
 //   glome-read | claude -p "sammanfatta"
 

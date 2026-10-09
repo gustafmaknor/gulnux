@@ -31,7 +31,7 @@ CONVERTIBLE = {".doc", ".odt", ".rtf", ".xls", ".ods", ".ppt", ".odp"}
 LABELS = {"document": "ett textdokument", "spreadsheet": "ett kalkylark", "presentation": "en presentation"}
 
 HOME = Path.home().resolve()
-DOCS_DIR = Path(os.environ.get("GLOFFICE_DIR", HOME / "Dokument")).resolve()
+DOCS_DIR = Path(os.environ.get("GLOFFICE_DIR", HOME / "Document")).resolve()
 DATA_DIR = Path(os.environ.get("XDG_DATA_HOME", HOME / ".local" / "share")) / "gloffice"
 BACKUPS_KEPT = 20
 
@@ -43,7 +43,7 @@ class GlofficeError(Exception):
 # ---------------------------------------------------------------- filer
 
 def resolve(path):
-    """Gör en sökväg absolut (relativa utgår från ~/Dokument) och håll den inom hemkatalogen."""
+    """Gör en sökväg absolut (relativa utgår från ~/Document) och håll den inom hemkatalogen."""
     p = Path(path).expanduser()
     if not p.is_absolute():
         p = DOCS_DIR / p
