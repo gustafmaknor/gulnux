@@ -23,6 +23,7 @@ rec {
   gul-search = skript "gul-search" [ ] "";
   gul-agent-status = skript "gul-agent-status" [ coreutils jq libnotify tmux ] "";
   gul-save = skript "gul-save" [ coreutils git gnused jq libnotify ] "";
+  gul-workspace = skript "gul-workspace" [ jq ] "";
 
   # Agentsessionen lever i tmux så att den överlever att terminalen stängs
   gul-session = writeShellApplication {
@@ -75,6 +76,7 @@ rec {
     gul-search
     gul-agent-status
     gul-save
+    gul-workspace
     gul-session
     gulnux-rebuild
     gulnux-home
