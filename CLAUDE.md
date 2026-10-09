@@ -26,6 +26,8 @@ Det personliga repot hämtar grunden som flake-input `gulnux` med låst version.
 sudo nixos-rebuild switch --flake ~/gulnux-personal#x1 --override-input gulnux path:$HOME/src/gulnux
 # användarnivån
 home-manager switch -b before-gulnux --flake ~/gulnux-personal#$USER --override-input gulnux path:$HOME/src/gulnux
+# Greed och sökningen startas inte om av nixos-rebuild (gulnux-rebuild gör det)
+systemctl --user try-restart greed gulsearch
 ```
 
 När det fungerar: committa och pusha grunden, och kör `gul update` (uppdaterar låsningen i
@@ -53,6 +55,11 @@ ruff check --select F,E9 apps
 info-nivå – kör ShellCheck innan du pushar skript.
 
 ## Konventioner
+
+- **Styr inte Sway med `wtype`** eller andra virtuella tangentbord. När det virtuella
+  tangentbordet försvinner får nya fönster ingen tangentbordslayout, och Chromium (Glome)
+  kraschar i `xkb_state_update_mask`. Rättas med `swaymsg 'input type:keyboard xkb_layout se'`
+  eller ett tryck på det riktiga tangentbordet.
 
 - **Språk:** användarens kommandon (`gul`, `gt`, `greed`, `gulsearch`) och deras utskrifter
   är på **engelska**. Löptext i README, AGENTS.md, promptar, kommentarer och gränssnitt
@@ -106,11 +113,10 @@ inte – **ändra inte `key`**, då byter tillägget id och servrarnas kontrolle
 
 Ungefär i prioritetsordning.
 
-1. **Kontrollera på X1:an** det som bara testats med låtsasmiljöer: SwayFX-inställningarna,
-   panelens CSS (waybar), GTK-accenten, agentstatusen i panelen (Claude Code-hooks),
-   swaylock-effects, Plymouth, Glomes temafärg och om policyn `toolbar_pin: force_pinned`
-   räcker (reserven i `scripts/glome.sh` fäster knapparna annars), native messaging för
-   GT-knappen (`/etc/chromium/native-messaging-hosts`).
+1. **Kontrollera på X1:an:** låsskärmen (swaylock-effects, `Super+Esc`) och Plymouths
+   utseende vid uppstart behöver ses av en människa. Kontrollerat 2026-10-09 och fungerar:
+   SwayFX, panelen och agentstatusen, GTK-accenten (GTK 3 och libadwaita), Glomes temafärg,
+   de fästa knapparna (policyn räcker), startsidan och native messaging för GT-knappen.
 2. **Riktiga skärmdumpar** (`grim`) i stället för skisserna i `docs/bilder/` (skrivbord,
    inloggning, låsskärm, programstartare). Ta bort texten om skisser i README:n.
 3. **ReGreet hänger sig.** Loggen visade: klocka-varning (`Could not parse system locale

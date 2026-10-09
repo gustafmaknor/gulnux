@@ -34,7 +34,13 @@ rec {
     name = "gulnux-rebuild";
     text = ''
       repo="''${GULNUX_PERSONAL:-$HOME/gulnux-personal}"
-      exec sudo nixos-rebuild "''${1:-switch}" --flake "$repo#$(hostname)"
+      action="''${1:-switch}"
+      sudo nixos-rebuild "$action" --flake "$repo#$(hostname)"
+      # Greed och sökningen körs från /run/current-system och märker inte att programmet
+      # bytts ut, så starta om dem (bara om de redan körs)
+      if [ "$action" = switch ] || [ "$action" = test ]; then
+        systemctl --user try-restart greed.service gulsearch.service || true
+      fi
     '';
   };
 

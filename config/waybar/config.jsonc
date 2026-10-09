@@ -79,7 +79,7 @@
     }
   },
   "clock": {
-    "format": "{:%a %-d %b   %H:%M}",
+    "format": "{:L%a %e %b   %H:%M}",
     "locale": "sv_SE.UTF-8",
     "tooltip-format": "<tt>{calendar}</tt>"
   }
