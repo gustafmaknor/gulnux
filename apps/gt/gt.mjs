@@ -18,10 +18,12 @@ const USAGE = `gt – Good Times: teach your computer the work you do in your we
         --yes                         confirm a tool that changes data
         --notify                      send the result as a notification
   gt session <app>                    copy your current login from Glome
-  gt schedule                         list scheduled tools
-  gt schedule <app> <tool> <when> ['<json>'] [--yes]
-                                      run a tool regularly, e.g. "Mon..Fri 08:00"
-  gt unschedule <app> <tool>          stop running a tool regularly
+  gt schedule                         list scheduled tools and actions
+  gt schedule <app> <tool> <when> ['<json>']
+                                      run a tool regularly ("Mon..Fri 08:00", "daily")
+        --once                        run once and then remove the schedule ("2026-10-30 09:00")
+        --yes                         confirm a scheduled action that changes data
+  gt unschedule <app> <id>            remove a schedule (the id from gt schedule)
   gt sync                             recreate schedules from your repo (new computer)
   gt mcp                              MCP server for the agents
 
@@ -122,12 +124,17 @@ async function main() {
       if (!positional.length) {
         const schedules = listSchedules();
         if (!schedules.length) console.log("Nothing is scheduled.");
-        for (const s of schedules) console.log(`● ${s.app} ${s.tool}  ${s.when}${s.writes ? "  (changes data)" : ""}`);
+        for (const s of schedules) {
+          const tags = [s.once && "once", s.writes && "changes data"].filter(Boolean).join(", ");
+          console.log(`● ${s.app} ${s.id}  ${s.when}${tags ? `  (${tags})` : ""}`);
+          if (Object.keys(s.args || {}).length) console.log(`    ${JSON.stringify(s.args)}`);
+        }
         return;
       }
       const [appName, toolName, when, argText] = positional;
       if (!when) throw new GtError('Usage: gt schedule <app> <tool> <when>, e.g. gt schedule myapp new-leads "Mon..Fri 08:00"');
-      console.log(await schedule(loadApp(appName), toolName, when, json(argText), { allowWrites: flags.has("yes") }));
+      const result = await schedule(loadApp(appName), toolName, when, json(argText), { confirm: flags.has("yes"), once: flags.has("once") });
+      console.log(result.message);
       return;
     }
     case "unschedule":

@@ -94,6 +94,11 @@ med `SKILL.md`, anteckningar och verktyg, och listas längst ner i den här kont
 - Gör användaren samma sak i en webbapp om och om igen: föreslå att GT lär sig den
   (`learn`, `gt learn <adress>` eller GT-knappen i Glome). Föreslå också att schemalägga
   verktyg som passar att köras regelbundet (`schedule`).
+- Handlingar kan schemaläggas: återkommande ("varje fredag kl 9") eller en gång
+  (`once: true`, t.ex. `"2026-10-30 09:00"`). Säg exakt vad som kommer att hända, när och
+  med vilka värden, och skicka `confirm: true` först när användaren sagt ja. Bekräfta sedan
+  nästa körningstid som `schedule` svarar med. Schemalagda handlingar körs utan att
+  användaren är med; resultatet kommer som en notis.
 - Inloggningen delas med Glome och ligger utanför repot. Läs, kopiera eller visa den aldrig.
   Har den gått ut: be användaren logga in i Glome och kör `gt session <app>`.
 - Appar kan innehålla andra personers uppgifter (kunder, kollegor). Hämta bara det som

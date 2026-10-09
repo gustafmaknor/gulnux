@@ -64,16 +64,23 @@ const TOOLS = {
     run: async () => listSchedules(),
   },
   schedule: {
-    description: "Run a tool regularly (systemd OnCalendar, e.g. \"daily\" or \"Mon..Fri 08:00\"). The user gets a notification with the result.",
-    props: { app: APP, tool: { type: "string" }, when: { type: "string" }, args: { type: "object" } },
+    description: "Schedule a tool or an action: regularly (systemd OnCalendar, e.g. \"daily\", \"Mon..Fri 08:00\") or once (once: true, e.g. \"2026-10-30 09:00\"). The user gets a notification with the result. For tools that change data (writes: true), first tell the user exactly what will happen, when and with which values, and pass confirm: true only after they said yes. Check the returned next run time with the user.",
+    props: {
+      app: APP,
+      tool: { type: "string" },
+      when: { type: "string", description: "systemd OnCalendar expression" },
+      args: { type: "object" },
+      once: { type: "boolean", description: "Run once, then remove the schedule" },
+      confirm: { type: "boolean", description: "Required for tools that change data – only after the user approved" },
+    },
     required: ["app", "tool", "when"],
-    run: ({ app, tool, when, args = {} }) => schedule(loadApp(app), tool, when, args),
+    run: ({ app, tool, when, args = {}, once = false, confirm = false }) => schedule(loadApp(app), tool, when, args, { once, confirm }),
   },
   unschedule: {
-    description: "Stop running a tool on a schedule.",
-    props: { app: APP, tool: { type: "string" } },
-    required: ["app", "tool"],
-    run: async ({ app, tool }) => unschedule(loadApp(app), tool),
+    description: "Remove a schedule, by its id from list_schedules (or the tool name if it has only one).",
+    props: { app: APP, id: { type: "string" } },
+    required: ["app", "id"],
+    run: async ({ app, id }) => unschedule(loadApp(app), id),
   },
 };
 

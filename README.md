@@ -157,8 +157,10 @@ Lär datorn de arbetsuppgifter du gör i dina webbappar, så får du good times 
    ändrar inget utan ditt ja.
 3. GT skriver anteckningar och bygger **verktyg** för dina uppgifter, och testar dem.
 4. Sedan kan du (och alla agenter) be om uppgiften: *"vilka nya intressenter har kommit
-   in idag?"*, eller köra den själv: `gt run <app> <verktyg>`. Regelbundna uppgifter kan
-   schemaläggas: `gt schedule <app> <verktyg> "Mon..Fri 08:00"` ger en notis med resultatet.
+   in idag?"*, eller köra den själv: `gt run <app> <verktyg>`. Uppgifter och handlingar kan
+   schemaläggas: `gt schedule <app> <verktyg> "Mon..Fri 08:00"` ger en notis med resultatet,
+   och *"sänk priset på Exempelgatan 1 till 3,5 miljoner den 30 oktober kl 9"* blir en
+   engångshandling som körs på utsatt tid.
 
 | Kommando | |
 |---|---|
@@ -167,7 +169,8 @@ Lär datorn de arbetsuppgifter du gör i dina webbappar, så får du good times 
 | `gt tools <app>` | Appens verktyg |
 | `gt run <app> <verktyg> ['<json>']` | Kör ett verktyg; `--live` i din Glome, `--yes` för verktyg som ändrar data |
 | `gt session <app>` | Kopiera din inloggning från Glome igen |
-| `gt schedule`, `gt unschedule` | Schemalägg verktyg |
+| `gt schedule <app> <verktyg> <när> ['<json>']` | Schemalägg; `--once` för en engångshandling, `--yes` för handlingar som ändrar data |
+| `gt schedule`, `gt unschedule <app> <id>` | Visa och ta bort scheman |
 
 Verktygen kör i en osynlig Chromium med en kopia av din inloggning från Glome, och de
 ligger i ditt personliga repo (`gt/<app>/`) så att de följer med till nya datorer.

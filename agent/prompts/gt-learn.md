@@ -31,8 +31,11 @@ Din arbetskatalog är appens mapp i användarens personliga repo: `@DIR@`
    göra något i @TITLE@. Uppdatera `app.json` om appen har fler adresser (`origins`),
    inloggningen ligger på fler domäner (`domains`) eller inloggningssidan har en annan
    adress (`loginPatterns`).
-7. **Föreslå schemaläggning** när ett verktyg passar att köras regelbundet, t.ex. "kolla
+7. **Föreslå schemaläggning** när en uppgift passar att köras regelbundet, t.ex. "kolla
    nya intressenter varje morgon": `gt schedule @APP@ <verktyg> "Mon..Fri 08:00"`.
+   Handlingar (verktyg som ändrar data) kan också schemaläggas, återkommande eller en gång
+   (`--once`, t.ex. `"2026-10-30 09:00"`), men bara när användaren har godkänt exakt vad,
+   när och med vilka värden – då med `--yes`.
 8. Committa och pusha det du skapat i användarens personliga repo när användaren är nöjd.
 
 ## Verktygens format
