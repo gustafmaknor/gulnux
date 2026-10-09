@@ -1,4 +1,14 @@
-# Gulnux
+<p align="center">
+  <img src="config/branding/logo.svg" width="96" alt="Gulnux logga: en gul cirkel med en terminalprompt">
+</p>
+
+<h1 align="center">Gulnux</h1>
+
+<p align="center"><b>Ett AI-first-operativsystem som lär sig att vara det OS du vill ha.</b></p>
+
+![Gulnux skrivbord: agenten i terminalen till vänster, Glome och Gloffice till höger, och agentens status i panelen överst](docs/bilder/skrivbord.png)
+
+<p align="center"><sub>Skiss av skrivbordet. Gulnux har ännu inte körts på riktig hårdvara; skisserna byts mot riktiga skärmdumpar efter första installationen.</sub></p>
 
 En AI-first-distribution byggd på NixOS. Startpunkten är en kodagent (Claude Code,
 Codex eller Mistral Vibe), och agenten sköter datorn åt dig.
@@ -17,6 +27,15 @@ Codex eller Mistral Vibe), och agenten sköter datorn åt dig.
 ## Utseende
 
 Ljust papper med en solgul accent, rundade hörn och mjuka skuggor.
+
+| | |
+|---|---|
+| ![Inloggningen: ett kort med namn, lösenordsfält och en gul knapp](docs/bilder/inloggning.png) | ![Låsskärmen: skrivbordet suddigt bakom en ring med klockan](docs/bilder/lasskarm.png) |
+| Inloggning (ReGreet) | Låsskärm (swaylock-effects) |
+| ![Programstartaren mitt på skärmen och notiser uppe till höger](docs/bilder/startare.png) | ![Gulnux färger och typsnitt](docs/bilder/palett.png) |
+| Programstartare och notiser | Färger och typsnitt |
+
+<sub>Skisser, se ovan.</sub>
 
 | Del | Program |
 |---|---|
@@ -149,6 +168,8 @@ sudo nixos-rebuild switch --rollback   ångra senaste systemändringen
 
 ## Good Times
 
+<img src="apps/gt-tillagg/ikoner/gt-128.png" width="72" align="right" alt="Good Times-solen: GT-knappen i Glome">
+
 Lär datorn de arbetsuppgifter du gör i dina webbappar, så får du good times och lugn och ro.
 
 1. Öppna appen i Glome och logga in som vanligt.
@@ -226,6 +247,14 @@ Fjärrstyrningsporten är bara öppen lokalt, men alla program som körs som din
 styra Glome, inklusive dina inloggade konton.
 
 ## Gloffice – kontorssviten
+
+![Gloffice med ett kalkylark öppet: en höstbudget med summor per månad](docs/bilder/gloffice-kalkyl.png)
+
+| | |
+|---|---|
+| ![Gloffice med ett textdokument: en offert](docs/bilder/gloffice-dokument.png) | ![Gloffice med en presentation](docs/bilder/gloffice-presentation.png) |
+
+<sub>Riktiga skärmdumpar av Gloffice.</sub>
 
 En enkel lokal kontorssvit för `.docx`, `.xlsx` och `.pptx`. Den är webbaserad och öppnas som
 ett eget fönster i Glome (`gloffice` eller `Super+o`). Agenterna arbetar i filerna via

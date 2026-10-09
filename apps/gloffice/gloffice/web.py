@@ -22,6 +22,14 @@ OPEN_PATHS = {"/api/export", "/api/download"}  # öppnas som vanliga länkar
 write_lock = threading.Lock()
 
 
+def _display(path):
+    """Visa en katalog i hemkatalogen som ~/…"""
+    try:
+        return "~/" + path.relative_to(core.HOME).as_posix()
+    except ValueError:
+        return str(path)
+
+
 def base_url():
     return f"http://127.0.0.1:{PORT}"
 
@@ -99,7 +107,7 @@ class Handler(BaseHTTPRequestHandler):
             elif url.path == "/api/ping":
                 self._send(200, {"ok": True})
             elif url.path == "/api/files":
-                self._send(200, {"dir": str(core.DOCS_DIR), "files": core.list_documents()})
+                self._send(200, {"dir": _display(core.DOCS_DIR), "files": core.list_documents()})
             elif url.path == "/api/open":
                 self._send(200, core.read(q["path"]))
             elif url.path == "/api/mtime":
