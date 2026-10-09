@@ -346,7 +346,8 @@ förenklas när du ändrar dess text.
 ## Struktur
 
 ```
-flake.nix                    moduler, profiler, lib.personal, mall, ISO och install
+CLAUDE.md                    för dig som utvecklar grunden: tester, konventioner, öppna uppgifter
+flake.nix                    moduler, profiler, lib.personal, mall, ISO, install och nix develop
 lib/personal.nix             bygger maskiner och hemkatalog ur ett personligt repo
 modules/gulnux/              systemnivå: bas, skrivbord, agenter, Glome, Gloffice, sök
 modules/home/                användarnivå: git, observation, reflektion, sök, utseende

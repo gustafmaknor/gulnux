@@ -55,6 +55,26 @@
         install = (pkgs.callPackage ./pkgs/gul.nix { }).install;
       };
 
+      # Utvecklingsmiljö för grunden: nix develop (se CLAUDE.md)
+      devShells.${system}.default = pkgs.mkShell {
+        packages = [
+          (pkgs.python3.withPackages (ps: [
+            ps.python-docx
+            ps.openpyxl
+            ps.python-pptx
+            ps.pypdf
+            ps.sqlite-vec
+            ps.feedparser
+            ps.trafilatura
+          ]))
+          pkgs.nodejs
+          pkgs.shellcheck
+          pkgs.ruff
+          pkgs.jq
+          pkgs.chromium
+        ];
+      };
+
       # Från en vanlig NixOS-ISO:  nix run github:gustafmaknor/gulnux#install
       apps.${system}.install = {
         type = "app";
