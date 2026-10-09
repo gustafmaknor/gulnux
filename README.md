@@ -21,6 +21,7 @@ Codex eller Mistral Vibe), och agenten sköter datorn åt dig.
 - **Webbläsare:** Glome, med full MCP-styrning för agenterna
 - **Kontorssvit:** Gloffice, med egen MCP-server
 - **Sökning:** lokal hybridsökning i dokument, minne och sparade webbsidor
+- **Greed:** ett självkurerande flöde – bara det som är värt din tid från nyheter och sociala medier
 - **Good Times:** lär datorn dina arbetsuppgifter i webbappar, med verktyg som kan schemaläggas
 - **Lärande:** minne, lokal observation och veckovis reflektion med förslag du godkänner
 
@@ -166,6 +167,51 @@ gulnux-rebuild              aktivera ändringar i hosts/ (systemnivå, sudo)
 sudo nixos-rebuild switch --rollback   ångra senaste systemändringen
 ```
 
+## Greed – ditt eget flöde
+
+<img src="apps/greed-tillagg/ikoner/greed-128.png" width="72" align="right" alt="Greed-knappen i Glome">
+
+Vanliga flöden visar det algoritmen vill. Greed samlar hela tiden in från många källor och
+visar bara det som är värt din tid – kanske tre, fyra saker om dagen från Aftonbladet i
+stället för hela förstasidan.
+
+![Greed: dagens urval med sammanfattningar, varför varje post valdes, och knapparna Mer, Mindre och Spara](docs/bilder/greed.png)
+
+<sub>Riktig skärmdump av Greed med påhittade exempelposter.</sub>
+
+1. **Samla in brett.** RSS från nyhetssajter (Aftonbladet, DN, SvD, SVT, Expressen, DI, CNN,
+   BBC är med från start) och öppna nätverk (YouTube, Reddit, Mastodon, Bluesky). Från
+   Facebook, Instagram och X läser Greed de inlägg du **faktiskt scrollar förbi** i Glome.
+2. **Sortera grovt lokalt.** Varje post jämförs med dina intressen med den lokala
+   språkmodellen. Det kostar inget och sållar bort det mesta.
+3. **Låt agenten välja ut** kl 07, 12 och 18. Den får de bästa kandidaterna, väljer det som
+   verkligen är intressant, slår ihop samma nyhet från flera källor och skriver *varför*
+   just du bör läsa den. Det första urvalet för dagen kommer som en notis.
+4. **Bli bättre hela tiden.** Mer/Mindre, vad du öppnar och sparar styr nästa urval, och
+   veckoreflektionen föreslår ändringar i dina intressen. En överraskning utanför din profil
+   per urval håller flödet från att bli en bubbla.
+
+Dina intressen skriver du med egna ord i `memory/greed.md` (eller säger till agenten), och
+källorna ligger i `greed/sources.json` – båda i ditt personliga repo.
+
+| Kommando | |
+|---|---|
+| `greed` eller `Super+n` | Öppna Greed |
+| `greed today` | Dagens urval i terminalen |
+| `greed add <rss-adress>` | Lägg till en källa |
+| `greed add --gt <app> <verktyg>` | Aktiv läsning av t.ex. Facebook via ett Good Times-verktyg |
+| `greed refresh` | Hämta och välj ut nu |
+
+```nix
+# home.nix
+gulnux.greed.times = [ "06:30" "17:00" ];
+gulnux.greed.picks = 5;
+```
+
+**Aktiv läsning** (att Greed läser ditt Facebook- eller X-flöde i bakgrunden) är ett val per
+källa: lär Good Times sajten och be om ett verktyg som läser flödet, och lägg sedan till det
+med `greed add --gt`. Det sker med din inloggning och kan bryta mot sajtens villkor.
+
 ## Good Times
 
 <img src="apps/gt-tillagg/ikoner/gt-128.png" width="72" align="right" alt="Good Times-solen: GT-knappen i Glome">
@@ -281,6 +327,7 @@ förenklas när du ändrar dess text.
 | `Super+Enter` | Terminal |
 | `Super+g` | Glome |
 | `Super+o` | Gloffice |
+| `Super+n` | Greed |
 | `Super+d` | Programstartare |
 | `Super+h/j/k/l` | Flytta fokus |
 | `Super+1..9` | Byt arbetsyta |
@@ -305,6 +352,8 @@ apps/gulsearch/                 sökningen (index, bakgrundstjänst, MCP)
 apps/glome-tillagg/          sökknappen och auto-läget i Glome
 apps/gt/                     Good Times (gt, MCP-server, native messaging-värd)
 apps/gt-tillagg/             GT-knappen i Glome
+apps/greed/                  Greed (insamling, sortering, agentens urval, MCP)
+apps/greed-tillagg/          Greed-knappen och läsningen av flöden i Glome
 config/                      tema: sway, waybar, foot, fuzzel, mako, swaylock, regreet, logga och bakgrund
 hosts/iso/                   installations-ISO
 ```

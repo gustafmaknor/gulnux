@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Greed</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <div class="brand"><span class="dot"></span>Greed</div>
+    <nav>
+      <button data-tab="flode" class="active">Flödet</button>
+      <button data-tab="kallor">Källor</button>
+      <button data-tab="profil">Intressen</button>
+    </nav>
+    <button id="refresh">Uppdatera nu</button>
+  </header>
+  <main>
+    <section id="flode"></section>
+    <section id="kallor" hidden></section>
+    <section id="profil" hidden></section>
+    <p id="status" role="status"></p>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

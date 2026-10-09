@@ -1,0 +1,13 @@
+[
+  { "id": "aftonbladet.se", "title": "Aftonbladet", "type": "rss", "url": "https://rss.aftonbladet.se/rss2/small/pages/sections/senastenytt/", "every": 30, "enabled": true },
+  { "id": "dn.se", "title": "Dagens Nyheter", "type": "rss", "url": "https://www.dn.se/rss/", "every": 30, "enabled": true },
+  { "id": "svd.se", "title": "Svenska Dagbladet", "type": "rss", "url": "https://www.svd.se/feed/articles.rss", "every": 30, "enabled": true },
+  { "id": "svt.se", "title": "SVT Nyheter", "type": "rss", "url": "https://www.svt.se/nyheter/rss.xml", "every": 30, "enabled": true },
+  { "id": "expressen.se", "title": "Expressen", "type": "rss", "url": "https://www.expressen.se/rss/nyheter", "every": 30, "enabled": true },
+  { "id": "di.se", "title": "Dagens industri", "type": "rss", "url": "https://www.di.se/rss", "every": 60, "enabled": true },
+  { "id": "cnn.com", "title": "CNN", "type": "rss", "url": "http://rss.cnn.com/rss/edition.rss", "every": 60, "enabled": true },
+  { "id": "bbc.co.uk", "title": "BBC News", "type": "rss", "url": "https://feeds.bbci.co.uk/news/world/rss.xml", "every": 60, "enabled": true },
+  { "id": "facebook.com", "title": "Facebook (det du ser i Glome)", "type": "glome", "site": "facebook.com", "enabled": true },
+  { "id": "instagram.com", "title": "Instagram (det du ser i Glome)", "type": "glome", "site": "instagram.com", "enabled": true },
+  { "id": "x.com", "title": "X (det du ser i Glome)", "type": "glome", "site": "x.com", "enabled": true }
+]

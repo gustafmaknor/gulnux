@@ -1,0 +1,73 @@
+/* Greed – Gulnux palett: ljust papper med gul accent */
+:root {
+  --bg: #F7F4EC;
+  --page: #FFFFFF;
+  --surface: #EFEBE0;
+  --text: #1F1D18;
+  --muted: #6B6457;
+  --line: #E2DCCB;
+  --accent: #F5C518;
+  --accent-text: #8A6100;
+  --highlight: #FFF3C4;
+  --error: #B3261E;
+  font-family: "Lexend", system-ui, sans-serif;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--text); }
+button {
+  font: inherit; font-size: 0.85rem; padding: 0.4rem 0.8rem; cursor: pointer;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--page); color: var(--text);
+}
+button:hover { border-color: var(--accent); }
+a { color: var(--text); text-decoration: none; }
+a:hover { color: var(--accent-text); }
+
+header {
+  position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  padding: 0.75rem 1.25rem; background: rgba(247, 244, 236, 0.92); border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1.2rem; margin-right: auto; }
+.dot { width: 1rem; height: 1rem; border-radius: 50%; background: var(--accent); }
+nav { display: flex; gap: 0.3rem; }
+nav button { border-color: transparent; background: transparent; color: var(--muted); }
+nav button.active { background: var(--accent); color: var(--text); font-weight: 600; }
+
+main { max-width: 760px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+#status { color: var(--muted); font-size: 0.85rem; min-height: 1.2em; }
+#status.error { color: var(--error); }
+.empty { color: var(--muted); line-height: 1.6; }
+
+.digest { margin-bottom: 2rem; }
+.digest h2 { font-size: 0.85rem; font-weight: 500; color: var(--muted); margin: 0 0 0.25rem; }
+.digest .note { margin: 0 0 0.75rem; color: var(--text); }
+
+.card {
+  background: var(--page); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem;
+  margin-bottom: 0.75rem; box-shadow: 0 4px 14px rgba(60, 48, 20, 0.05);
+}
+.card.surprise { border-style: dashed; }
+.card .meta { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; margin-bottom: 0.4rem; }
+.chip { font-size: 0.75rem; padding: 0.15rem 0.55rem; border-radius: 8px; background: var(--surface); color: var(--muted); }
+.chip.surprise { background: var(--highlight); color: var(--accent-text); }
+.card h3 { margin: 0 0 0.35rem; font-size: 1.05rem; line-height: 1.35; }
+.card .summary { margin: 0 0 0.5rem; line-height: 1.55; color: #3A362D; }
+.card .reason { margin: 0 0 0.75rem; font-size: 0.85rem; color: var(--accent-text); }
+.actions { display: flex; gap: 0.4rem; }
+.actions button { display: flex; align-items: center; gap: 0.3rem; padding: 0.3rem 0.6rem; }
+.actions button.on { background: var(--accent); border-color: var(--accent); }
+.actions svg { width: 15px; height: 15px; }
+
+.source { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 0; border-bottom: 1px solid var(--line); }
+.source .info { flex: 1; min-width: 0; }
+.source .name { font-weight: 500; }
+.source .detail { font-size: 0.8rem; color: var(--muted); overflow-wrap: anywhere; }
+.source .detail.error { color: var(--error); }
+.add { display: flex; gap: 0.5rem; margin-top: 1rem; }
+.add input { flex: 1; font: inherit; padding: 0.45rem 0.7rem; border: 1px solid var(--line); border-radius: 10px; background: var(--page); }
+.add input:focus { outline: none; border-color: var(--accent); }
+.hint { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+.profile { white-space: pre-wrap; background: var(--page); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; line-height: 1.6; }

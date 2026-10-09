@@ -14,6 +14,7 @@ gul log                          summarize what Gulnux has observed
 gul learning [on|off]            pause or resume observation and reflection
 gul update                       fetch the latest Gulnux base and rebuild
 gul gt                           Good Times: teach your computer your work in web apps
+gul greed                        Greed: your self-curating feed
 EOF
 }
 
@@ -28,9 +29,10 @@ case "${1:-}" in
     echo "Default agent: $2 (set agent in settings.nix to make it apply on all your computers)"
     exit 0
     ;;
-  gt)
+  gt|greed)
+    app="$1"
     shift
-    exec gt "$@"
+    exec "$app" "$@"
     ;;
   setup|search|memory|proposals|reflect|log|learning|update)
     sub="$1"
@@ -134,6 +136,11 @@ fi
 # Search
 if command -v gulsearch >/dev/null; then
   register_mcp gulsearch gulsearch mcp
+fi
+
+# Greed: the self-curating feed
+if command -v greed >/dev/null; then
+  register_mcp greed greed mcp
 fi
 
 # Good Times: the MCP server, each learned app as a Claude Code skill, and the app schedules

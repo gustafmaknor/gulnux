@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Greed",
+  "version": "0.1.0",
+  "description": "Your self-curating feed: collects the posts you scroll past on Facebook, Instagram and X, and opens Greed.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwY0HkcYdaLNHdU5RkrtAx8P9QpEoyuklky0wdiL0QayRRiD7MLvaBB6Bbxr5+Ruquc7mgyNjijn3ZAOw+zCXL4WOFBCaGOtClZkNokn3sJ0a9Xud+zkAn5Ja1EgTPYTgW46WxB5bZTEknnU4LVyKtBFbaDetKbMiFtuhH/b17MvGfn10/8LonwUJsupX/de5cvRUhqGb06jzh2hnujtP2QC7HVap01l3qdP+tQhX3NeRWEG4IisCWWb7nrfbM5idu1mpr7kvAmMww9KZWcfF8lXg24vomx0YCG4NwPYZieWT13iOWyHSy+v4tinr2E2VtkBFrGagsuPg4oY/3X+GgwIDAQAB",
+  "permissions": ["tabs"],
+  "host_permissions": ["http://127.0.0.1:9303/*"],
+  "background": { "service_worker": "bakgrund.js" },
+  "content_scripts": [
+    {
+      "matches": ["https://*.facebook.com/*", "https://*.instagram.com/*", "https://x.com/*", "https://twitter.com/*"],
+      "js": ["innehall.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Open Greed",
+    "default_icon": { "16": "ikoner/greed-16.png", "32": "ikoner/greed-32.png", "48": "ikoner/greed-48.png" }
+  },
+  "icons": { "16": "ikoner/greed-16.png", "48": "ikoner/greed-48.png", "128": "ikoner/greed-128.png" }
+}

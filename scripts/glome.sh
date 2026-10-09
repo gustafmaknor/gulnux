@@ -16,6 +16,9 @@ fi
 if [ -d /etc/gulnux/gt-tillagg ]; then
   kataloger+=(/etc/gulnux/gt-tillagg)
 fi
+if [ -d /etc/gulnux/greed-tillagg ]; then
+  kataloger+=(/etc/gulnux/greed-tillagg)
+fi
 tillagg=()
 if [ ${#kataloger[@]} -gt 0 ]; then
   lista=$(IFS=,; echo "${kataloger[*]}")

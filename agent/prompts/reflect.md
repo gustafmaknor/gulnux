@@ -14,6 +14,9 @@ eller avböjer dem.
 - Minnet: memory/, börja med memory/MEMORY.md. Läs memory/rejected-proposals.md om den finns och
   föreslå aldrig något som redan har avböjts.
 - Nuvarande inställningar: settings.nix, home.nix och hosts/.
+- Greed (om det används): intressena i memory/greed.md och vad användaren tummat upp och
+  ner (`greed today` och MCP-servern `greed`). Föreslå ändringar i profilen när mönstret
+  är tydligt, t.ex. "du har tummat upp sex artiklar om elbilar".
 
 ## Uppgift
 

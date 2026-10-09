@@ -81,6 +81,23 @@ med betydelse, så sök gärna med en hel mening.
 - Inställningar (källor, Glome-läge off/manual/auto, undantag) finns under `gulnux.search` i
   `home.nix`.
 
+## Greed – det självkurerande flödet
+
+Greed samlar hela tiden in nyheter och inlägg (RSS från nyhetssajter och öppna nätverk,
+inlägg användaren scrollar förbi i Glome och, om användaren valt det, aktiv läsning via
+Good Times), sorterar lokalt mot användarens intressen och låter dig välja ut det som är
+värt hens tid några gånger om dagen. Använd MCP-servern `greed`.
+
+- "Vad har hänt idag?" eller "något nytt om …": använd `today`.
+- Intressena står i `memory/greed.md` (`get_profile`, `update_profile`). Säger användaren
+  vad hen gillar eller inte gillar: uppdatera profilen och berätta vad du ändrade.
+- "Mer/mindre sånt här" om en post: `feedback` med 1 eller -1.
+- Nya källor: `add_source`. Aktiv läsning (`type: gt`) av t.ex. Facebook eller X sker med
+  användarens inloggning och kan bryta mot sajtens villkor. Lägg bara till det när
+  användaren uttryckligen valt det för just den källan; bygg då läsverktyget med Good
+  Times först (ett verktyg som returnerar inlägg som `data: [{url, title, text, author}]`).
+- `refresh` hämtar och väljer ut direkt. Det kör din agent, så använd det när användaren ber om det.
+
 ## Good Times (GT)
 
 Good Times lär datorn användarens arbetsuppgifter i de webbappar hen använder mycket, så

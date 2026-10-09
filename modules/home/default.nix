@@ -8,6 +8,7 @@ in
   imports = [
     ./search.nix
     ./appearance.nix
+    ./greed.nix
   ];
 
   options.gulnux.learning = {

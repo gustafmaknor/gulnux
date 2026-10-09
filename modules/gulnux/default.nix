@@ -7,5 +7,6 @@
     ./gloffice.nix
     ./search.nix
     ./gt.nix
+    ./greed.nix
   ];
 }
