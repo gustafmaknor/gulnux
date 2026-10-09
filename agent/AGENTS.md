@@ -81,6 +81,24 @@ med betydelse, så sök gärna med en hel mening.
 - Inställningar (källor, Glome-läge off/manual/auto, undantag) finns under `gulnux.search` i
   `home.nix`.
 
+## Good Times (GT)
+
+Good Times lär datorn användarens arbetsuppgifter i de webbappar hen använder mycket, så
+att hen får lugn och ro. Varje app GT har lärt sig ligger i `~/gulnux-personal/gt/<app>/`
+med `SKILL.md`, anteckningar och verktyg, och listas längst ner i den här kontexten.
+
+- När användaren vill göra något i en app GT kan: läs appens `SKILL.md` och använd
+  MCP-servern `gt` (`list_tools`, `run_tool`) eller `gt run <app> <verktyg> '<json>'`.
+- Verktyg med `writes: true` ändrar data i appen (sparar, skickar, raderar). Beskriv vad
+  som kommer att hända och fråga användaren innan du kör dem med `confirm: true` / `--yes`.
+- Gör användaren samma sak i en webbapp om och om igen: föreslå att GT lär sig den
+  (`learn`, `gt learn <adress>` eller GT-knappen i Glome). Föreslå också att schemalägga
+  verktyg som passar att köras regelbundet (`schedule`).
+- Inloggningen delas med Glome och ligger utanför repot. Läs, kopiera eller visa den aldrig.
+  Har den gått ut: be användaren logga in i Glome och kör `gt session <app>`.
+- Appar kan innehålla andra personers uppgifter (kunder, kollegor). Hämta bara det som
+  behövs för uppgiften och spara det inte i minnet eller repot.
+
 ## Minne
 
 Gulnux har ett minne som är gemensamt för alla agenter: `~/gulnux-personal/memory/`.

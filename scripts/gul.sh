@@ -13,6 +13,7 @@ gul reflect                      let Gulnux reflect now instead of waiting
 gul log                          summarize what Gulnux has observed
 gul learning [on|off]            pause or resume observation and reflection
 gul update                       fetch the latest Gulnux base and rebuild
+gul gt                           Good Times: teach your computer your work in web apps
 EOF
 }
 
@@ -26,6 +27,10 @@ case "${1:-}" in
     echo "${2:?specify claude, codex or vibe}" > "$conf_dir/agent"
     echo "Default agent: $2 (set agent in settings.nix to make it apply on all your computers)"
     exit 0
+    ;;
+  gt)
+    shift
+    exec gt "$@"
     ;;
   setup|search|memory|proposals|reflect|log|learning|update)
     sub="$1"
@@ -79,6 +84,14 @@ context="$state/AGENTS.md"
     printf "\n---\n\n# Användarens minne\n\nFrån \`%s\`. Läs de enskilda minnesfilerna när de är relevanta.\n\n" "$repo/memory"
     cat "$repo/memory/MEMORY.md"
   fi
+  apps=("$repo"/gt/*/SKILL.md)
+  if [ -e "${apps[0]}" ]; then
+    printf "\n---\n\n# Good Times-appar\n\nAppar som GT har lärt sig. Läs appens SKILL.md när användaren vill göra något i den.\n\n"
+    for skill in "${apps[@]}"; do
+      dir=$(dirname "$skill")
+      printf -- "- %s: %s\n" "$(jq -r '.title' "$dir/app.json" 2>/dev/null || basename "$dir")" "$skill"
+    done
+  fi
 } > "$context"
 
 # Link a Gulnux file into an agent's configuration without overwriting the user's own files
@@ -121,6 +134,17 @@ fi
 # Search
 if command -v gulsearch >/dev/null; then
   register_mcp gulsearch gulsearch mcp
+fi
+
+# Good Times: the MCP server, each learned app as a Claude Code skill, and the app schedules
+if command -v gt >/dev/null; then
+  register_mcp gt gt mcp
+  for dir in "$repo"/gt/*/; do
+    if [ -f "$dir/SKILL.md" ]; then
+      link_file "${dir%/}" "$HOME/.claude/skills/gt-$(basename "$dir")"
+    fi
+  done
+  gt sync >/dev/null 2>&1 || true
 fi
 
 # The agent's status in the panel: the agents' hooks tell gul-agent-status what they are doing

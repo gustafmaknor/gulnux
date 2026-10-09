@@ -6,5 +6,6 @@
     ./glome.nix
     ./gloffice.nix
     ./search.nix
+    ./gt.nix
   ];
 }

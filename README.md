@@ -11,6 +11,7 @@ Codex eller Mistral Vibe), och agenten sköter datorn åt dig.
 - **Webbläsare:** Glome, med full MCP-styrning för agenterna
 - **Kontorssvit:** Gloffice, med egen MCP-server
 - **Sökning:** lokal hybridsökning i dokument, minne och sparade webbsidor
+- **Good Times:** lär datorn dina arbetsuppgifter i webbappar, med verktyg som kan schemaläggas
 - **Lärande:** minne, lokal observation och veckovis reflektion med förslag du godkänner
 
 ## Utseende
@@ -146,6 +147,38 @@ gulnux-rebuild              aktivera ändringar i hosts/ (systemnivå, sudo)
 sudo nixos-rebuild switch --rollback   ångra senaste systemändringen
 ```
 
+## Good Times
+
+Lär datorn de arbetsuppgifter du gör i dina webbappar, så får du good times och lugn och ro.
+
+1. Öppna appen i Glome och logga in som vanligt.
+2. Tryck på **solen** (GT-knappen). En agent öppnas i ett eget fönster, frågar vad du brukar
+   göra i appen och lär sig det i din inloggade Glome. Den läser och utforskar fritt men
+   ändrar inget utan ditt ja.
+3. GT skriver anteckningar och bygger **verktyg** för dina uppgifter, och testar dem.
+4. Sedan kan du (och alla agenter) be om uppgiften: *"vilka nya intressenter har kommit
+   in idag?"*, eller köra den själv: `gt run <app> <verktyg>`. Regelbundna uppgifter kan
+   schemaläggas: `gt schedule <app> <verktyg> "Mon..Fri 08:00"` ger en notis med resultatet.
+
+| Kommando | |
+|---|---|
+| `gt` | Appar GT har lärt sig |
+| `gt learn [adress]` | Lär GT en app (eller mer om en app den redan kan) |
+| `gt tools <app>` | Appens verktyg |
+| `gt run <app> <verktyg> ['<json>']` | Kör ett verktyg; `--live` i din Glome, `--yes` för verktyg som ändrar data |
+| `gt session <app>` | Kopiera din inloggning från Glome igen |
+| `gt schedule`, `gt unschedule` | Schemalägg verktyg |
+
+Verktygen kör i en osynlig Chromium med en kopia av din inloggning från Glome, och de
+ligger i ditt personliga repo (`gt/<app>/`) så att de följer med till nya datorer.
+Inloggningen ligger bara på datorn. Verktyg som ändrar data är märkta och kräver
+bekräftelse varje gång.
+
+**Tänk på:** när GT lär sig och använder en app läser agenten det som står på skärmen,
+och det skickas till agentens AI-tjänst. Innehåller appen andra personers uppgifter (t.ex.
+kunder i ett affärssystem) ska du kontrollera att det är tillåtet enligt arbetsgivarens
+och kundernas villkor. Börja gärna med ett testkonto.
+
 ## Sökning
 
 Gulnux sök hittar saker i dina dokument (`~/Document`: Word, Excel, PowerPoint, PDF, text),
@@ -238,6 +271,8 @@ agent/prompts/reflect.md     instruktionen till veckoreflektionen
 apps/gloffice/               kontorssviten
 apps/gulsearch/                 sökningen (index, bakgrundstjänst, MCP)
 apps/glome-tillagg/          sökknappen och auto-läget i Glome
+apps/gt/                     Good Times (gt, MCP-server, native messaging-värd)
+apps/gt-tillagg/             GT-knappen i Glome
 config/                      tema: sway, waybar, foot, fuzzel, mako, swaylock, regreet, logga och bakgrund
 hosts/iso/                   installations-ISO
 ```
