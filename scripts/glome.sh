@@ -25,6 +25,21 @@ if [ ${#kataloger[@]} -gt 0 ]; then
   tillagg=(--load-extension="$lista" --disable-features=DisableLoadExtensionCommandLineSwitch)
 fi
 
+# Fäst knapparna i verktygsfältet (Chromium lägger nya tillägg bakom pusselbiten).
+# En gång per profil, och bara när Glome inte körs – annars skriver Chromium över ändringen.
+# Policyn i glome.nix fäster dem också; det här gäller om policyn inte räcker.
+prefs="$profile/Default/Preferences"
+if [ -f "$prefs" ] && [ ! -L "$profile/SingletonLock" ] && [ ! -e "$profile/.gulnux-fasta-knappar" ]; then
+  if jq --argjson ids '["okelhmbnolibhpnjedoejgidbpnnoolh","ggkddmolbkjjhlicmldkhpflblbleocb","ccbiciocgndmnhmblociljbphlibegne"]' \
+    '.extensions.pinned_extensions = ((.extensions.pinned_extensions // []) + ($ids - (.extensions.pinned_extensions // [])))' \
+    "$prefs" > "$prefs.gulnux"; then
+    mv "$prefs.gulnux" "$prefs"
+    touch "$profile/.gulnux-fasta-knappar"
+  else
+    rm -f "$prefs.gulnux"
+  fi
+fi
+
 exec chromium \
   --user-data-dir="$profile" \
   --remote-debugging-port="$port" \

@@ -43,5 +43,12 @@ in
     };
 
     environment.etc."gulnux/commands/glome.md".source = ../../agent/commands/glome.md;
+
+    # Gulnux knappar (sök, Good Times, Greed) alltid synliga i verktygsfältet, inte bakom pusselbiten
+    programs.chromium.extraOpts.ExtensionSettings = lib.genAttrs [
+      "okelhmbnolibhpnjedoejgidbpnnoolh" # Gulnux sök
+      "ggkddmolbkjjhlicmldkhpflblbleocb" # Good Times
+      "ccbiciocgndmnhmblociljbphlibegne" # Greed
+    ] (_: { toolbar_pin = "force_pinned"; });
   };
 }
