@@ -1,0 +1,23 @@
+# Gulnux – mako (notiser)
+font=Lexend 11
+width=380
+padding=14,16
+margin=12
+border-size=1
+border-radius=16
+border-color=#E2DCCB
+background-color=#FFFFFFF5
+text-color=#1F1D18
+progress-color=over #FFF3C4
+icon-path=/run/current-system/sw/share/icons/Papirus
+max-icon-size=32
+default-timeout=8000
+
+[urgency=high]
+border-size=2
+border-color=#B3261E
+default-timeout=0
+
+[app-name=Gulnux]
+border-size=2
+border-color=#F5C518

@@ -1,0 +1,117 @@
+/* Gulnux – panelen (waybar). Egna ändringar: ~/.config/waybar/style.css */
+
+* {
+  font-family: "Lexend", "JetBrainsMono Nerd Font", sans-serif;
+  font-size: 13px;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+window#waybar {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid #E2DCCB;
+  border-radius: 14px;
+  color: #3A362D;
+}
+
+tooltip {
+  background: #FFFFFF;
+  border: 1px solid #E2DCCB;
+  border-radius: 10px;
+}
+
+tooltip label {
+  color: #1F1D18;
+}
+
+#custom-logo {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 600;
+  background: #F5C518;
+  color: #1F1D18;
+  border-radius: 10px;
+  margin: 6px 0 6px 8px;
+  padding: 0 7px;
+}
+
+#workspaces {
+  margin-left: 4px;
+}
+
+#workspaces button {
+  padding: 0 10px;
+  margin: 6px 2px;
+  border-radius: 9px;
+  color: #6B6457;
+  background: transparent;
+}
+
+#workspaces button:hover {
+  background: #EFEBE0;
+}
+
+#workspaces button.focused {
+  background: #F5C518;
+  color: #1F1D18;
+  font-weight: 600;
+}
+
+#workspaces button.urgent {
+  color: #B3261E;
+}
+
+#mode {
+  margin: 6px 4px;
+  padding: 0 10px;
+  border-radius: 9px;
+  background: #EFEBE0;
+  color: #1F1D18;
+}
+
+#custom-agent {
+  margin: 6px 0;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: #FFF3C4;
+  color: #5E4200;
+}
+
+#custom-agent.off {
+  background: transparent;
+  color: #6B6457;
+}
+
+#custom-agent.idle {
+  background: #EFEBE0;
+  color: #3A362D;
+}
+
+#custom-agent.attention {
+  background: #F5C518;
+  color: #1F1D18;
+  font-weight: 600;
+}
+
+#network,
+#pulseaudio,
+#battery,
+#clock {
+  padding: 0 8px;
+}
+
+#battery.warning {
+  color: #8A6100;
+}
+
+#battery.critical {
+  color: #B3261E;
+}
+
+#clock {
+  font-weight: 500;
+  margin-right: 8px;
+  color: #1F1D18;
+}

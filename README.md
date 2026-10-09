@@ -6,12 +6,30 @@ Codex eller Mistral Vibe), och agenten sköter datorn åt dig.
 **Ledstjärna: Gulnux ska lära sig att vara det OS som användaren vill ha.**
 
 - **Bas:** NixOS (flake), med rollback av varje ändring
-- **Skrivbord:** Sway (tiling, Wayland) + foot + waybar + fuzzel
+- **Skrivbord:** SwayFX (tiling, Wayland) i ljust tema med gul accent
 - **Agent:** `gul` startar vald agent med Gulnux kontext och ditt minne
 - **Webbläsare:** Glome, med full MCP-styrning för agenterna
 - **Kontorssvit:** Gloffice, med egen MCP-server
 - **Sökning:** lokal hybridsökning i dokument, minne och sparade webbsidor
 - **Lärande:** minne, lokal observation och veckovis reflektion med förslag du godkänner
+
+## Utseende
+
+Ljust papper med en solgul accent, rundade hörn och mjuka skuggor.
+
+| Del | Program |
+|---|---|
+| Uppstart | Plymouth (tillverkarens logga, ingen rullande text) |
+| Inloggning | ReGreet i Gulnux färger, med bakgrundsbilden |
+| Fönster | SwayFX: rundade hörn, skuggor, oskärpa bakom panel och programstartare; gul kant på fönstret i fokus |
+| Panel | waybar överst: arbetsytor, **agentens status** (vad den gör just nu), nätverk, ljud, batteri, klocka |
+| Terminal, programstartare, notiser | foot, fuzzel och mako med samma palett |
+| Låsskärm | swaylock-effects: suddigt skrivbord, ring med klocka |
+| Program | adw-gtk3 med gul accent, Papirus-ikoner, Bibata Modern Amber-pekare, Lexend och JetBrains Mono |
+
+Temat sätts per användare och kan ändras i `home.nix`: skriv över en enskild fil med
+`xdg.configFile."waybar/style.css".source = lib.mkForce ./min-style.css;` eller stäng av
+alltihop med `gulnux.appearance.enable = false;`.
 
 ## Två repon: grunden och ditt eget
 
@@ -210,7 +228,7 @@ förenklas när du ändrar dess text.
 flake.nix                    moduler, profiler, lib.personal, mall, ISO och install
 lib/personal.nix             bygger maskiner och hemkatalog ur ett personligt repo
 modules/gulnux/              systemnivå: bas, skrivbord, agenter, Glome, Gloffice, sök
-modules/home/                användarnivå: git, observation, reflektion, sök
+modules/home/                användarnivå: git, observation, reflektion, sök, utseende
 modules/profiles/            maskinprofiler: generic, thinkpad-x1-gen10, virtualbox, usb
 templates/personal/          mallen för det personliga repot
 pkgs/gul.nix                 gul-kommandona
@@ -220,7 +238,7 @@ agent/prompts/reflect.md     instruktionen till veckoreflektionen
 apps/gloffice/               kontorssviten
 apps/gulsearch/                 sökningen (index, bakgrundstjänst, MCP)
 apps/glome-tillagg/          sökknappen och auto-läget i Glome
-config/sway/config           fönsterhanteraren
+config/                      tema: sway, waybar, foot, fuzzel, mako, swaylock, regreet, logga och bakgrund
 hosts/iso/                   installations-ISO
 ```
 

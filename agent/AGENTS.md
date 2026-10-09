@@ -26,7 +26,14 @@ Gulnux består av två git-repon:
 Flera personer kan använda samma dator, var och en med sitt eget personliga repo.
 Ändra aldrig i någon annans hemkatalog eller repo.
 
-- Fönsterhanterare: Sway (Wayland, tiling). Styr den med `swaymsg`
+- Utseende: ljust papper (`#F7F4EC`) med gul accent (`#F5C518`, bärnsten `#8A6100` för text),
+  typsnitten Lexend och JetBrains Mono. Temat för panel (waybar), terminal (foot),
+  programstartare (fuzzel), notiser (mako), låsskärm och GTK sätts per användare av
+  `gulnux.appearance` och skrivs till `~/.config`. Vill användaren ändra något: skriv över
+  just den filen i `home.nix` med `xdg.configFile."<fil>".source = lib.mkForce ./<fil>;` och
+  lägg filen i repot, eller stäng av hela temat med `gulnux.appearance.enable = false;`.
+  Panelen visar agentens status via `gul-agent-status`.
+- Fönsterhanterare: SwayFX (Sway med rundade hörn, skuggor och oskärpa). Styr den med `swaymsg`
   (t.ex. `swaymsg -t get_tree`, `swaymsg workspace 2`).
 - Terminal: foot. Agentsessionen körs i tmux-sessionen `gul`.
 - Skärmdump: `grim /tmp/skärm.png` (hela skärmen) eller `grim -g "$(slurp)"`.

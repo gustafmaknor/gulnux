@@ -9,7 +9,7 @@ set $right l
 set $term foot
 set $menu fuzzel
 
-font pango:JetBrainsMono Nerd Font 10
+font pango:Lexend 10
 
 input type:keyboard {
     xkb_layout se
@@ -20,11 +20,33 @@ input type:touchpad {
     dwt enabled
 }
 
-output * bg #1d2021 solid_color
+### Utseende: ljust papper med gul accent
+output * bg /etc/gulnux/bakgrund.png fill
+seat * xcursor_theme Bibata-Modern-Amber 24
 
 default_border pixel 2
-gaps inner 4
-client.focused #d79921 #d79921 #1d2021 #fabd2f #d79921
+default_floating_border pixel 2
+gaps inner 10
+
+# klass                 kant    bakgrund text    indikator barnkant
+client.focused          #F5C518 #FFFFFF  #1F1D18 #F5C518   #F5C518
+client.focused_inactive #E2DCCB #FFFFFF  #6B6457 #E2DCCB   #E2DCCB
+client.unfocused        #E2DCCB #FFFFFF  #6B6457 #E2DCCB   #E2DCCB
+client.urgent           #B3261E #FFFFFF  #1F1D18 #B3261E   #B3261E
+
+# SwayFX: rundade hörn, mjuka skuggor och oskärpa bakom panel och programstartare
+corner_radius 14
+shadows enable
+shadow_blur_radius 24
+shadow_offset 0 6
+shadow_color #3C30141F
+shadow_inactive_color #3C301412
+blur enable
+blur_passes 2
+blur_radius 6
+layer_effects "waybar" blur enable; shadows enable; corner_radius 14
+layer_effects "launcher" blur enable; shadows enable; corner_radius 18
+layer_effects "notifications" shadows enable; corner_radius 16
 
 ### Agenten är startpunkten
 # Workspace 1 öppnas med agentsessionen. $mod+a hoppar dit, $mod+Shift+a startar om den.
@@ -41,8 +63,8 @@ bindsym $mod+d exec $menu
 bindsym $mod+Shift+q kill
 floating_modifier $mod normal
 bindsym $mod+Shift+c reload
-bindsym $mod+Shift+e exec swaynag -t warning -m 'Logga ut från Gulnux?' -B 'Ja' 'swaymsg exit'
-bindsym $mod+Escape exec swaylock -f -c 1d2021
+bindsym $mod+Shift+e exec swaynag -m 'Logga ut från Gulnux?' -B 'Logga ut' 'swaymsg exit' --font 'Lexend 11' --background FFFFFF --text 1F1D18 --border F5C518 --border-bottom F5C518 --button-background FFF3C4 --button-text 1F1D18
+bindsym $mod+Escape exec swaylock -f
 
 ### Fokus och flytt
 bindsym $mod+$left focus left
@@ -115,9 +137,9 @@ bindsym Print exec grim -g "$(slurp)" - | wl-copy
 exec mako
 exec gul-observe
 exec swayidle -w \
-    timeout 300 'swaylock -f -c 1d2021' \
+    timeout 300 'swaylock -f' \
     timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
-    before-sleep 'swaylock -f -c 1d2021'
+    before-sleep 'swaylock -f'
 
 bar {
     swaybar_command waybar

@@ -1,0 +1,86 @@
+// Gulnux – panelen (waybar). Egna ändringar: ~/.config/waybar/config.jsonc
+{
+  "layer": "top",
+  "position": "top",
+  "height": 38,
+  "margin-top": 10,
+  "margin-left": 10,
+  "margin-right": 10,
+  "spacing": 6,
+  "modules-left": [
+    "custom/logo",
+    "sway/workspaces",
+    "sway/mode"
+  ],
+  "modules-center": [
+    "custom/agent"
+  ],
+  "modules-right": [
+    "network",
+    "pulseaudio",
+    "battery",
+    "clock"
+  ],
+  "custom/logo": {
+    "format": "›_",
+    "tooltip": false,
+    "on-click": "fuzzel"
+  },
+  "sway/workspaces": {
+    "format": "{name}",
+    "disable-scroll": true,
+    "persistent-workspaces": {
+      "1": [],
+      "2": [],
+      "3": [],
+      "4": []
+    }
+  },
+  "custom/agent": {
+    "exec": "gul-agent-status",
+    "return-type": "json",
+    "interval": 2,
+    "on-click": "swaymsg '[app_id=\"gul-agent\"] focus'"
+  },
+  "network": {
+    "format-wifi": "󰖩",
+    "format-ethernet": "󰈀",
+    "format-disconnected": "󰖪",
+    "tooltip-format-wifi": "{essid} ({signalStrength} %)",
+    "tooltip-format-ethernet": "{ifname}",
+    "on-click": "foot nmtui"
+  },
+  "pulseaudio": {
+    "format": "{icon}",
+    "format-muted": "󰖁",
+    "format-icons": {
+      "default": [
+        "󰕿",
+        "󰖀",
+        "󰕾"
+      ]
+    },
+    "tooltip-format": "{volume} %",
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+  },
+  "battery": {
+    "format": "{icon}  {capacity} %",
+    "format-charging": "󰂄  {capacity} %",
+    "format-icons": [
+      "󰁺",
+      "󰁼",
+      "󰁾",
+      "󰂀",
+      "󰁹"
+    ],
+    "states": {
+      "warning": 25,
+      "critical": 10
+    }
+  },
+  "clock": {
+    "format": "{:%a %-d %b   %H:%M}",
+    "locale": "sv_SE.UTF-8",
+    "tooltip-format": "<tt>{calendar}</tt>"
+  }
+}

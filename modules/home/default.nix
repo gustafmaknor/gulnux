@@ -5,7 +5,10 @@ let
   cfg = config.gulnux.learning;
 in
 {
-  imports = [ ./search.nix ];
+  imports = [
+    ./search.nix
+    ./appearance.nix
+  ];
 
   options.gulnux.learning = {
     observe = lib.mkEnableOption "att Gulnux loggar vilka program och kommandon du använder (bara lokalt)" // { default = true; };

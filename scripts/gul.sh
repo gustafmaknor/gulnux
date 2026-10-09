@@ -47,7 +47,13 @@ if [ ! -d "$repo" ] && [ -t 0 ]; then
   gul-setup || echo "gul: setup was cancelled – run 'gul setup' whenever you like." >&2
 elif [ -d "$repo" ] && ! hm_active; then
   echo "Activating your personal settings for the first time…"
-  gulnux-home || echo "gul: could not activate your settings – run 'gulnux-home' to see the error." >&2
+  if gulnux-home; then
+    # The theme lives in ~/.config: let the panel and notifications pick it up
+    swaymsg reload >/dev/null 2>&1 || true
+    makoctl reload >/dev/null 2>&1 || true
+  else
+    echo "gul: could not activate your settings – run 'gulnux-home' to see the error." >&2
+  fi
 fi
 
 agent=""
@@ -115,6 +121,31 @@ fi
 # Search
 if command -v gulsearch >/dev/null; then
   register_mcp gulsearch gulsearch mcp
+fi
+
+# The agent's status in the panel: the agents' hooks tell gul-agent-status what they are doing
+if command -v gul-agent-status >/dev/null; then
+  claude_settings="$HOME/.claude/settings.json"
+  if command -v claude >/dev/null && ! grep -qs "gul-agent-status" "$claude_settings"; then
+    mkdir -p "$HOME/.claude"
+    [ -s "$claude_settings" ] || echo '{}' > "$claude_settings"
+    jq '
+      def hook(cmd): {hooks: [{type: "command", command: cmd}]};
+      .hooks.UserPromptSubmit += [hook("gul-agent-status working")]
+      | .hooks.PreToolUse += [{matcher: "*"} + hook("gul-agent-status tool")]
+      | .hooks.Stop += [hook("gul-agent-status idle")]
+      | .hooks.Notification += [hook("gul-agent-status attention")]
+    ' "$claude_settings" > "$claude_settings.tmp"
+    mv "$claude_settings.tmp" "$claude_settings"
+  fi
+  # Codex only reports finished turns; notify must be a top-level key, so it goes first in the file
+  codex_conf="$HOME/.codex/config.toml"
+  if ! grep -qs '^notify' "$codex_conf"; then
+    mkdir -p "$HOME/.codex"
+    { echo 'notify = ["gul-agent-status", "idle"]'; cat "$codex_conf" 2>/dev/null || true; } > "$codex_conf.tmp"
+    mv "$codex_conf.tmp" "$codex_conf"
+  fi
+  gul-agent-status idle
 fi
 
 case "$agent" in
