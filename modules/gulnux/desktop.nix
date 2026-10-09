@@ -31,6 +31,7 @@ in
         foot
         waybar
         fuzzel
+        networkmanager_dmenu # nätverksmenyn i panelen (wifi-nät i fuzzel)
         mako
         libnotify
         grim

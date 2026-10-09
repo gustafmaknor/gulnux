@@ -48,7 +48,7 @@
     "format-disconnected": "󰖪",
     "tooltip-format-wifi": "{essid} ({signalStrength} %)",
     "tooltip-format-ethernet": "{ifname}",
-    "on-click": "foot nmtui"
+    "on-click": "pkill -x fuzzel || networkmanager_dmenu"
   },
   "pulseaudio": {
     "format": "{icon}",

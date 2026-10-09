@@ -22,6 +22,7 @@ in
       "waybar/style.css".source = ../../config/waybar/style.css;
       "foot/foot.ini".source = ../../config/foot/foot.ini;
       "fuzzel/fuzzel.ini".source = ../../config/fuzzel/fuzzel.ini;
+      "networkmanager-dmenu/config.ini".source = ../../config/networkmanager-dmenu/config.ini;
       "mako/config".source = ../../config/mako/config;
       "swaylock/config".source = ../../config/swaylock/config;
     };
