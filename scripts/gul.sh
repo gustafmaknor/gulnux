@@ -55,11 +55,8 @@ if [ ! -d "$repo" ] && [ -t 0 ]; then
   gul-setup || echo "gul: setup was cancelled – run 'gul setup' whenever you like." >&2
 elif [ -d "$repo" ] && ! hm_active; then
   echo "Activating your personal settings for the first time…"
-  if gulnux-home; then
-    # The theme lives in ~/.config: let the panel and notifications pick it up
-    swaymsg reload >/dev/null 2>&1 || true
-    makoctl reload >/dev/null 2>&1 || true
-  else
+  # gulnux-home also restarts the panel and notifications, so they pick up the theme
+  if ! gulnux-home; then
     echo "gul: could not activate your settings – run 'gulnux-home' to see the error." >&2
   fi
 fi

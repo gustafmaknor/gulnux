@@ -49,7 +49,14 @@ rec {
     name = "gulnux-home";
     text = ''
       repo="''${GULNUX_PERSONAL:-$HOME/gulnux-personal}"
-      exec home-manager "''${1:-switch}" -b before-gulnux --flake "$repo#$USER"
+      action="''${1:-switch}"
+      home-manager "$action" -b before-gulnux --flake "$repo#$USER"
+      # Panelen och notiserna läser sina filer i ~/.config bara när de startar. swaymsg reload
+      # startar om panelen (en signal till waybar räcker inte för nya moduler).
+      if [ "$action" = switch ] && [ -n "''${SWAYSOCK:-}" ]; then
+        swaymsg reload >/dev/null 2>&1 || true
+        makoctl reload >/dev/null 2>&1 || true
+      fi
     '';
   };
 
