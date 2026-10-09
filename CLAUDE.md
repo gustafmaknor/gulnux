@@ -6,7 +6,7 @@ Den här filen är för arbetet *på* grunden.
 
 **Ledstjärna: Gulnux ska lära sig att vara det OS som användaren vill ha.**
 
-Grunden byggdes på en Windows-dator utan Nix och installerades sedan för första gången på
+Grunden byggdes först på en Windows-dator utan Nix och installerades sedan för första gången på
 en ThinkPad X1 Carbon Gen 10 (värden `x1`, användare `gustaf`). Mycket är därför testat
 med låtsasmiljöer men **inte på riktig hårdvara** – se *Öppna uppgifter*.
 
@@ -106,26 +106,24 @@ inte – **ändra inte `key`**, då byter tillägget id och servrarnas kontrolle
 
 Ungefär i prioritetsordning.
 
-1. **`flake.lock` i grunden saknas.** Kör `nix flake lock` här, committa och pusha, och ta
-   bort `--no-write-lock-file` ur `README.md` och `scripts/gulnux-install.sh`.
-2. **Kontrollera på X1:an** det som bara testats med låtsasmiljöer: SwayFX-inställningarna,
+1. **Kontrollera på X1:an** det som bara testats med låtsasmiljöer: SwayFX-inställningarna,
    panelens CSS (waybar), GTK-accenten, agentstatusen i panelen (Claude Code-hooks),
    swaylock-effects, Plymouth, Glomes temafärg och om policyn `toolbar_pin: force_pinned`
    räcker (reserven i `scripts/glome.sh` fäster knapparna annars), native messaging för
    GT-knappen (`/etc/chromium/native-messaging-hosts`).
-3. **Riktiga skärmdumpar** (`grim`) i stället för skisserna i `docs/bilder/` (skrivbord,
+2. **Riktiga skärmdumpar** (`grim`) i stället för skisserna i `docs/bilder/` (skrivbord,
    inloggning, låsskärm, programstartare). Ta bort texten om skisser i README:n.
-4. **ReGreet hänger sig.** Loggen visade: klocka-varning (`Could not parse system locale
+3. **ReGreet hänger sig.** Loggen visade: klocka-varning (`Could not parse system locale
    sv-SE`), `Missing TOML file: /var/lib/regreet/state.toml`, och efter klick på Login
    `greetd asks for a secret auth input: Password` – sedan inget mer; musen rörde sig men
    inget svarade. Misstänkta: vår `extraCss` (`config/regreet/style.css`), temat
    (adw-gtk3 i GTK4) eller cage. Prova utan CSS och tema först.
-5. **Greed på riktigt:** läsningen från Facebook, Instagram och X (selektorerna i
+4. **Greed på riktigt:** läsningen från Facebook, Instagram och X (selektorerna i
    `apps/greed-tillagg/innehall.js`) är otestad med riktiga konton; agentens urval och
    vektorerna har bara körts mot låtsasversioner.
-6. **Good Times på riktigt:** en riktig lärsession med Claude mot en riktig app.
-7. **Gloffice med LibreOffice:** PDF-export, konvertering och omräkning är otestade.
-8. **Mistral Vibe:** saknar MCP-registrering och stöd i reflektionen (bara claude och codex).
-9. **Saknade körningar:** en schemalagd GT-handling eller ett Greed-urval körs direkt när
+5. **Good Times på riktigt:** en riktig lärsession med Claude mot en riktig app.
+6. **Gloffice med LibreOffice:** PDF-export, konvertering och omräkning är otestade.
+7. **Mistral Vibe:** saknar MCP-registrering och stöd i reflektionen (bara claude och codex).
+8. **Saknade körningar:** en schemalagd GT-handling eller ett Greed-urval körs direkt när
    datorn startar om tiden passerades medan den var avstängd (`Persistent=true`) – kanske
    ska tidskritiska handlingar hoppas över.

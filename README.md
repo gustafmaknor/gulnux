@@ -123,7 +123,7 @@ datorns inbyggda disk, ett USB-minne eller en virtuell maskin.
    ```
 6. **Installera Gulnux:**
    ```
-   nix --extra-experimental-features 'nix-command flakes' run --no-write-lock-file github:gustafmaknor/gulnux#install
+   nix --extra-experimental-features 'nix-command flakes' run github:gustafmaknor/gulnux#install
    ```
    Installationsprogrammet loggar in på GitHub (du får en kod att skriva in på
    github.com/login/device, gärna från mobilen), skapar eller hämtar ditt personliga repo,
