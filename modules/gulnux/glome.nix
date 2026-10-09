@@ -39,7 +39,15 @@ in
 {
   options.gulnux.glome.enable = lib.mkEnableOption "webbläsaren Glome" // { default = cfg.desktop.enable; };
 
+  options.gulnux.glome.widevine =
+    lib.mkEnableOption "Widevine (DRM) i Glome, så att TIDAL, Spotify, Netflix med flera kan spela upp" // { default = true; };
+
   config = lib.mkIf cfg.glome.enable {
+    # Glome är Chromium – med Widevine går det att spela musik och film från strömningstjänster
+    nixpkgs.overlays = lib.mkIf cfg.glome.widevine [
+      (final: prev: { chromium = prev.chromium.override { enableWideVine = true; }; })
+    ];
+
     environment.systemPackages = [ glome glome-mcp glome-read glome-desktop ];
 
     xdg.mime.defaultApplications = {
