@@ -5,5 +5,6 @@
     ./agents.nix
     ./glome.nix
     ./gloffice.nix
+    ./sok.nix
   ];
 }

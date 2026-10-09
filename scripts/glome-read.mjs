@@ -4,6 +4,7 @@
 //   glome-read 2          text från flik nummer 2 (se --list)
 //   glome-read --html     rå HTML i stället för text
 //   glome-read --list     lista öppna flikar
+//   glome-read --json     url, titel och sidans huvudtext som JSON (används av gul sok spara)
 //
 //   glome-read | claude -p "sammanfatta"
 
@@ -33,7 +34,13 @@ if (!page) {
 }
 
 const html = args.includes("--html");
-const expression = html ? "document.documentElement.outerHTML" : "document.body.innerText";
+const json = args.includes("--json");
+// Med --json: sidans huvudinnehåll om den märker upp det, samma som Glome-tilläggets knapp
+const expression = html
+  ? "document.documentElement.outerHTML"
+  : json
+    ? '(document.querySelector("article") || document.querySelector("main") || document.body).innerText'
+    : "document.body.innerText";
 
 const ws = new WebSocket(page.webSocketDebuggerUrl);
 ws.onopen = () =>
@@ -41,8 +48,13 @@ ws.onopen = () =>
 ws.onmessage = (event) => {
   const msg = JSON.parse(event.data);
   if (msg.id !== 1) return;
-  if (!html) console.log(`# ${page.title}\n${page.url}\n`);
-  console.log(msg.result?.result?.value ?? "");
+  const value = msg.result?.result?.value ?? "";
+  if (json) {
+    console.log(JSON.stringify({ url: page.url, titel: page.title, text: value }));
+  } else {
+    if (!html) console.log(`# ${page.title}\n${page.url}\n`);
+    console.log(value);
+  }
   ws.close();
 };
 ws.onerror = () => {

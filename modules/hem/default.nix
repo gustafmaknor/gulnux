@@ -5,6 +5,8 @@ let
   cfg = config.gulnux.larande;
 in
 {
+  imports = [ ./sok.nix ];
+
   options.gulnux.larande = {
     observera = lib.mkEnableOption "att Gulnux loggar vilka program och kommandon du använder (bara lokalt)" // { default = true; };
     reflektera = lib.mkEnableOption "att Gulnux regelbundet föreslår förbättringar utifrån hur du använder datorn" // { default = true; };

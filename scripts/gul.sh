@@ -5,6 +5,8 @@ hjalp() {
 gul [claude|codex|vibe] [args]   starta en agent (standard: din valda)
 gul use <agent>                  byt standardagent
 gul setup                        koppla Gulnux till ditt GitHub-konto och personliga repo
+gul sok <fråga>                  sök i dokument, minne och sparade webbsidor
+gul sok spara                    spara sidan du har framme i Glome i sökningen
 gul minne [sökord]               visa vad Gulnux minns om dig
 gul forslag                      granska Gulnux förslag på förbättringar
 gul reflektera                   låt Gulnux reflektera nu i stället för att vänta
@@ -25,7 +27,7 @@ case "${1:-}" in
     echo "Standardagent: $2 (ändra agent i installningar.nix för att det ska gälla på alla dina datorer)"
     exit 0
     ;;
-  setup|minne|forslag|reflektera|logg|larande|uppdatera)
+  setup|sok|minne|forslag|reflektera|logg|larande|uppdatera)
     sub="$1"
     shift
     exec "gul-$sub" "$@"
@@ -108,6 +110,11 @@ fi
 # Kontorssviten Gloffice
 if command -v gloffice >/dev/null; then
   register_mcp gloffice gloffice mcp
+fi
+
+# Sökningen
+if command -v gulsok >/dev/null; then
+  register_mcp gulsok gulsok mcp
 fi
 
 case "$agent" in

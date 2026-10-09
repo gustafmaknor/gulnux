@@ -10,6 +10,7 @@ Codex eller Mistral Vibe), och agenten sköter datorn åt dig.
 - **Agent:** `gul` startar vald agent med Gulnux kontext och ditt minne
 - **Webbläsare:** Glome, med full MCP-styrning för agenterna
 - **Kontorssvit:** Gloffice, med egen MCP-server
+- **Sökning:** lokal hybridsökning i dokument, minne och sparade webbsidor
 - **Lärande:** minne, lokal observation och veckovis reflektion med förslag du godkänner
 
 ## Två repon: grunden och ditt eget
@@ -113,6 +114,8 @@ Skriptet laddar ner NixOS-ISO:n och skapar och startar VM:en. Följ sedan stegen
 ```
 gul                     starta din agent
 gul codex               starta en viss agent
+gul sok <fråga>         sök i dokument, minne och sparade sidor
+gul sok spara           spara sidan du har framme i Glome
 gul minne               vad Gulnux minns om dig
 gul forslag             Gulnux förslag på förbättringar
 gul logg                vad Gulnux har observerat
@@ -122,6 +125,35 @@ gulnux-home             aktivera ändringar i home.nix (användarnivå)
 gulnux-rebuild          aktivera ändringar i hosts/ (systemnivå, sudo)
 sudo nixos-rebuild switch --rollback   ångra senaste systemändringen
 ```
+
+## Sökning
+
+Gulnux sök hittar saker i dina dokument (`~/Dokument`: Word, Excel, PowerPoint, PDF, text),
+ditt minne och webbsidor du sparat från Glome. Den kombinerar fulltext, som hittar namn,
+nummer och exakta ord, med vektorer från en lokal flerspråkig modell (bge-m3 via ollama),
+som hittar på betydelse. Allt stannar på datorn.
+
+- Be agenten: *"hitta offerten om takbyte från i våras"*
+- `gul sok <fråga>` i terminalen, `gul sok status` för att se vad som är indexerat
+- Indexet hålls uppdaterat i bakgrunden (`systemctl --user status gulsok`). Fulltexten
+  fungerar direkt, och vektorerna räknas fram i takt med att modellen hinner.
+
+**Webbsidor från Glome** har tre lägen, som du ställer in i `home.nix`:
+
+| `gulnux.sok.glome` | Vad som sparas |
+|---|---|
+| `"av"` | Inga webbsidor |
+| `"manuell"` (standard) | Bara när du trycker på sökknappen (förstoringsglaset) i Glome eller kör `gul sok spara` |
+| `"auto"` | Varje sida du öppnar, utom undantagna (bank, e-post, vården, myndigheter …). Knappen fungerar även på undantagna sidor. |
+
+```nix
+gulnux.sok.glome = "auto";
+gulnux.sok.undantag = [ "bank" "mail." "intranat.foretaget.se" ];
+gulnux.sok.kallor.projekt = "~/Projekt";
+```
+
+Ta bort en sida ur indexet med `gul sok glom <id>`. Byte mellan `av` och de andra lägena
+gäller från nästa gång Glome startar.
 
 ## Glome – webbläsaren
 
@@ -175,8 +207,8 @@ förenklas när du ändrar dess text.
 ```
 flake.nix                    moduler, profiler, lib.personlig, mall, ISO och installera
 lib/personlig.nix            bygger maskiner och hemkatalog ur ett personligt repo
-modules/gulnux/              systemnivå: bas, skrivbord, agenter, Glome, Gloffice
-modules/hem/                 användarnivå: git, observation, reflektion
+modules/gulnux/              systemnivå: bas, skrivbord, agenter, Glome, Gloffice, sök
+modules/hem/                 användarnivå: git, observation, reflektion, sök
 modules/profiler/            maskinprofiler: generisk, thinkpad-x1-gen10, virtualbox, usb
 templates/personlig/         mallen för det personliga repot
 pkgs/gul.nix                 gul-kommandona
@@ -184,6 +216,8 @@ scripts/                     gul, gul-*, gulnux-installera, glome, vbox-create
 agent/AGENTS.md              kontexten som alla agenter får
 agent/prompts/reflektera.md  instruktionen till veckoreflektionen
 apps/gloffice/               kontorssviten
+apps/gulsok/                 sökningen (index, bakgrundstjänst, MCP)
+apps/glome-tillagg/          sökknappen och auto-läget i Glome
 config/sway/config           fönsterhanteraren
 hosts/iso/                   installations-ISO
 ```

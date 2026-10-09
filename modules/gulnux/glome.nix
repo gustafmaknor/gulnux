@@ -4,7 +4,7 @@ let
 
   glome = pkgs.writeShellApplication {
     name = "glome";
-    runtimeInputs = [ pkgs.chromium ];
+    runtimeInputs = [ pkgs.chromium pkgs.jq ];
     text = builtins.readFile ../../scripts/glome.sh;
   };
 

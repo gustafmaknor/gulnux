@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Gulnux sök",
+  "version": "0.1.0",
+  "description": "Spara sidan du läser i Gulnux sökning – med knappen, eller automatiskt om du slagit på det.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtOy6hurD3Jks/ea6hyYDwjG+02T2BHXNLF/0NYTTHC5a+T3S/vSws+1AeMPSUp2wTyunl3BmX43uiKDD9qQrQItlJVhbVMywfvTpCxyTVCBT90UXcsSDcVyh9LaJ0qzPNA4fbm0WVx2eXmY+8RsYF5YBz8Ypm4qNlNHGuSUenOZDCBr8XDj9y1BhSn//EIcvDYx6GBKEpS9ZW6mxTLCcs30HYsth+El4J/Sq1Ap1bj23ViOPuVRGlrSktOiYnjp61HjMMqKanpSGolPw7GuWUu/s5WLnBanfTL8VXuQaX3Raq2LIn5zGvnQHlawAA3KinK07tMVZ22EKF6AlsLbUIwIDAQAB",
+  "permissions": ["scripting", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "bakgrund.js" },
+  "action": {
+    "default_title": "Spara sidan i Gulnux sök",
+    "default_icon": { "16": "ikoner/sok-16.png", "32": "ikoner/sok-32.png", "48": "ikoner/sok-48.png" }
+  },
+  "icons": { "16": "ikoner/sok-16.png", "48": "ikoner/sok-48.png", "128": "ikoner/sok-128.png" }
+}

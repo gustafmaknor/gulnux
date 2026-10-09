@@ -60,6 +60,20 @@ Använd MCP-servern `gloffice` för att arbeta i sådana filer, inte egna skript
 - Äldre format (.doc, .xls, .ppt, .odt …) konverteras först med `convert`.
 - I terminalen: `gloffice <fil>` öppnar en fil.
 
+## Sökning
+
+MCP-servern `gulsok` söker i användarens dokument (`~/Dokument`: Word, Excel, PowerPoint,
+PDF, text), Gulnux minne och webbsidor som sparats från Glome. Den kombinerar exakta ord
+med betydelse, så sök gärna med en hel mening.
+
+- När användaren letar efter något hen har ("offerten om taket", "den där artikeln om
+  flakes"): sök med `search` innan du letar på annat sätt.
+- Läs hela träffen med `read`. Öppna Office-filer med `open_in_gloffice` och webbsidor i Glome.
+- "Spara sidan" betyder `save_glome_page`. Användaren kan också trycka på sökknappen i Glome
+  eller köra `gul sok spara`.
+- Inställningar (källor, Glome-läge av/manuell/auto, undantag) finns under `gulnux.sok` i
+  `home.nix`.
+
 ## Minne
 
 Gulnux har ett minne som är gemensamt för alla agenter: `~/gulnux-personlig/minne/`.
