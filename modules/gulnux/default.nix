@@ -3,5 +3,6 @@
     ./base.nix
     ./desktop.nix
     ./agents.nix
+    ./glome.nix
   ];
 }

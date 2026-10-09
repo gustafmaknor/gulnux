@@ -7,6 +7,20 @@ Codex eller Mistral Vibe), och agenten sköter systemet genom att ändra i det h
 - **Skrivbord:** Sway (tiling, Wayland) + foot + waybar + fuzzel
 - **Agent:** `gul` startar vald agent med gemensam systemkontext (`agent/AGENTS.md`)
 
+## Glome – webbläsaren
+
+Glome är Chromium med egen profil (`~/.config/glome`) och fjärrstyrning på `127.0.0.1:9222`.
+Agenterna styr den via MCP-servern `glome` (Chrome DevTools MCP), som `gul` registrerar
+automatiskt hos Claude Code och Codex.
+
+- Be agenten: *"sök efter NixOS Sway-teman och öppna det bästa i Glome"*
+- `/glome` i agenten läser och analyserar sidan du har framme (t.ex. `/glome vilka är för- och nackdelarna?`)
+- `glome <url>` öppnar en adress, `glome-read` skriver ut sidans text, `glome-read | claude -p "sammanfatta"`
+- `Super+g` öppnar Glome
+
+Fjärrstyrningsporten är bara öppen lokalt, men alla program som körs som din användare kan
+styra Glome, inklusive dina inloggade konton.
+
 ## Struktur
 
 ```
@@ -26,6 +40,7 @@ agent/AGENTS.md           systemkontext som alla agenter får
 | `Super+a` | Hoppa till agenten |
 | `Super+Shift+a` | Öppna agentsessionen igen |
 | `Super+Enter` | Terminal |
+| `Super+g` | Glome |
 | `Super+d` | Programstartare |
 | `Super+h/j/k/l` | Flytta fokus |
 | `Super+1..9` | Byt arbetsyta |

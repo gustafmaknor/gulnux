@@ -5,7 +5,6 @@
 #   gul use codex       byt standardagent för din användare
 
 conf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/gulnux"
-context=/etc/gulnux/AGENTS.md
 
 if [ "${1:-}" = "use" ]; then
   mkdir -p "$conf_dir"
@@ -26,15 +25,29 @@ if [ -z "$agent" ]; then
   fi
 fi
 
-# Ge alla agenter samma systemkontext, utan att skriva över användarens egna filer
-link_context() {
-  mkdir -p "$(dirname "$1")"
-  if [ ! -e "$1" ] || [ -L "$1" ]; then
-    ln -sfn "$context" "$1"
+# Länka en Gulnux-fil till agentens konfiguration, utan att skriva över användarens egna filer
+link_file() {
+  mkdir -p "$(dirname "$2")"
+  if [ ! -e "$2" ] || [ -L "$2" ]; then
+    ln -sfn "$1" "$2"
   fi
 }
-link_context "$HOME/.claude/CLAUDE.md"
-link_context "$HOME/.codex/AGENTS.md"
+link_file /etc/gulnux/AGENTS.md "$HOME/.claude/CLAUDE.md"
+link_file /etc/gulnux/AGENTS.md "$HOME/.codex/AGENTS.md"
+
+# Webbläsaren Glome: registrera MCP-servern och /glome-kommandot hos agenterna
+if command -v glome-mcp >/dev/null; then
+  if command -v claude >/dev/null && ! claude mcp get glome >/dev/null 2>&1; then
+    claude mcp add --scope user glome -- glome-mcp >/dev/null 2>&1 || true
+  fi
+  codex_conf="$HOME/.codex/config.toml"
+  if ! grep -qs '^\[mcp_servers\.glome\]' "$codex_conf"; then
+    printf '\n[mcp_servers.glome]\ncommand = "glome-mcp"\n' >> "$codex_conf"
+  fi
+
+  link_file /etc/gulnux/commands/glome.md "$HOME/.claude/commands/glome.md"
+  link_file /etc/gulnux/commands/glome.md "$HOME/.codex/prompts/glome.md"
+fi
 
 case "$agent" in
   claude) exec claude "$@" ;;
