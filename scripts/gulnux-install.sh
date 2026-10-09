@@ -1,7 +1,7 @@
 # gulnux-install – installs Gulnux on a partitioned and mounted disk
 #
 # Run as root from a NixOS ISO, after mounting the disk on /mnt (and /mnt/boot):
-#   nix run github:gustafmaknor/gulnux#install
+#   nix run --no-write-lock-file github:gustafmaknor/gulnux#install
 #
 # Connects to your GitHub account, creates or clones your personal repo, adds this
 # machine to it and installs.
