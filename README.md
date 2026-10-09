@@ -137,7 +137,7 @@ som hittar på betydelse. Allt stannar på datorn.
 
 - Be agenten: *"hitta offerten om takbyte från i våras"*
 - `gul search <fråga>` i terminalen, `gul search status` för att se vad som är indexerat
-- Indexet hålls uppdaterat i bakgrunden (`systemctl --user status gulsok`). Fulltexten
+- Indexet hålls uppdaterat i bakgrunden (`systemctl --user status gulsearch`). Fulltexten
   fungerar direkt, och vektorerna räknas fram i takt med att modellen hinner.
 
 **Webbsidor från Glome** har tre lägen, som du ställer in i `home.nix`:
@@ -218,7 +218,7 @@ scripts/                     gul, gul-*, gulnux-install, glome, vbox-create
 agent/AGENTS.md              kontexten som alla agenter får
 agent/prompts/reflect.md     instruktionen till veckoreflektionen
 apps/gloffice/               kontorssviten
-apps/gulsok/                 sökningen (index, bakgrundstjänst, MCP)
+apps/gulsearch/                 sökningen (index, bakgrundstjänst, MCP)
 apps/glome-tillagg/          sökknappen och auto-läget i Glome
 config/sway/config           fönsterhanteraren
 hosts/iso/                   installations-ISO

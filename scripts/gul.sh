@@ -113,8 +113,8 @@ if command -v gloffice >/dev/null; then
 fi
 
 # Search
-if command -v gulsok >/dev/null; then
-  register_mcp gulsok gulsok mcp
+if command -v gulsearch >/dev/null; then
+  register_mcp gulsearch gulsearch mcp
 fi
 
 case "$agent" in

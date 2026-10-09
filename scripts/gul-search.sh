@@ -12,7 +12,7 @@ case "${1:-}" in
     echo "Usage: gul search <query> | save | status | read <id> | forget <id> | index" >&2
     exit 1
     ;;
-  save) glome-read --json | gulsok save-page ;;
-  status|read|forget|index) exec gulsok "$@" ;;
-  *) exec gulsok search "$@" ;;
+  save) glome-read --json | gulsearch save-page ;;
+  status|read|forget|index) exec gulsearch "$@" ;;
+  *) exec gulsearch search "$@" ;;
 esac

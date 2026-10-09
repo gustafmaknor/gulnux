@@ -8,8 +8,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from . import core, inbaddning
 
-PORT = int(os.environ.get("GULSOK_PORT", "9301"))
-INTERVALL = int(os.environ.get("GULSOK_INTERVALL", "60"))
+PORT = int(os.environ.get("GULSEARCH_PORT", "9301"))
+INTERVALL = int(os.environ.get("GULSEARCH_INTERVALL", "60"))
 
 # Bara Gulnux eget Glome-tillägg (fast id via nyckeln i manifest.json) får skicka sidor.
 # Vanliga webbsidor kan inte förfalska Origin, så de kan inte fylla indexet med skräp.

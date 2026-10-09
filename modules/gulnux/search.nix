@@ -12,11 +12,11 @@ let
     ps.sqlite-vec
   ]);
 
-  gulsok = pkgs.writeShellApplication {
-    name = "gulsok";
+  gulsearch = pkgs.writeShellApplication {
+    name = "gulsearch";
     text = ''
-      export PYTHONPATH=${../../apps/gulsok}:${../../apps/gloffice}
-      exec ${python}/bin/python -m gulsok "$@"
+      export PYTHONPATH=${../../apps/gulsearch}:${../../apps/gloffice}
+      exec ${python}/bin/python -m gulsearch "$@"
     '';
   };
 in
@@ -32,7 +32,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [ gulsok ];
+    environment.systemPackages = [ gulsearch ];
 
     services.ollama = lib.mkIf cfg.vectors {
       enable = true;

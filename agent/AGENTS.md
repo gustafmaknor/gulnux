@@ -62,7 +62,7 @@ Använd MCP-servern `gloffice` för att arbeta i sådana filer, inte egna skript
 
 ## Sökning
 
-MCP-servern `gulsok` söker i användarens dokument (`~/Document`: Word, Excel, PowerPoint,
+MCP-servern `gulsearch` söker i användarens dokument (`~/Document`: Word, Excel, PowerPoint,
 PDF, text), Gulnux minne och webbsidor som sparats från Glome. Den kombinerar exakta ord
 med betydelse, så sök gärna med en hel mening.
 

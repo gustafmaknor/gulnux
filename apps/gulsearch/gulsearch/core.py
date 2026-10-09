@@ -16,8 +16,8 @@ from urllib.parse import urlparse
 from . import extrahera, inbaddning
 
 HOME = Path.home()
-DATA_DIR = Path(os.environ.get("XDG_DATA_HOME", HOME / ".local" / "share")) / "gulsok"
-CONFIG_FIL = Path(os.environ.get("XDG_CONFIG_HOME", HOME / ".config")) / "gulsok" / "config.json"
+DATA_DIR = Path(os.environ.get("XDG_DATA_HOME", HOME / ".local" / "share")) / "gulsearch"
+CONFIG_FIL = Path(os.environ.get("XDG_CONFIG_HOME", HOME / ".config")) / "gulsearch" / "config.json"
 SYSTEM_FIL = Path("/etc/gulnux/search.json")
 
 STANDARD = {
@@ -54,7 +54,7 @@ def installningar():
             varden.update(json.loads(fil.read_text(encoding="utf-8")))
         except (OSError, ValueError):
             pass
-    varden["ollama"] = os.environ.get("GULSOK_OLLAMA", varden["ollama"])
+    varden["ollama"] = os.environ.get("GULSEARCH_OLLAMA", varden["ollama"])
     return varden
 
 

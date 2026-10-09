@@ -9,7 +9,7 @@ profile="${XDG_CONFIG_HOME:-$HOME/.config}/glome"
 # Tillägget för Gulnux sök (knappen och auto-läget), om Glome-sidor inte är avstängda.
 # Läget ställs in med gulnux.search.glome i home.nix.
 tillagg=()
-lage=$(jq -r '.glome // "manual"' "${XDG_CONFIG_HOME:-$HOME/.config}/gulsok/config.json" 2>/dev/null || echo manual)
+lage=$(jq -r '.glome // "manual"' "${XDG_CONFIG_HOME:-$HOME/.config}/gulsearch/config.json" 2>/dev/null || echo manual)
 if [ "$lage" != off ] && [ -d /etc/gulnux/glome-tillagg ]; then
   tillagg=(--load-extension=/etc/gulnux/glome-tillagg --disable-features=DisableLoadExtensionCommandLineSwitch)
 fi

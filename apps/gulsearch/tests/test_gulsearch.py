@@ -1,10 +1,10 @@
 """Testar Gulnux sök: indexering, fulltext, vektorer (mot en låtsas-ollama), Glome-lägen,
 tjänstens HTTP-gränssnitt och MCP-servern.
 
-Kör från apps/gulsok med en Python som har python-docx, openpyxl, python-pptx, pypdf och
+Kör från apps/gulsearch med en Python som har python-docx, openpyxl, python-pptx, pypdf och
 sqlite-vec, och med Gloffice på PYTHONPATH:
 
-  T=$(mktemp -d -p ~) PYTHONPATH=.:../gloffice python tests/test_gulsok.py
+  T=$(mktemp -d -p ~) PYTHONPATH=.:../gloffice python tests/test_gulsearch.py
 """
 import hashlib
 import json
@@ -30,7 +30,7 @@ MINNE.mkdir(parents=True, exist_ok=True)
 
 
 def skriv_config(**extra):
-    fil = ROT / "config" / "gulsok" / "config.json"
+    fil = ROT / "config" / "gulsearch" / "config.json"
     fil.parent.mkdir(parents=True, exist_ok=True)
     fil.write_text(json.dumps({"sources": {"documents": str(DOK), "memory": str(MINNE)}, **extra}), encoding="utf-8")
 
@@ -69,10 +69,10 @@ class Ollama(BaseHTTPRequestHandler):
 
 ollama = ThreadingHTTPServer(("127.0.0.1", 0), Ollama)
 threading.Thread(target=ollama.serve_forever, daemon=True).start()
-os.environ["GULSOK_OLLAMA"] = f"http://127.0.0.1:{ollama.server_address[1]}"
+os.environ["GULSEARCH_OLLAMA"] = f"http://127.0.0.1:{ollama.server_address[1]}"
 
 from gloffice import core as gloffice  # noqa: E402
-from gulsok import core  # noqa: E402
+from gulsearch import core  # noqa: E402
 
 ok = lambda text: print("OK  ", text)  # noqa: E731
 
@@ -188,9 +188,9 @@ assert not index.sok("transaktioner", installn=None)["traffar"]
 ok("Glome: av, manuell, auto, undantag och glöm")
 
 # ---------- bakgrundstjänstens HTTP-gränssnitt
-env = {**os.environ, "GULSOK_PORT": "9391", "GULSOK_INTERVALL": "3600", "PYTHONIOENCODING": "utf-8"}
-tjanst = subprocess.Popen([sys.executable, "-m", "gulsok", "watch"], env=env, stdout=subprocess.PIPE, text=True)
-from gulsok import bevaka  # noqa: E402
+env = {**os.environ, "GULSEARCH_PORT": "9391", "GULSEARCH_INTERVALL": "3600", "PYTHONIOENCODING": "utf-8"}
+tjanst = subprocess.Popen([sys.executable, "-m", "gulsearch", "watch"], env=env, stdout=subprocess.PIPE, text=True)
+from gulsearch import bevaka  # noqa: E402
 URSPRUNG = f"chrome-extension://{bevaka.TILLAGG_ID}"
 
 
@@ -228,7 +228,7 @@ finally:
     tjanst.terminate()
 
 # ---------- MCP
-p = subprocess.Popen([sys.executable, "-m", "gulsok", "mcp"], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+p = subprocess.Popen([sys.executable, "-m", "gulsearch", "mcp"], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                      env=env, text=True, encoding="utf-8")
 
 
@@ -238,7 +238,7 @@ def rpc(id_, metod, params=None):
     return json.loads(p.stdout.readline())
 
 
-assert rpc(1, "initialize")["result"]["serverInfo"]["name"] == "gulsok"
+assert rpc(1, "initialize")["result"]["serverInfo"]["name"] == "gulsearch"
 verktyg = [t["name"] for t in rpc(2, "tools/list")["result"]["tools"]]
 svar = rpc(3, "tools/call", {"name": "search", "arguments": {"query": "plåttak pris"}})
 resultat = json.loads(svar["result"]["content"][0]["text"])

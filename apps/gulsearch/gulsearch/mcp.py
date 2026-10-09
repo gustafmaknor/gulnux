@@ -66,7 +66,7 @@ def handle(msg):
         return {"result": {
             "protocolVersion": params.get("protocolVersion", "2025-06-18"),
             "capabilities": {"tools": {}},
-            "serverInfo": {"name": "gulsok", "version": __version__},
+            "serverInfo": {"name": "gulsearch", "version": __version__},
             "instructions": INSTRUCTIONS,
         }}
     if method == "ping":

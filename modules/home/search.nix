@@ -42,17 +42,17 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    xdg.configFile."gulsok/config.json".text = builtins.toJSON {
+    xdg.configFile."gulsearch/config.json".text = builtins.toJSON {
       inherit (cfg) sources glome exclude;
     };
 
-    systemd.user.services.gulsok = {
+    systemd.user.services.gulsearch = {
       Unit = {
         Description = "Gulnux search keeps the search index up to date";
-        ConditionPathExists = "/run/current-system/sw/bin/gulsok";
+        ConditionPathExists = "/run/current-system/sw/bin/gulsearch";
       };
       Service = {
-        ExecStart = "/run/current-system/sw/bin/gulsok watch";
+        ExecStart = "/run/current-system/sw/bin/gulsearch watch";
         Restart = "on-failure";
         RestartSec = 30;
         Environment = [ "PATH=/run/current-system/sw/bin" ];

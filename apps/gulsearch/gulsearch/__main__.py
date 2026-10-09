@@ -1,13 +1,13 @@
-"""gulsok – Gulnux search
+"""gulsearch – Gulnux search
 
-  gulsok search <query>    search documents, memory and saved web pages
-  gulsok read <id>         show the full text of a hit
-  gulsok save-page         save a web page (JSON with url, titel and text on stdin)
-  gulsok forget <id>       remove a document from the index
-  gulsok status            what is indexed
-  gulsok index             update the index now, in the foreground
-  gulsok watch             the background service (started by systemd)
-  gulsok mcp               the MCP server for the agents
+  gulsearch search <query>    search documents, memory and saved web pages
+  gulsearch read <id>         show the full text of a hit
+  gulsearch save-page         save a web page (JSON with url, titel and text on stdin)
+  gulsearch forget <id>       remove a document from the index
+  gulsearch status            what is indexed
+  gulsearch index             update the index now, in the foreground
+  gulsearch watch             the background service (started by systemd)
+  gulsearch mcp               the MCP server for the agents
 """
 
 import json
@@ -80,9 +80,9 @@ def main():
         else:
             print(__doc__)
     except core.SokFel as e:
-        sys.exit(f"gulsok: {e}")
+        sys.exit(f"gulsearch: {e}")
     except (IndexError, KeyError, ValueError) as e:
-        sys.exit(f"gulsok: bad arguments ({e})")
+        sys.exit(f"gulsearch: bad arguments ({e})")
 
 
 if __name__ == "__main__":
