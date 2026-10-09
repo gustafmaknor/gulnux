@@ -32,7 +32,7 @@ Ljust papper med en solgul accent, rundade hörn och mjuka skuggor.
 | | |
 |---|---|
 | ![Inloggningen: ett kort med namn, lösenordsfält och en gul knapp](docs/bilder/inloggning.png) | ![Låsskärmen: skrivbordet suddigt bakom en ring med klockan](docs/bilder/lasskarm.png) |
-| Inloggning (ReGreet) | Låsskärm (swaylock-effects) |
+| Inloggning (ReGreet, valbar – felsöks) | Låsskärm (swaylock-effects) |
 | ![Programstartaren mitt på skärmen och notiser uppe till höger](docs/bilder/startare.png) | ![Gulnux färger och typsnitt](docs/bilder/palett.png) |
 | Programstartare och notiser | Färger och typsnitt |
 
@@ -41,7 +41,7 @@ Ljust papper med en solgul accent, rundade hörn och mjuka skuggor.
 | Del | Program |
 |---|---|
 | Uppstart | Plymouth (tillverkarens logga, ingen rullande text) |
-| Inloggning | ReGreet i Gulnux färger, med bakgrundsbilden |
+| Inloggning | tuigreet (text) i Gulnux gula färger. Grafiska ReGreet finns som val (`gulnux.desktop.greeter = "regreet";`) men hängde sig på första riktiga installationen och felsöks. |
 | Fönster | SwayFX: rundade hörn, skuggor, oskärpa bakom panel och programstartare; gul kant på fönstret i fokus |
 | Panel | waybar överst: arbetsytor, **agentens status** (vad den gör just nu), nätverk, ljud, batteri, klocka |
 | Terminal, programstartare, notiser | foot, fuzzel och mako med samma palett |

@@ -9,7 +9,17 @@ let
   '';
 in
 {
-  options.gulnux.desktop.enable = lib.mkEnableOption "Gulnux Sway-skrivbord" // { default = true; };
+  options.gulnux.desktop = {
+    enable = lib.mkEnableOption "Gulnux Sway-skrivbord" // { default = true; };
+    greeter = lib.mkOption {
+      type = lib.types.enum [ "tuigreet" "regreet" ];
+      default = "tuigreet";
+      description = ''
+        Inloggningsskärmen. tuigreet är textbaserad och beprövad. ReGreet är grafisk men
+        hängde sig vid lösenordet vid första installationen på en ThinkPad X1 Gen 10.
+      '';
+    };
+  };
 
   config = lib.mkIf cfg.desktop.enable {
     # SwayFX: Sway med rundade hörn, skuggor och oskärpa. Samma konfiguration i övrigt.
@@ -36,8 +46,22 @@ in
     environment.etc."gulnux/bakgrund.png".source = bakgrund;
     environment.etc."gulnux/logo.svg".source = ../../config/branding/logo.svg;
 
-    # Grafisk inloggning (ReGreet i cage) i Gulnux färger
-    programs.regreet = {
+    # Inloggning: textbaserad tuigreet i Gulnux gula färger (standard) …
+    services.greetd = lib.mkIf (cfg.desktop.greeter == "tuigreet") {
+      enable = true;
+      settings.default_session.command = lib.concatStringsSep " " [
+        "${pkgs.tuigreet}/bin/tuigreet"
+        "--time"
+        "--remember"
+        "--asterisks"
+        "--greeting 'Välkommen till Gulnux'"
+        "--theme 'border=yellow;title=yellow;prompt=yellow;time=yellow;button=yellow;action=gray'"
+        "--cmd sway"
+      ];
+    };
+
+    # … eller grafisk ReGreet (i cage) i Gulnux färger
+    programs.regreet = lib.mkIf (cfg.desktop.greeter == "regreet") {
       enable = true;
       theme = {
         package = pkgs.adw-gtk3;
