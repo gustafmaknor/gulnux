@@ -12,6 +12,7 @@ gul proposals                    review Gulnux's proposed improvements
 gul reflect                      let Gulnux reflect now instead of waiting
 gul log                          summarize what Gulnux has observed
 gul learning [on|off]            pause or resume observation and reflection
+gul save                         commit and push the changes in your personal repo
 gul update                       fetch the latest Gulnux base and rebuild
 gul gt                           Good Times: teach your computer your work in web apps
 gul greed                        Greed: your self-curating feed
@@ -34,7 +35,7 @@ case "${1:-}" in
     shift
     exec "$app" "$@"
     ;;
-  setup|search|memory|proposals|reflect|log|learning|update)
+  setup|search|memory|proposals|reflect|log|learning|update|save)
     sub="$1"
     shift
     exec "gul-$sub" "$@"

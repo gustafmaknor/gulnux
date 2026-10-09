@@ -16,6 +16,7 @@
     "custom/agent"
   ],
   "modules-right": [
+    "custom/save",
     "network",
     "pulseaudio",
     "battery",
@@ -41,6 +42,12 @@
     "return-type": "json",
     "interval": 2,
     "on-click": "swaymsg '[app_id=\"gul-agent\"] focus'"
+  },
+  "custom/save": {
+    "exec": "gul save status",
+    "return-type": "json",
+    "interval": 5,
+    "on-click": "gul save"
   },
   "network": {
     "format-wifi": "󰖩",

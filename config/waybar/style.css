@@ -95,6 +95,11 @@ tooltip label {
   font-weight: 600;
 }
 
+#custom-save.dirty,
+#custom-save.ahead {
+  color: #8A6100;
+}
+
 #network,
 #pulseaudio,
 #battery,
