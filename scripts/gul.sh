@@ -1,16 +1,51 @@
-# gul – startar Gulnux kodagent
-#
-#   gul                 starta vald agent
-#   gul codex [args]    starta en specifik agent (claude, codex, vibe)
-#   gul use codex       byt standardagent för din användare
+# gul – Gulnux startpunkt: startar din kodagent med Gulnux kontext och ditt minne
+
+hjalp() {
+  cat <<'EOF'
+gul [claude|codex|vibe] [args]   starta en agent (standard: din valda)
+gul use <agent>                  byt standardagent
+gul setup                        koppla Gulnux till ditt GitHub-konto och personliga repo
+gul minne [sökord]               visa vad Gulnux minns om dig
+gul forslag                      granska Gulnux förslag på förbättringar
+gul reflektera                   låt Gulnux reflektera nu i stället för att vänta
+gul logg                         sammanfatta vad Gulnux har observerat
+gul larande [av|pa]              pausa eller slå på observation och reflektion
+gul uppdatera                    hämta senaste Gulnux-grunden och bygg om
+EOF
+}
 
 conf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/gulnux"
+state="${XDG_STATE_HOME:-$HOME/.local/state}/gulnux"
+repo="${GULNUX_PERSONLIG:-$HOME/gulnux-personlig}"
 
-if [ "${1:-}" = "use" ]; then
-  mkdir -p "$conf_dir"
-  echo "${2:?ange claude, codex eller vibe}" > "$conf_dir/agent"
-  echo "Standardagent: $2"
-  exit 0
+case "${1:-}" in
+  use)
+    mkdir -p "$conf_dir"
+    echo "${2:?ange claude, codex eller vibe}" > "$conf_dir/agent"
+    echo "Standardagent: $2 (ändra agent i installningar.nix för att det ska gälla på alla dina datorer)"
+    exit 0
+    ;;
+  setup|minne|forslag|reflektera|logg|larande|uppdatera)
+    sub="$1"
+    shift
+    exec "gul-$sub" "$@"
+    ;;
+  -h|--help|hjalp)
+    hjalp
+    exit 0
+    ;;
+esac
+
+# Första starten: koppla till GitHub och aktivera de personliga inställningarna
+hm_aktiv() {
+  [ -e "${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/home-manager" ] || [ -e "/nix/var/nix/profiles/per-user/$USER/home-manager" ]
+}
+if [ ! -d "$repo" ] && [ -t 0 ]; then
+  echo "Gulnux är inte kopplat till ditt GitHub-konto än."
+  gul-setup || echo "gul: setup avbröts – kör 'gul setup' när du vill." >&2
+elif [ -d "$repo" ] && ! hm_aktiv; then
+  echo "Aktiverar dina personliga inställningar för första gången…"
+  gulnux-home || echo "gul: kunde inte aktivera inställningarna – kör 'gulnux-home' för att se felet." >&2
 fi
 
 agent=""
@@ -20,10 +55,23 @@ esac
 if [ -z "$agent" ]; then
   if [ -f "$conf_dir/agent" ]; then
     agent="$(cat "$conf_dir/agent")"
+  elif [ -n "${GULNUX_AGENT:-}" ]; then
+    agent="$GULNUX_AGENT"
   else
     agent="$(cat /etc/gulnux/default-agent)"
   fi
 fi
+
+# Gemensam kontext för alla agenter: Gulnux systemkontext plus användarens minne
+mkdir -p "$state"
+kontext="$state/AGENTS.md"
+{
+  cat /etc/gulnux/AGENTS.md
+  if [ -f "$repo/minne/MINNE.md" ]; then
+    printf "\n---\n\n# Användarens minne\n\nFrån \`%s\`. Läs de enskilda minnesfilerna när de är relevanta.\n\n" "$repo/minne"
+    cat "$repo/minne/MINNE.md"
+  fi
+} > "$kontext"
 
 # Länka en Gulnux-fil till agentens konfiguration, utan att skriva över användarens egna filer
 link_file() {
@@ -32,8 +80,8 @@ link_file() {
     ln -sfn "$1" "$2"
   fi
 }
-link_file /etc/gulnux/AGENTS.md "$HOME/.claude/CLAUDE.md"
-link_file /etc/gulnux/AGENTS.md "$HOME/.codex/AGENTS.md"
+link_file "$kontext" "$HOME/.claude/CLAUDE.md"
+link_file "$kontext" "$HOME/.codex/AGENTS.md"
 
 # Registrera en MCP-server hos Claude Code och Codex om den inte redan finns
 #   register_mcp <namn> <kommando> [argument...]

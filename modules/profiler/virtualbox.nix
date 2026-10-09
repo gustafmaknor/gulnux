@@ -1,8 +1,5 @@
+# Testmaskin i VirtualBox
 {
-  imports = [ ./hardware-configuration.nix ];
-
-  networking.hostName = "gulnux-vm";
-
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
@@ -13,6 +10,4 @@
     WLR_RENDERER = "pixman";
     WLR_NO_HARDWARE_CURSORS = "1";
   };
-
-  system.stateVersion = "26.05";
 }

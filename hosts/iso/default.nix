@@ -1,13 +1,11 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 {
   networking.hostName = "gulnux-live";
   networking.wireless.enable = lib.mkForce false; # NetworkManager används i stället
 
-  # Live-miljön är bara terminal: logga in och kör `gul` för hjälp med installationen
+  # Live-miljön är bara terminal: partitionera och kör sedan `gulnux-installera`
   gulnux.desktop.enable = false;
-
-  # Gulnux-källkoden följer med så att den kan installeras direkt från USB-stickan
-  environment.etc."gulnux/src".source = ../..;
+  environment.systemPackages = [ (pkgs.callPackage ../../pkgs/gul.nix { }).installera ];
 
   nixpkgs.hostPlatform = "x86_64-linux";
 }

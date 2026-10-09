@@ -5,45 +5,60 @@
     # unstable eftersom kodagenterna uppdateras ofta
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixos-hardware, ... }: {
-    nixosConfigurations = {
-      # Lenovo ThinkPad X1 Carbon Gen 10
-      x1 = nixpkgs.lib.nixosSystem {
-        modules = [
-          ./modules/gulnux
-          nixos-hardware.nixosModules.lenovo-thinkpad-x1-10th-gen
-          ./hosts/x1
-        ];
+  outputs = { self, nixpkgs, ... }@inputs:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+    {
+      # Grunden som varje Gulnux-maskin bygger på
+      nixosModules.default = ./modules/gulnux;
+
+      # Maskinprofiler som en maskin i det personliga repot väljer bland
+      nixosModules.profiler = {
+        generisk = ./modules/profiler/generisk.nix;
+        thinkpad-x1-gen10 = ./modules/profiler/thinkpad-x1-gen10.nix;
+        virtualbox = ./modules/profiler/virtualbox.nix;
+        usb = ./modules/profiler/usb.nix;
       };
 
-      # Portabel installation på USB-minne/extern SSD – startar på de flesta PC
-      usb = nixpkgs.lib.nixosSystem {
-        modules = [
-          ./modules/gulnux
-          ./hosts/usb
-        ];
-      };
+      # Gulnux på användarnivå: git, minne, observation och reflektion
+      homeModules.default = ./modules/hem;
 
-      # Testmaskin i VirtualBox
-      vm = nixpkgs.lib.nixosSystem {
-        modules = [
-          ./modules/gulnux
-          ./hosts/vm
-        ];
-      };
+      # Bygger maskiner och hemkatalog ur ett personligt repo (se templates/personlig)
+      lib.personlig = import ./lib/personlig.nix { inherit self inputs; };
 
-      # Live-/installations-ISO med agenterna förinstallerade
-      iso = nixpkgs.lib.nixosSystem {
+      templates.personlig = {
+        path = ./templates/personlig;
+        description = "Personligt Gulnux-repo med inställningar, maskiner och minne";
+      };
+      templates.default = self.templates.personlig;
+
+      # Live-/installations-ISO med agenterna och installationsprogrammet
+      nixosConfigurations.iso = nixpkgs.lib.nixosSystem {
+        specialArgs = { gulnux = self; inherit inputs; };
         modules = [
-          ./modules/gulnux
+          self.nixosModules.default
           "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
           ./hosts/iso
         ];
       };
-    };
 
-    packages.x86_64-linux.iso = self.nixosConfigurations.iso.config.system.build.isoImage;
-  };
+      packages.${system} = {
+        iso = self.nixosConfigurations.iso.config.system.build.isoImage;
+        installera = (pkgs.callPackage ./pkgs/gul.nix { }).installera;
+      };
+
+      # Från en vanlig NixOS-ISO:  nix run github:gustafmaknor/gulnux#installera
+      apps.${system}.installera = {
+        type = "app";
+        program = "${self.packages.${system}.installera}/bin/gulnux-installera";
+      };
+    };
 }

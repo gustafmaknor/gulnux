@@ -1,26 +1,7 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.gulnux;
-
-  gul = pkgs.writeShellApplication {
-    name = "gul";
-    text = builtins.readFile ../../scripts/gul.sh;
-  };
-
-  # Agentsessionen lever i tmux så att den överlever att terminalen stängs
-  gul-session = pkgs.writeShellApplication {
-    name = "gul-session";
-    runtimeInputs = [ pkgs.tmux ];
-    text = ''exec tmux new-session -A -s gul "gul; exec bash -l"'';
-  };
-
-  gulnux-rebuild = pkgs.writeShellApplication {
-    name = "gulnux-rebuild";
-    text = ''
-      flake="''${GULNUX_FLAKE:-$HOME/gulnux}"
-      exec sudo nixos-rebuild "''${1:-switch}" --flake "$flake#$(hostname)"
-    '';
-  };
+  gul = pkgs.callPackage ../../pkgs/gul.nix { };
 in
 {
   options.gulnux.agent.default = lib.mkOption {
@@ -30,10 +11,7 @@ in
   };
 
   config = {
-    environment.systemPackages = [
-      gul
-      gul-session
-      gulnux-rebuild
+    environment.systemPackages = gul.alla ++ [
       pkgs.claude-code
       pkgs.codex
       # Mistral Vibe startas via uv av `gul` tills den finns i nixpkgs

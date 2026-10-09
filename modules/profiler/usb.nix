@@ -1,8 +1,5 @@
+# Portabel installation på USB-minne eller extern SSD – startar på de flesta PC
 {
-  imports = [ ./hardware-configuration.nix ];
-
-  networking.hostName = "gulnux-usb";
-
   # Installeras som "flyttbar" EFI-boot: inga bootposter skrivs i datorns firmware,
   # så den inbyggda disken och dess bootmeny lämnas orörda. Starta via bootmenyn (F12 på ThinkPad).
   boot.loader.grub = {
@@ -21,6 +18,4 @@
 
   # Spara på USB-minnets skrivcykler
   fileSystems."/".options = [ "noatime" ];
-
-  system.stateVersion = "26.05";
 }
