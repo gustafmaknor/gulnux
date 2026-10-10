@@ -38,6 +38,22 @@ DIM = style("38;2;107;100;87")
 MARK = style("1;38;2;31;29;24;48;2;255;243;196")
 
 
+def link(text, target):
+    """En klickbar länk (OSC 8) i terminaler som stöder det; i foot öppnas den med Ctrl+Shift+O."""
+    if not target or not sys.stdout.isatty() or os.environ.get("NO_COLOR"):
+        return text
+    return f"\033]8;;{target}\033\\{text}\033]8;;\033\\"
+
+
+def target(hit):
+    """Vart länken går: webbsidan i Glome, eller dokumentet (Office-filer öppnas i Gloffice)."""
+    if hit["kalla"] == "glome":
+        return hit["sokvag"] if hit["sokvag"].startswith(("http://", "https://")) else None
+    if hit["kalla"] == "documents" and Path(hit["sokvag"]).is_absolute():
+        return Path(hit["sokvag"]).as_uri()
+    return None
+
+
 def when(day):
     date = datetime.date.fromisoformat(day)
     days = (datetime.date.today() - date).days
@@ -87,13 +103,17 @@ def print_hits(query, result):
         room = width - len(number) - len(meta) - 2
         if len(title) > room:
             title = title[:max(10, room - 1)] + "…"
-        print(AMBER(number) + BOLD(title) + " " * max(2, width - len(number) - len(title) - len(meta)) + DIM(meta))
-        print("    " + DIM(place(hit)))
+        url = target(hit)
+        print(AMBER(number) + link(BOLD(title), url) + " " * max(2, width - len(number) - len(title) - len(meta)) + DIM(meta))
+        print("    " + link(DIM(place(hit)), url))
         lines = textwrap.wrap(hit["utdrag"], width - 4, max_lines=3, placeholder=" …")
         for line in lines:
             print("    " + highlight(line, words))
         print()
-    print(DIM(f"Read a hit in full: gul search read {hits[0]['id']}"))
+    tip = f"Read a hit in full: gul search read {hits[0]['id']}"
+    if sys.stdout.isatty() and any(target(h) for h in hits):
+        tip += "   ·   Open a link: Ctrl+Shift+O"
+    print(DIM(tip))
     if result["lage"] == "fulltext":
         print(DIM("(Full-text search only – vector search is not running, see 'gul search status'.)"))
 

@@ -51,6 +51,11 @@ in
     # nix-ld gör att de går att köra på NixOS.
     programs.nix-ld.enable = true;
 
+    # tmux (agentsessionen gul) släpper igenom klickbara länkar (OSC 8) till foot
+    environment.etc."tmux.conf".text = lib.mkDefault ''
+      set -as terminal-features ",xterm-256color:hyperlinks,foot*:hyperlinks"
+    '';
+
     environment.systemPackages = with pkgs; [
       git
       gh
