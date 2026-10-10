@@ -133,6 +133,7 @@ fragor = {
     "hyresavtal Södermalm": "avtal.pdf",
     "mörkt tema": "MEMORY.md",
     "sommarstuga": "offert-tak.docx",       # grundform hittar böjd form ("sommarstugan") via prefix
+    "sommarstugor": "offert-tak.docx",      # annan böjning: ändelsen tas bort före prefixsökningen
 }
 for fraga, vantat in fragor.items():
     r = index.sok(fraga, installn=None)
@@ -141,6 +142,9 @@ assert not index.sok("hemlig", installn=None)["traffar"], "script-innehåll ska 
 assert not index.sok("indexeras", installn=None)["traffar"], "dolda filer ska hoppas över"
 assert index.sok("och i att", installn=None)["traffar"] == [], "bara stoppord ska inte ge brus"
 assert index.sok("tema", kalla="documents", installn=None)["traffar"] == []
+assert core.stam("cykla") == "cykl" and core.stam("offerten") == "offert" and core.stam("tak") == "tak"
+assert core.stader("## Intressen\n\n- cykling\n- [AI](ai.md)\n-\n") == "Intressen: • cykling • AI"
+assert core.utdrag("ord " * 100 + "Växthus", ["vaxthus"], 60).endswith("Växthus"), "utdraget ska visa träffen"
 ok("indexering och fulltext (" + ", ".join(fragor.values()) + ")")
 
 # ---------- vektorer och hybrid
@@ -149,6 +153,9 @@ s = index.status(installn)
 assert gjorda == s["bitar"] == s["med_vektor"] and s["ollama"], s
 r = index.sok("tegeltak Roslagen", installn=installn)
 assert r["lage"] == "hybrid" and r["traffar"][0]["titel"] == "offert-tak.docx", r
+assert all(t["traff"] == "ord" for t in r["traffar"]), r
+assert index.sok("kvantfysik och svarta hål i galaxer", installn=installn)["traffar"] == [], \
+    "bitar som varken innehåller sökorden eller ligger nära i betydelse ska inte visas"
 assert index.vektorisera(installn) == 0
 ok(f"vektorer och hybridsökning ({gjorda} bitar)")
 

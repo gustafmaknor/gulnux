@@ -10,23 +10,92 @@
   gulsearch mcp               the MCP server for the agents
 """
 
+import datetime
 import json
+import os
+import shutil
 import sys
+import textwrap
+import urllib.parse
+from pathlib import Path
 
 from . import core, inbaddning
 
 
-def print_hits(result):
+SOURCES = {"documents": "Document", "memory": "Memory", "glome": "Web page"}
+
+
+def style(code):
+    """ANSI-färg bara när utskriften går till en terminal (och NO_COLOR inte är satt)."""
+    if not sys.stdout.isatty() or os.environ.get("NO_COLOR"):
+        return lambda text: text
+    return lambda text: f"\033[{code}m{text}\033[0m"
+
+
+AMBER = style("38;2;138;97;0")
+BOLD = style("1")
+DIM = style("38;2;107;100;87")
+MARK = style("1;38;2;31;29;24;48;2;255;243;196")
+
+
+def when(day):
+    date = datetime.date.fromisoformat(day)
+    days = (datetime.date.today() - date).days
+    if days == 0:
+        return "today"
+    if days == 1:
+        return "yesterday"
+    if days < 7:
+        return f"{days} days ago"
+    return date.strftime("%-d %b" if date.year == datetime.date.today().year else "%-d %b %Y")
+
+
+def place(hit):
+    path = hit["sokvag"]
+    if hit["kalla"] == "glome":
+        url = urllib.parse.urlparse(path)
+        return url.netloc + (url.path if url.path != "/" else "")
+    home = str(Path.home())
+    return "~" + path[len(home):] if path.startswith(home) else path
+
+
+def highlight(text, words):
+    out, last = [], 0
+    for start, end in core.matchningar(text, words):
+        out += [text[last:start], MARK(text[start:end])]
+        last = end
+    return "".join(out + [text[last:]])
+
+
+def print_hits(query, result):
     hits = result["traffar"]
+    words = result.get("ord", [])
     if not hits:
-        print("No hits.")
+        print(f"No hits for \"{query}\".")
+        if result["lage"] == "fulltext":
+            print(DIM("(Full-text search only – vector search is not running, see 'gul search status'.)"))
         return
+    width = max(40, min(shutil.get_terminal_size((100, 20)).columns, 110))
+    print(DIM(f"{len(hits)} {'hit' if len(hits) == 1 else 'hits'} for ") + BOLD(f"\"{query}\"") + "\n")
     for nr, hit in enumerate(hits, start=1):
-        print(f"{nr}. {hit['titel']}  [{hit['kalla']}, {hit['andrad']}, id {hit['id']}]")
-        print(f"   {hit['sokvag']}")
-        print(f"   {hit['utdrag']}\n")
+        meta = f"{SOURCES.get(hit['kalla'], hit['kalla'])} · {when(hit['andrad'])}"
+        if hit.get("traff") == "betydelse":
+            meta = "related · " + meta
+        meta += f" · id {hit['id']}"
+        number = f"{nr:>2}  "
+        title = hit["titel"]
+        room = width - len(number) - len(meta) - 2
+        if len(title) > room:
+            title = title[:max(10, room - 1)] + "…"
+        print(AMBER(number) + BOLD(title) + " " * max(2, width - len(number) - len(title) - len(meta)) + DIM(meta))
+        print("    " + DIM(place(hit)))
+        lines = textwrap.wrap(hit["utdrag"], width - 4, max_lines=3, placeholder=" …")
+        for line in lines:
+            print("    " + highlight(line, words))
+        print()
+    print(DIM(f"Read a hit in full: gul search read {hits[0]['id']}"))
     if result["lage"] == "fulltext":
-        print("(Full-text search only – vector search is not running yet, see 'gul search status'.)")
+        print(DIM("(Full-text search only – vector search is not running, see 'gul search status'.)"))
 
 
 def print_status(s):
@@ -50,7 +119,9 @@ def main():
         if command == "search":
             if len(args) < 2:
                 sys.exit("What do you want to search for?")
-            print_hits(core.Index().sok(" ".join(args[1:]), installn=settings))
+            query = " ".join(args[1:])
+            result = core.Index().sok(query, installn=settings)
+            print_hits(query, result)
         elif command == "read":
             d = core.Index().las(args[1])
             print(f"# {d['titel']}\n{d['sokvag']}\n\n{d['text']}")
