@@ -41,6 +41,9 @@ Allt installeras på användarnivå och kräver inga administratörsrättigheter
    npm start
    ```
 
+   I PowerShell på datorer där skript är avstängda (`npm.ps1 cannot be loaded`): skriv
+   `npm.cmd` i stället för `npm`.
+
 3. Inställningsfönstret visar vad som saknas, med en knapp för varje: uv och Python-miljön
    (för sökningen, Greed och Gloffice), Claude Code eller Codex, och frivilligt Ollama för
    sökning på betydelse. Klona ditt personliga repo därifrån om du har ett.
