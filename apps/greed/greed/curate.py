@@ -9,7 +9,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from .core import GreedError
+from .core import GreedError, program
 from .fetch import article_text
 
 PROMPTS = Path(os.environ.get("GREED_PROMPTS") or Path(__file__).resolve().parents[3] / "agent" / "prompts")
@@ -36,7 +36,7 @@ def run_agent(prompt):
     else:
         command = ["claude", "-p", "--max-turns", "1"]
     try:
-        out = subprocess.run(command, input=prompt, capture_output=True, text=True, encoding="utf-8", timeout=900, check=True)
+        out = subprocess.run(program(command), input=prompt, capture_output=True, text=True, encoding="utf-8", timeout=900, check=True)
     except subprocess.CalledProcessError as e:
         raise GreedError(f"The agent failed: {(e.stderr or '').strip()[-300:]}") from None
     except (OSError, subprocess.TimeoutExpired) as e:

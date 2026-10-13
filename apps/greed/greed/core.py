@@ -11,7 +11,10 @@ och följer med mellan datorer. Inläggen ligger lokalt i ~/.local/share/greed.
 import json
 import os
 import re
+import shutil
 import sqlite3
+import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -49,6 +52,35 @@ en rad per intresse. Agenten föreslår ändringar när den lär sig mer om vad 
 
 class GreedError(Exception):
     pass
+
+
+def program(args):
+    """Kommandot med sökväg: i Gulapp (Windows) är gt, gulsearch, glome och codex .cmd-filer,
+    som subprocess bara hittar med hela namnet."""
+    return [shutil.which(args[0]) or args[0], *args[1:]]
+
+
+# Windows-notis via PowerShell. Titel och text går via miljövariabler, så inget behöver citeras.
+TOAST = r"""
+[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
+$x = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02)
+$t = $x.GetElementsByTagName('text')
+[void]$t.Item(0).AppendChild($x.CreateTextNode($env:GULNUX_TITLE))
+[void]$t.Item(1).AppendChild($x.CreateTextNode($env:GULNUX_BODY))
+$app = '{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\WindowsPowerShell\v1.0\powershell.exe'
+[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier($app).Show([Windows.UI.Notifications.ToastNotification]::new($x))
+"""
+
+
+def notify(title, body):
+    try:
+        if sys.platform == "win32":
+            subprocess.run(["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", TOAST], capture_output=True, timeout=20,
+                           env={**os.environ, "GULNUX_TITLE": title, "GULNUX_BODY": body})
+        else:
+            subprocess.run(["notify-send", "-a", "Gulnux", title, body], capture_output=True, timeout=10)
+    except (OSError, subprocess.SubprocessError):
+        pass  # ingen notistjänst – urvalet finns ändå i Greed
 
 
 def settings():

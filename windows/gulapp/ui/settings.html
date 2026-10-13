@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'">
+  <title>Gulapp – inställningar</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1><span class="sol" aria-hidden="true"></span>Gulapp</h1>
+  <p class="under">Gulnux på Windows: Glome, sökningen, Good Times, Greed, Gloffice och din agent.</p>
+
+  <section>
+    <h2>Agent</h2>
+    <div class="val" id="agenter"></div>
+    <p class="liten" id="agent-info"></p>
+    <div class="rad"><button class="huvud" id="starta">Starta agenten</button><span class="liten">eller skriv <code>gul</code> i en terminal</span></div>
+  </section>
+
+  <section>
+    <h2>Dokument</h2>
+    <div class="rad">
+      <div class="fyll sokvag" id="dokument"></div>
+      <button id="byt-mapp">Välj mapp …</button>
+    </div>
+    <p class="liten">Sökningen indexerar mappen och Gloffice utgår från den.</p>
+    <div class="rad">
+      <span class="fyll">Webbsidor från Glome till sökningen</span>
+      <select id="glome-lage">
+        <option value="manual">när jag trycker på knappen</option>
+        <option value="auto">alla sidor jag öppnar</option>
+        <option value="off">aldrig</option>
+      </select>
+    </div>
+  </section>
+
+  <section>
+    <h2>Personligt repo</h2>
+    <div id="repo-ja" hidden>
+      <div class="rad"><span class="punkt ja"></span><span class="fyll sokvag" id="repo"></span><button id="oppna-repo">Öppna</button></div>
+      <p class="liten">Minnet, GT-apparna och Greeds källor delas med Gulnux via repot.</p>
+    </div>
+    <div id="repo-nej" hidden>
+      <p class="liten">Dela minnet, GT-apparna och Greeds källor med Gulnux genom att klona ditt privata repo <code>gulnux-personal</code>.</p>
+      <div class="rad">
+        <input type="text" id="github" class="fyll" placeholder="Ditt GitHub-konto" autocomplete="off" spellcheck="false">
+        <button class="huvud" id="klona">Klona</button>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>I bakgrunden</h2>
+    <div class="rad"><input type="checkbox" id="tjanst-gulsearch"><label class="fyll" for="tjanst-gulsearch">Sökningen håller indexet aktuellt</label><span class="liten" id="kor-gulsearch"></span></div>
+    <div class="rad"><input type="checkbox" id="tjanst-greed"><label class="fyll" for="tjanst-greed">Greed samlar ditt flöde och ger Glome startsidan</label><span class="liten" id="kor-greed"></span></div>
+    <div class="rad"><input type="checkbox" id="autostart"><label class="fyll" for="autostart">Starta Gulapp när jag loggar in</label></div>
+  </section>
+
+  <section>
+    <h2>Det här behövs</h2>
+    <div id="krav"></div>
+    <pre id="logg"></pre>
+  </section>
+
+  <script src="settings.js"></script>
+</body>
+</html>

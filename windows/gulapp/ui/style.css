@@ -1,0 +1,121 @@
+/* Gulnux palett: ljust papper, gul accent och text i bärnsten */
+:root {
+  --papper: #F7F4EC;
+  --kort: #FFFDF7;
+  --linje: #E6DFCC;
+  --text: #2B2A26;
+  --dampad: #77736A;
+  --gul: #F5C518;
+  --barnsten: #8A6100;
+  --rod: #B5380B;
+  --gron: #3F7D3A;
+  --rund: 12px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--papper);
+  color: var(--text);
+  font: 14px/1.5 "Lexend", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+}
+
+body { padding: 24px 28px 32px; }
+
+h1 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+h1 .sol {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--gul);
+  box-shadow: 0 0 0 3px var(--barnsten);
+}
+
+h2 {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--barnsten);
+}
+
+.under { margin: 0 0 22px; color: var(--dampad); }
+
+section {
+  margin-bottom: 14px;
+  padding: 16px 18px;
+  background: var(--kort);
+  border: 1px solid var(--linje);
+  border-radius: var(--rund);
+}
+
+.rad { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
+.rad > .fyll { flex: 1; min-width: 0; }
+.liten { font-size: 12px; color: var(--dampad); }
+.sokvag { font-family: "JetBrains Mono", Consolas, monospace; font-size: 12px; overflow-wrap: anywhere; }
+
+button {
+  font: inherit;
+  padding: 6px 14px;
+  border: 1px solid var(--linje);
+  border-radius: 999px;
+  background: var(--kort);
+  color: var(--text);
+  cursor: pointer;
+}
+button:hover { border-color: var(--barnsten); }
+button.huvud { background: var(--gul); border-color: var(--gul); font-weight: 600; }
+button.huvud:hover { border-color: var(--barnsten); }
+button:disabled { opacity: .5; cursor: default; }
+
+input[type=text], input[type=search], select {
+  font: inherit;
+  padding: 7px 12px;
+  border: 1px solid var(--linje);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+}
+input:focus, select:focus, button:focus-visible { outline: 2px solid var(--gul); outline-offset: 1px; }
+
+.val { display: flex; gap: 8px; flex-wrap: wrap; }
+.val label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid var(--linje);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.val label:has(input:checked) { background: var(--gul); border-color: var(--gul); font-weight: 600; }
+.val input { accent-color: var(--barnsten); }
+
+.punkt { width: 9px; height: 9px; border-radius: 50%; flex: none; background: var(--linje); }
+.punkt.ja { background: var(--gron); }
+.punkt.nej { background: var(--rod); }
+
+pre#logg {
+  max-height: 140px;
+  margin: 10px 0 0;
+  padding: 10px;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid var(--linje);
+  border-radius: 8px;
+  font: 11px/1.4 "JetBrains Mono", Consolas, monospace;
+  white-space: pre-wrap;
+}
+pre#logg:empty { display: none; }
+
+.fel { color: var(--rod); }

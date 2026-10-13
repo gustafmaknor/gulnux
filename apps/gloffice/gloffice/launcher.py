@@ -40,7 +40,7 @@ def open_ui(path=None):
     if path:
         url += "#" + quote(str(core.resolve(path)))
     if shutil.which("glome"):
-        subprocess.Popen(["glome", f"--app={url}"], **QUIET)
+        subprocess.Popen([shutil.which("glome"), f"--app={url}"], **QUIET)
     else:
         webbrowser.open(url)
     return f"Öppnade {url} i Glome"

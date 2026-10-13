@@ -4,6 +4,7 @@
 
 import { spawn } from "node:child_process";
 import { findAppByUrl, toolNames } from "./lib/core.mjs";
+import { gtCommand } from "./lib/platform.mjs";
 
 function readMessage() {
   return new Promise((resolve, reject) => {
@@ -38,7 +39,8 @@ function answer(msg) {
   }
   if (msg.action === "learn") {
     // Lärsessionen ska leva vidare när Chromium stänger värdprogrammet
-    const child = spawn(process.env.GT_BIN || "gt", ["learn", url], { detached: true, stdio: "ignore" });
+    const [gt, ...pre] = gtCommand();
+    const child = spawn(gt, [...pre, "learn", url], { detached: true, stdio: "ignore" });
     child.unref();
     return { ok: true, known: Boolean(app), message: app ? `Continuing to learn ${app.title}` : "Good Times is starting to learn this app" };
   }

@@ -153,7 +153,7 @@ def save(db, item):
     if row["url"].startswith("http"):
         page = {"url": row["url"], "titel": row["title"], "text": fetch.article_text(row["url"]) or row["text"]}
         try:
-            subprocess.run(["gulsearch", "save-page"], input=json.dumps(page), text=True, encoding="utf-8", capture_output=True, timeout=120, check=True)
+            subprocess.run(core.program(["gulsearch", "save-page"]), input=json.dumps(page), text=True, encoding="utf-8", capture_output=True, timeout=120, check=True)
         except (OSError, subprocess.SubprocessError):
             pass  # sökningen är inte installerad – posten markeras ändå som sparad i Greed
     db.event(item, "save")

@@ -108,6 +108,9 @@ os.environ["GULSEARCH_OLLAMA"] = f"http://127.0.0.1:{servers[1].server_address[1
 AGENT = ROT / "agent.py"
 AGENT.write_text(r'''
 import json, re, sys
+# som riktiga agenter: UTF-8 in och ut, även på Windows
+sys.stdin.reconfigure(encoding="utf-8")
+sys.stdout.reconfigure(encoding="utf-8")
 prompt = sys.stdin.read()
 open(sys.argv[1], "w", encoding="utf-8").write(prompt)
 kandidater = prompt.split("## Kandidater")[1].split("## Utanför profilen")[0]
@@ -215,7 +218,7 @@ assert db.one("SELECT count(*) AS n FROM items WHERE status = 'scored'")["n"] < 
 ok(f"agentens urval: {len(titles)} valda, samma nyhet slås ihop, högst en överraskning")
 
 # ---------- tider
-now = time.mktime(time.strptime("2026-10-09 12:30", "%Y-%m-%d %H:%M"))
+now = time.mktime(time.strptime(time.strftime("%Y-%m-%d") + " 12:30", "%Y-%m-%d %H:%M"))  # idag, så att urvalet syns på sidan
 with db.db:
     db.db.execute("UPDATE digests SET created = ?", (now - 3 * 3600,))  # förra urvalet 09:30
 assert curate.due(db, ["07:00", "12:00", "18:00"], now) is True

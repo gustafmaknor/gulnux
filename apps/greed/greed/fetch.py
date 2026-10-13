@@ -9,7 +9,7 @@ import re
 import subprocess
 import time
 
-from .core import GreedError, load_sources
+from .core import GreedError, load_sources, program
 
 
 def _strip_html(text):
@@ -40,7 +40,7 @@ def fetch_gt(source):
     """Aktiv läsning: ett Good Times-verktyg som returnerar inlägg i data
     ([{url, title?, text, author?, published?}, …])."""
     try:
-        out = subprocess.run(["gt", "run", source["app"], source["tool"]], capture_output=True, text=True, encoding="utf-8",
+        out = subprocess.run(program(["gt", "run", source["app"], source["tool"]]), capture_output=True, text=True, encoding="utf-8",
                              timeout=600, check=True).stdout
         data = json.loads(out).get("data") or []
     except subprocess.CalledProcessError as e:

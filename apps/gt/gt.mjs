@@ -1,8 +1,8 @@
 // gt – Good Times: teach your computer the work you do in your web apps.
 
 import fs from "node:fs";
-import { execFileSync } from "node:child_process";
 import { GtError, STATE, listApps, loadApp, sessionFile } from "./lib/core.mjs";
+import { notify } from "./lib/platform.mjs";
 import { captureSession } from "./lib/session.mjs";
 import { describeTools, runTool } from "./lib/runner.mjs";
 import { learn } from "./lib/learn.mjs";
@@ -28,14 +28,6 @@ const USAGE = `gt – Good Times: teach your computer the work you do in your we
   gt mcp                              MCP server for the agents
 
 Tip: the GT button in Glome starts \`gt learn\` for the page you are on.`;
-
-function notify(title, body, urgent = false) {
-  try {
-    execFileSync("notify-send", ["-a", "Gulnux", ...(urgent ? ["-u", "critical"] : []), title, body], { stdio: "ignore" });
-  } catch {
-    // ingen notisdaemon – resultatet finns i loggen
-  }
-}
 
 function logRun(app, tool, entry) {
   fs.mkdirSync(`${STATE}/logs`, { recursive: true });

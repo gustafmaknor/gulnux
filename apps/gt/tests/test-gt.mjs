@@ -115,7 +115,14 @@ export async function run({ page, args, app }) {
   assert.equal(pagesAfter, pagesBefore, "live-körningen ska stänga sin flik men inte Glome");
   ok("--live kör i Glome och lämnar Glome orörd");
 
-  const unit = (id, ext = "service") => fs.readFileSync(path.join(T, "units", `gt-localhost-${id}.${ext}`), "utf8");
+  // Scheman: systemd-enheter på Gulnux, skript för Schemaläggaren i Gulapp (Windows)
+  const WIN = process.platform === "win32";
+  const UNITS = WIN ? path.join(T, "data", "gt", "schedules") : path.join(T, "units");
+  const unitFile = (id) => path.join(UNITS, `gt-localhost-${id}.${WIN ? "cmd" : "service"}`);
+  const unit = (id) => fs.readFileSync(unitFile(id), "utf8");
+  // Det schemat kör: gt run … och, för engångshandlingar, gt unschedule … efteråt
+  const runArgs = (id) => / (run localhost[^\r\n]*)/.exec(unit(id))[1].trim().split(" ");
+  const cleanupArgs = (id) => / (unschedule localhost \S+)/.exec(unit(id))?.[1].split(" ");
   gt("schedule", "localhost", "till-salu", "Mon..Fri 08:00");
   assert.ok(unit("till-salu").includes("--notify") && !unit("till-salu").includes("--yes"));
   assert.match(gtFails("schedule", "localhost", "till-salu", "daily; rm -rf ~"), /not a valid time/);
@@ -124,8 +131,8 @@ export async function run({ page, args, app }) {
   assert.match(gtFails("schedule", "localhost", "pris", "2030-10-30 09:00", '{"id":1,"pris":3500000}', "--once"), /--yes/);
   assert.match(gt("schedule", "localhost", "pris", "2030-10-30 09:00", '{"id":1,"pris":3500000}', "--once", "--yes"), /runs once.*\(id pris\)/);
   assert.match(gt("schedule", "localhost", "pris", "Fri 09:00", '{"id":3,"pris":2600000}', "--yes"), /\(id pris-2\)/);
-  assert.ok(unit("pris").includes("--yes") && unit("pris").includes("ExecStartPost=") && unit("pris").includes("unschedule localhost pris"));
-  assert.ok(!unit("pris-2").includes("ExecStartPost="), "ett återkommande schema ska inte ta bort sig självt");
+  assert.ok(unit("pris").includes("--yes") && cleanupArgs("pris")?.join(" ") === "unschedule localhost pris");
+  assert.ok(!cleanupArgs("pris-2"), "ett återkommande schema ska inte ta bort sig självt");
   assert.equal(JSON.parse(Buffer.from(/--args-base64 (\S+)/.exec(unit("pris-2"))[1], "base64").toString()).pris, 2600000);
   const lista = gt("schedule");
   assert.match(lista, /pris {2}2030-10-30 09:00 {2}\(once, changes data\)/);
@@ -133,19 +140,18 @@ export async function run({ page, args, app }) {
   ok("schemalagda handlingar: kräver --yes, engångs och återkommande, flera med samma verktyg");
 
   // Så som timern kör engångshandlingen: körningen lyckas, och schemat tar bort sig självt
-  const exec = /ExecStart=\S+ (.+)/.exec(unit("pris"))[1].split(" ");
-  gt(...exec);
-  gt(...(/ExecStartPost=\S+ (.+)/.exec(unit("pris"))[1].split(" ")));
-  assert.ok(!fs.existsSync(path.join(T, "units", "gt-localhost-pris.service")));
+  gt(...runArgs("pris"));
+  gt(...cleanupArgs("pris"));
+  assert.ok(!fs.existsSync(unitFile("pris")));
   assert.doesNotMatch(gt("schedule"), /pris {2}2030/);
   ok("en engångshandling körs och tar sedan bort sitt schema");
 
   assert.match(gtFails("unschedule", "localhost", "finns-inte"), /no schedule/);
-  fs.rmSync(path.join(T, "units"), { recursive: true });
+  fs.rmSync(UNITS, { recursive: true });
   assert.match(gt("sync"), /Created 2/);
   gt("unschedule", "localhost", "pris-2");
   gt("unschedule", "localhost", "till-salu");
-  assert.equal(fs.readdirSync(path.join(T, "units")).length, 0);
+  assert.equal(fs.readdirSync(UNITS).length, 0);
   ok("gt sync återskapar scheman, unschedule tar bort dem");
 
   const mcp = spawn(process.execPath, [GT, "mcp"], { env, stdio: ["pipe", "pipe", "ignore"] });
