@@ -1,6 +1,6 @@
 """gulsearch – Gulnux search
 
-  gulsearch search <query>    search documents, memory and saved web pages (--json for programs)
+  gulsearch search <query>    search documents, memory and saved web pages
   gulsearch read <id>         show the full text of a hit
   gulsearch save-page         save a web page (JSON with url, titel and text on stdin)
   gulsearch forget <id>       remove a document from the index
@@ -63,8 +63,7 @@ def when(day):
         return "yesterday"
     if days < 7:
         return f"{days} days ago"
-    # %-d finns inte på Windows (Gulapp)
-    return f"{date.day} {date.strftime('%b')}" + ("" if date.year == datetime.date.today().year else f" {date.year}")
+    return date.strftime("%-d %b" if date.year == datetime.date.today().year else "%-d %b %Y")
 
 
 def place(hit):
@@ -140,13 +139,9 @@ def main():
         if command == "search":
             if len(args) < 2:
                 sys.exit("What do you want to search for?")
-            as_json = "--json" in args
-            query = " ".join(a for a in args[1:] if a != "--json")
+            query = " ".join(args[1:])
             result = core.Index().sok(query, installn=settings)
-            if as_json:
-                print(json.dumps({**result, "traffar": [{**h, "mal": target(h)} for h in result["traffar"]]}, ensure_ascii=False))
-            else:
-                print_hits(query, result)
+            print_hits(query, result)
         elif command == "read":
             d = core.Index().las(args[1])
             print(f"# {d['titel']}\n{d['sokvag']}\n\n{d['text']}")

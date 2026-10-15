@@ -3,10 +3,9 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { DATA, GtError, agentName, createApp, findAppByUrl, toolNames } from "./core.mjs";
-import { WINDOWS, openTerminal } from "./platform.mjs";
+import { GtError, agentName, createApp, findAppByUrl, toolNames } from "./core.mjs";
 import { captureSession, currentGlomePage } from "./session.mjs";
 
 const PROMPTS = process.env.GT_PROMPTS || path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "agent", "prompts");
@@ -52,15 +51,11 @@ export async function learn(url, { agent = agentName(), window = true, dryRun = 
   if (dryRun) return { app, isNew, command };
 
   if (window) {
-    let start = command;
-    if (WINDOWS) {
-      // Windows Terminal delar kommandoraden vid ";" – instruktionen går via en fil i stället
-      const file = path.join(DATA, "learn", `${app.name}.md`);
-      fs.mkdirSync(path.dirname(file), { recursive: true });
-      fs.writeFileSync(file, command[1]);
-      start = [agent, `Läs instruktionerna i ${file} och följ dem.`];
-    }
-    openTerminal(`Good Times: ${app.title}`, app.dir, start);
+    const child = spawn("foot", ["--app-id", "gt-learn", "--title", `Good Times: ${app.title}`, "-D", app.dir, ...command], {
+      detached: true,
+      stdio: "ignore",
+    });
+    child.unref();
   } else {
     spawnSync(command[0], command.slice(1), { cwd: app.dir, stdio: "inherit" });
   }

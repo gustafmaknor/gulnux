@@ -5,7 +5,6 @@
   "description": "Teach your computer the work you do in a web app. Click on the app you want Good Times to learn.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArgH7kEfsElFP9E1dlDigX7AvH9cW4ntYDYqzSeRaVYjffkPBmmgwVXxk09IV75fENh51220wCvS5d7hcmXz4x53QeKHM0qBP3fuiFVAu++FKk/J8uwK3LA8w7ovog+F7ac+v+TvxcTBl1Yc0gCUPaJPiqow48bXUoSwXKvoCFNDNP+k56PvzWZR/GZ0r4Pt351xvONk273W+FNiY09RsIs6oftCBC63pWBqhY/LN7094536GloOyk4j0oIipaKYcaHaln2G2lCZhxtxsqF8vX0bzQBoACjpteFICwzCuOVIJUiwCs7lbBNJBJNXKwtS+EARarVVo5aTdoVd3I2k7uwIDAQAB",
   "permissions": ["nativeMessaging", "tabs"],
-  "host_permissions": ["http://127.0.0.1:9304/*"],
   "background": { "service_worker": "bakgrund.js" },
   "action": {
     "default_title": "Teach Good Times this app",

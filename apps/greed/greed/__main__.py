@@ -24,6 +24,13 @@ from datetime import datetime
 from . import core
 
 
+def notify(title, body):
+    try:
+        subprocess.run(["notify-send", "-a", "Gulnux", title, body], capture_output=True, timeout=10)
+    except (OSError, subprocess.SubprocessError):
+        pass
+
+
 def watch():
     """Bakgrundstjänsten: hämtar, poängsätter och låter agenten välja ut på de inställda tiderna."""
     from . import curate, fetch, score, web
@@ -46,7 +53,7 @@ def watch():
                     if digest and digest["picks"]:
                         titles = [p["title"] for p in db.digests(1)[0]["picks"]][:5]
                         heading = f"Greed: {digest['picks']} saker {'idag' if first_today else 'nu'}"
-                        core.notify(heading, "\n".join(f"• {t}" for t in titles))
+                        notify(heading, "\n".join(f"• {t}" for t in titles))
             if time.time() - last_prune > 86400:
                 db.prune(settings["keep_days"])
                 last_prune = time.time()
@@ -67,7 +74,7 @@ def open_ui():
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
         time.sleep(1.5)
     if shutil.which("glome"):
-        subprocess.Popen(core.program(["glome", f"--app={url}"]), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+        subprocess.Popen(["glome", f"--app={url}"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
     else:
         webbrowser.open(url)
 

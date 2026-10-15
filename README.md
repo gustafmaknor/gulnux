@@ -24,7 +24,6 @@ Codex eller Mistral Vibe), och agenten sköter datorn åt dig.
 - **Greed:** ett självkurerande flöde – bara det som är värt din tid från nyheter och sociala medier
 - **Good Times:** lär datorn dina arbetsuppgifter i webbappar, med verktyg som kan schemaläggas
 - **Lärande:** minne, lokal observation och veckovis reflektion med förslag du godkänner
-- **Windows:** Gulapp ger samma program och samma minne på en Windows-dator ([nedan](#gulapp--gulnux-på-windows))
 
 ## Utseende
 
@@ -328,17 +327,6 @@ Begränsningar: bilder och diagram i kalkylark kan försvinna när Gloffice spar
 openpyxl). Textdokument redigeras stycke för stycke, och formatering inom ett stycke
 förenklas när du ändrar dess text.
 
-## Gulapp – Gulnux på Windows
-
-Gulapp är Gulnux för datorer som måste köra Windows, till exempel jobbdatorn: Glome (Edge med
-Gulnux profil och tillägg), sökningen, Good Times, Greed, Gloffice och Gul-agenten, samlade i
-en ikon i aktivitetsfältet som visar vad agenten gör. Det personliga repot delas, så minnet,
-GT-apparna och Greeds källor är desamma som på Gulnux. Allt installeras på användarnivå.
-
-![Gulapps sökfönster med träffar i dokument och minne](docs/bilder/gulapp-sok.png)
-
-Installation och detaljer: [windows/gulapp/README.md](windows/gulapp/README.md).
-
 ## Kortkommandon
 
 | Tangent | Funktion |
@@ -368,7 +356,6 @@ templates/personal/          mallen för det personliga repot
 pkgs/gul.nix                 gul-kommandona
 scripts/                     gul, gul-*, gulnux-install, glome, vbox-create
 agent/AGENTS.md              kontexten som alla agenter får
-agent/AGENTS-windows.md      kontexten i Gulapp (Windows)
 agent/prompts/reflect.md     instruktionen till veckoreflektionen
 apps/gloffice/               kontorssviten
 apps/gulsearch/                 sökningen (index, bakgrundstjänst, MCP)
@@ -377,7 +364,6 @@ apps/gt/                     Good Times (gt, MCP-server, native messaging-värd)
 apps/gt-tillagg/             GT-knappen i Glome
 apps/greed/                  Greed (insamling, sortering, agentens urval, MCP)
 apps/greed-tillagg/          Greed-knappen och läsningen av flöden i Glome
-windows/gulapp/              Gulapp: Gulnux för Windows (Electron)
 config/                      tema: sway, waybar, foot, fuzzel, mako, swaylock, regreet, logga och bakgrund
 hosts/iso/                   installations-ISO
 ```

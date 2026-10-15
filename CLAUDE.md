@@ -51,16 +51,6 @@ ruff check --select F,E9 apps
 (cd apps/gt && GT_CHROMIUM=$(command -v chromium) node tests/test-gt.mjs)
 ```
 
-### Gulapp (Windows)
-
-Gulapp (`windows/gulapp`, Electron) testas på en Windows-dator: `cd windows\gulapp && npm install && npm test`.
-Med uv i PATH testas också Python-miljön och apparna. Apparnas egna tester går att köra på
-Windows också (Python från `%LOCALAPPDATA%\Gulapp\python`, `GT_CHROMIUM` = Edge). GT, Greed,
-sökningen och Gloffice är samma kod på båda; det som skiljer finns i `apps/gt/lib/platform.mjs`,
-Windows-delen av `apps/gt/lib/schedule.mjs` och `program()`/`notify()` i `apps/greed/greed/core.py`.
-Tänk på Windows när du ändrar i apparna: `.cmd`-program kräver `shutil.which`/cmd, `strftime("%-d")`
-finns inte, och utdata till andra program ska vara UTF-8.
-
 `writeShellApplication` kör ShellCheck vid bygget och stoppar på *alla* anmärkningar, även
 info-nivå – kör ShellCheck innan du pushar skript.
 
@@ -93,7 +83,6 @@ info-nivå – kör ShellCheck innan du pushar skript.
 | 9300 | Gloffice |
 | 9301 | Gulnux sök (tar emot sidor från söktillägget) |
 | 9303 | Greed (sidan, startsidan `/start`, tar emot inlägg från Greed-tillägget) |
-| 9304 | Gulapps brygga för GT-knappen när native messaging är avstängt (bara Windows) |
 | `okelhmbnolibhpnjedoejgidbpnnoolh` | Söktillägget (`apps/glome-tillagg`) |
 | `ggkddmolbkjjhlicmldkhpflblbleocb` | Good Times-tillägget (`apps/gt-tillagg`), native messaging-värd `se.gulnux.gt` |
 | `ccbiciocgndmnhmblociljbphlibegne` | Greed-tillägget (`apps/greed-tillagg`) |
@@ -119,12 +108,6 @@ inte – **ändra inte `key`**, då byter tillägget id och servrarnas kontrolle
 - **Greed** är en tratt: bred insamling → lokal grovsortering (bge-m3 via ollama) → agenten
   väljer ut 07/12/18. Sociala medier läses passivt i Glome; aktiv läsning via GT är ett val
   per källa.
-- **Gulapp** (issue #1): Electron, Glome = Edge (Edge tar emot `--load-extension`, finns
-  överallt och kräver ingen installation). Claude Code får kontext, MCP och hooks som flaggor så
-  att användarens `~/.claude` på jobbdatorn inte påverkas. Glome startar med
-  `--disable-features=…,msImplicitSignin` (annars loggas profilen in med jobbkontot och synkar
-  allt) och en ny profil får `pinned_extension_migration: true` (annars tömmer Edge listan över
-  fästa knappar). Jobbdatorn där Gulapp byggdes har `NativeMessagingUserLevelHosts = 0`, därav bryggan på 9304.
 
 ## Öppna uppgifter
 
@@ -147,10 +130,6 @@ Ungefär i prioritetsordning.
 5. **Good Times på riktigt:** en riktig lärsession med Claude mot en riktig app.
 6. **Gloffice med LibreOffice:** PDF-export, konvertering och omräkning är otestade.
 7. **Mistral Vibe:** saknar MCP-registrering och stöd i reflektionen (bara claude och codex).
-8. **Gulapp, nästa steg** (issue #1): paketering med installationsprogram och signering
-   (nu körs den från en klon med `npm start`), automatiska uppdateringar, steg 5 i issuet
-   (lärandet: observation och reflektion), GT:s lärsession med riktig agent i Windows Terminal,
-   och en riktig session med Codex (inte installerat på datorn där Gulapp byggdes).
-9. **Saknade körningar:** en schemalagd GT-handling eller ett Greed-urval körs direkt när
+8. **Saknade körningar:** en schemalagd GT-handling eller ett Greed-urval körs direkt när
    datorn startar om tiden passerades medan den var avstängd (`Persistent=true`) – kanske
    ska tidskritiska handlingar hoppas över.

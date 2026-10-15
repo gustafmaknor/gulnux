@@ -2,7 +2,6 @@
 och sparade webbsidor."""
 
 import json
-import shutil
 import subprocess
 import sys
 
@@ -30,7 +29,7 @@ def _search(query, limit=10, source=None):
 
 def _save_glome_page():
     try:
-        sida = json.loads(subprocess.run([shutil.which("glome-read") or "glome-read", "--json"], capture_output=True, text=True, encoding="utf-8",
+        sida = json.loads(subprocess.run(["glome-read", "--json"], capture_output=True, text=True,
                                          check=True, timeout=30).stdout)
     except (OSError, subprocess.SubprocessError, ValueError) as e:
         raise core.SokFel(f"Could not read the page in Glome: {e}") from None

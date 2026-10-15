@@ -108,9 +108,6 @@ os.environ["GULSEARCH_OLLAMA"] = f"http://127.0.0.1:{servers[1].server_address[1
 AGENT = ROT / "agent.py"
 AGENT.write_text(r'''
 import json, re, sys
-# som riktiga agenter: UTF-8 in och ut, även på Windows
-sys.stdin.reconfigure(encoding="utf-8")
-sys.stdout.reconfigure(encoding="utf-8")
 prompt = sys.stdin.read()
 open(sys.argv[1], "w", encoding="utf-8").write(prompt)
 kandidater = prompt.split("## Kandidater")[1].split("## Utanför profilen")[0]
